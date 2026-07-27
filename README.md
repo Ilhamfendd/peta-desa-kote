@@ -1,0 +1,309 @@
+# Peta Digital Desa Kote
+
+Peta digital interaktif untuk **Desa Kote, Kecamatan Singkep Pesisir, Kabupaten Lingga,
+Kepulauan Riau** (kode wilayah `21.04.06.2004`).
+
+Hasil akhirnya **satu berkas**: `peta-desa-kote.html` (±510 KB). Tidak butuh server,
+database, pemasangan, kunci API, maupun CDN. Cukup dobel-klik untuk membuka, atau
+unggah ke website desa.
+
+---
+
+## Isi peta
+
+| Bagian | Isinya |
+|---|---|
+| **Beranda** | Identitas desa, angka pokok, visi, kontak, cuaca ringkas |
+| **Statistik** | Penduduk, kepadatan, rasio jenis kelamin, piramida umur, pendidikan, mata pencaharian, agama — tiap grafik punya tampilan **Tabel** |
+| **Tempat** | Fasilitas per kategori (pemerintahan, pendidikan, kesehatan, ibadah, ekonomi, perikanan, wisata, infrastruktur), lengkap dengan **foto**, penyaring, dan tombol bagikan |
+| **Cuaca** | Kondisi terkini, prakiraan 7 hari, arah & kekuatan angin, matahari terbit/terbenam, serta **peringatan gelombang** berskala BMKG |
+| **Wilayah** | Batas desa (luas & keliling terhitung otomatis), dusun/RW, koordinat, desa sekitar beserta jaraknya |
+| **Kelola** | Semua formulir pengisian data, impor/ekspor, dan penerbitan |
+
+### Mode peta
+
+Pemilih bergambar di kiri bawah, dengan gambar mini yang **diambil dari ubin asli
+Desa Kote** — jadi pratinjaunya benar-benar memperlihatkan hasilnya:
+
+| Mode | Sumber | Cocok untuk |
+|---|---|---|
+| **Peta** | OpenStreetMap | Jalan, nama tempat, penggunaan sehari-hari |
+| **Satelit** | Esri World Imagery | Melihat rumah, kebun, tambak, garis pantai sebenarnya |
+| **Medan** | OpenTopoMap | Kontur, bukit, dan ketinggian |
+| **Polos** | CARTO | Latar tenang saat menonjolkan data desa |
+| **Luring** | Tertanam di berkas | Tanpa internet sama sekali |
+
+Saklar **Nama tempat** menumpangkan nama desa di atas mode yang tidak punya label
+(Satelit dan Luring). Secara otomatis menyala di kedua mode itu dan mati di mode
+lain agar nama tidak tercetak dua kali — tapi bisa Anda paksa kapan saja.
+
+### Peta terkunci di wilayah desa
+
+Peta terbuka langsung pada Desa Kote (zoom 15, sekitar 5 km selebar layar) dan
+**jelajahnya dibatasi** pada kotak 8 km dari pusat desa. Menggeser keluar akan
+ditahan, dan zoom tidak bisa dijauhkan melewati batas itu.
+
+Tujuannya menjaga fokus: ini peta Desa Kote, bukan peta umum yang bisa dipakai
+menjelajah ke mana-mana. Bila batas desa sudah digambar, wilayah jelajah otomatis
+melebar mengikutinya.
+
+Jangkauannya bisa diubah di **Kelola → Identitas desa → Jangkauan peta** (1–60 km).
+
+### Perkakas GIS
+
+| Perkakas | Cara pakai |
+|---|---|
+| **Skala grafis** | Di bilah bawah, ikut berubah saat memperbesar peta |
+| **Arah mata angin** | Pojok kiri atas peta |
+| **Menu klik-kanan** | Klik kanan (atau tekan lama di HP) pada peta: koordinat DMS & desimal, salin koordinat, radius dari sini, ukur dari sini, pusatkan, tambah tempat |
+| **Analisis radius** | Menghitung tempat dalam jarak tertentu — mis. jangkauan layanan posyandu. Menampilkan luas, jumlah, dan daftar terurut jarak |
+| **Ukur jarak & luas** | Panjang tiap ruas tertulis di titik tengahnya; luas dan keliling di bilah atas |
+| **Kelegapan layer** | Penggeser transparansi tiap layer di panel layer |
+| **Tabel atribut** | Semua tempat dalam tabel yang bisa diurutkan per kolom; klik baris untuk melompat ke peta |
+| **Ekspor CSV** | Untuk Excel — memakai BOM dan pemisah titik koma agar huruf beraksen tidak rusak |
+| **Layar penuh** | Tombol di deretan alat peta, berguna saat presentasi |
+
+Alat lain: cari lokasi saya, pencarian, cetak/PDF, dan mode terang/gelap.
+
+---
+
+## Identitas visual
+
+Tema mengikuti **logo KKN Kelompok 67 Desa Kote**. Hijau `#263f29` diambil langsung
+dari logonya, lalu diturunkan menjadi warna antarmuka yang terukur kontrasnya:
+
+| Peran | Terang | Gelap |
+|---|---|---|
+| Bilah merek | `#263f29` | `#1c3320` |
+| Aksen (tombol, tab aktif, batas desa) | `#2a5a2f` — 7,86:1 | `#5cb767` — 6,99:1 |
+
+Lambang KKN ditanam sebagai **mask alfa** (satu berkas 27 KB), jadi tintanya
+mengikuti tema: hijau di atas cakram putih pada bilah atas, dan putih pada kartu
+kop Beranda. Tulisan "KKN Kelompok 67" diset sebagai teks, bukan gambar, supaya
+tajam di semua ukuran.
+
+Warna grafik statistik **sengaja tidak diubah** — palet itu sudah diuji
+keterbacaannya bagi penyandang buta warna, dan mengubahnya demi kecocokan merek
+justru akan merusak fungsinya.
+
+**Logo desa** bisa Anda tambahkan sendiri di **Kelola → Identitas desa → Logo desa**.
+Gambarnya dikecilkan otomatis ke 256 px agar berkas tetap ringan, lalu tampil di
+samping lambang KKN. Nama tim, institusi, dan tahun juga bisa diubah di sana.
+
+> Tidak ada logo resmi Desa Kote di sumber publik, jadi slot ini dibiarkan kosong
+> daripada diisi lambang karangan. Bila desa memakai lambang Kabupaten Lingga,
+> unggah saja berkasnya.
+
+---
+
+## Berkas pratinjau berisi data karangan
+
+`contoh-peta-desa-kote.html` dibuat khusus untuk melihat wujud aplikasi dalam
+keadaan terisi. **Seluruh angka dan tempat di dalamnya karangan** — bukan data
+Desa Kote.
+
+Pengamannya berlapis:
+
+- Berkas **terpisah**; `peta-desa-kote.html` tidak tersentuh dan tetap kosong
+- Ada **bilah peringatan** di bagian atas aplikasi yang tidak bisa disembunyikan
+- Judul tabnya diawali `[CONTOH]`
+- Memakai **penyimpanan browser sendiri** (`…/contoh`), jadi suntingan di sana
+  tidak mungkin bocor ke berkas asli
+- Tombol **Kosongkan** di bilah itu mengembalikannya ke keadaan kosong
+
+Membatalkannya: **hapus saja berkasnya.** Tidak ada yang perlu dipulihkan.
+Untuk membuatnya lagi: `python buat-contoh.py`
+
+## Cara mengisi data
+
+Peta ini **sengaja dikirim dalam keadaan kosong**. Tidak ada satu angka penduduk pun
+yang dikarang — statistik tingkat desa untuk Kote tidak tersedia di sumber publik,
+jadi hanya Anda yang bisa mengisinya.
+
+1. Buka `peta-desa-kote.html`.
+2. Klik ikon **gembok** di kanan atas untuk menyalakan mode Kelola.
+3. Buka tab **Kelola**, isi bagian yang diperlukan.
+4. Untuk batas desa: **Wilayah → Gambar batas di peta**, klik mengikuti batas,
+   tekan `Enter` bila selesai. Luas dan keliling dihitung sendiri.
+5. Untuk fasilitas: **Tempat → Tambah tempat di peta**, klik lokasinya, isi formulir.
+
+Perubahan tersimpan otomatis di browser Anda (`localStorage`).
+
+**Pintasan saat menggambar:** `Enter` selesai · `Esc` batal · `Backspace` mundur satu
+titik · seret bulatan untuk menggeser titik · klik bulatan untuk menghapusnya.
+
+### Foto tempat
+
+Saat menambah atau mengubah tempat, tekan **Ambil foto atau pilih dari galeri**.
+Di HP, tombol itu menawarkan kamera maupun galeri. Fotonya dikecilkan otomatis ke
+1000 px dan disimpan di dalam data peta — tidak perlu hosting gambar terpisah.
+
+Foto ponsel 4 MB biasanya menyusut jadi sekitar 60–120 KB. Ukuran seluruh data
+ditampilkan di **Kelola → Simpan & terbitkan**; penyimpanan browser umumnya
+terbatas sekitar 5 MB, jadi pantau angkanya bila memasang banyak foto.
+
+### Batas usulan (semi-otomatis)
+
+Di **Wilayah → Muat batas usulan** tersedia poligon Desa Kote yang sudah ditanam
+di dalam berkas, diambil dari basis data **GADM 4.1** (turunan data administratif
+Indonesia): **21,36 km²**, **18 titik**.
+
+Gunakan sebagai **rancangan awal**, bukan hasil akhir:
+
+- Hanya 18 titik untuk keliling 20,5 km — rata-rata 1,1 km antar titik, sehingga
+  teluk dan tanjung terpotong lurus
+- GADM mencatat kecamatannya masih "Singkep", sebelum pemekaran Singkep Pesisir
+- **Bukan penetapan resmi.** Batas desa yang sah ditetapkan lewat Perbup/Perdes
+
+Alur yang disarankan: muat usulannya, buka mode **Satelit**, lalu geser titiknya
+bersama perangkat desa. Jauh lebih cepat daripada menggambar dari nol.
+
+### Punya berkas dari Bappeda/BPN?
+
+**Kelola → Batas & wilayah** menerima **GeoJSON** dan **KML** (termasuk hasil ekspor
+Google Earth) untuk batas desa, dusun, maupun titik fasilitas.
+
+---
+
+## Sudah online
+
+**https://peta-desa-kote.vercel.app**
+
+Di-hosting gratis di Vercel, HTTPS otomatis, dan bisa dibuka siapa pun.
+
+Memperbarui setelah menyunting data:
+
+```
+python build.py        # bila mengubah kode; lewati bila hanya mengubah data
+python terbitkan.py    # salin ke situs/ lalu unggah — alamatnya tetap sama
+```
+
+Kalau datanya Anda isi lewat mode Kelola di browser: unduh **HTML mandiri**,
+timpa `peta-desa-kote.html`, lalu jalankan `python terbitkan.py`.
+
+> Karena sekarang berjalan di HTTPS, tombol **Pakai lokasi saya** (GPS) dan menu
+> berbagi bawaan HP ikut berfungsi — keduanya diblokir browser saat berkas dibuka
+> langsung lewat `file://`.
+
+Isi alamat itu di **Kelola → Alamat terbit & kode QR** supaya tautan berbagi dan
+kode QR menunjuk ke alamat yang benar.
+
+## Cara memasang ke website desa
+
+1. Di tab **Kelola → Simpan & terbitkan**, klik **Unduh HTML mandiri**.
+   Berkas yang terunduh sudah berisi peta **dan** data terbaru Anda.
+2. Unggah berkas itu ke hosting website desa.
+3. Buka langsung lewat tautannya, atau sematkan ke sebuah halaman:
+
+```html
+<iframe src="/peta-desa-kote.html" title="Peta Digital Desa Kote"
+        style="width:100%;height:640px;border:0;border-radius:12px"
+        loading="lazy" allow="geolocation"></iframe>
+```
+
+Cocok untuk WordPress, OpenSID, maupun HTML biasa. Bisa juga diunggah gratis ke
+GitHub Pages atau Netlify.
+
+### Berbagi & kode QR
+
+Isi **alamat peta di website desa** pada **Kelola → Alamat terbit & kode QR**.
+Setelah terisi:
+
+- Tiap tempat punya tombol **Bagikan** — menghasilkan tautan yang langsung membuka
+  peta pada tempat itu, misalnya
+  `…/peta-desa-kote.html#t=dermaga-nelayan`. Cocok dikirim di grup WhatsApp.
+- Tersedia **kode QR** untuk peta maupun untuk satu tempat, bisa diunduh sebagai
+  PNG beresolusi tinggi untuk dicetak di banner, papan pengumuman, atau lampiran
+  laporan KKN.
+
+Kode QR dibuat di dalam berkas ini sendiri — tanpa layanan luar, jadi tetap
+berfungsi meski dibuka tanpa internet.
+
+> **Alur pembaruan:** sunting di browser → **Unduh HTML mandiri** → unggah ulang
+> menimpa yang lama. Pengunjung selalu melihat versi terbitan; salinan lokal yang
+> lebih lama otomatis dikalahkan oleh versi terbitan yang lebih baru.
+
+Pengunjung website **tidak bisa** mengubah data — mode Kelola hanya memengaruhi
+browser orang yang menyalakannya, dan tidak pernah ikut terbit.
+
+Cadangkan berkala lewat **Cadangkan JSON**. **Ekspor GeoJSON** menghasilkan berkas
+yang bisa dibuka di QGIS atau ArcGIS.
+
+---
+
+## Kondisi tanpa internet
+
+| Bagian | Tanpa internet |
+|---|---|
+| Antarmuka, statistik, grafik, daftar tempat | ✅ jalan penuh |
+| Batas desa, dusun, penanda, alat ukur | ✅ jalan penuh |
+| Mode peta **Luring** | ✅ garis pantai, jalan, perairan tertanam di berkas |
+| Mode Peta / Satelit / Medan / Polos | ❌ perlu internet |
+| Cuaca | ❌ perlu internet |
+
+Bila ubin gagal dimuat, aplikasi otomatis beralih ke mode **Luring**.
+
+---
+
+## Sumber data
+
+- **Geometri dasar** — OpenStreetMap ([ODbL](https://www.openstreetmap.org/copyright)):
+  47 ruas garis pantai, 198 ruas jalan, 15 badan air, 15 permukiman, 31 pulau,
+  sudah disederhanakan dan ditanam ke dalam berkas.
+- **Titik pusat desa** — simpul OSM `place=village` "Kote" (`-0,36580, 104,50984`),
+  Wikidata `Q12492286`.
+- **Cuaca & gelombang** — [Open-Meteo](https://open-meteo.com) (gratis, tanpa kunci API).
+  Untuk peringatan dini resmi tetap rujuk [BMKG](https://www.bmkg.go.id).
+- **Statistik & fasilitas** — dimasukkan oleh pengelola desa.
+
+> Catatan: OpenStreetMap **belum** memuat poligon batas Desa Kote (hanya satu titik),
+> juga hampir tidak memuat bangunan dan fasilitas di wilayah ini. Itulah sebabnya
+> batas wilayah dan daftar tempat harus digambar sendiri.
+
+---
+
+## Membangun ulang dari sumber
+
+```
+python build.py
+```
+
+```
+peta-desa-kote/
+├── peta-desa-kote.html      ← hasil akhir, satu berkas
+├── build.py                 ← perakit
+└── src/
+    ├── index.html           ← kerangka + penanda sisipan
+    ├── style.css            ← sistem desain (terang/gelap)
+    ├── basemap.json         ← geometri OSM tersederhanakan
+    ├── logo-kkn-emblem.png  ← mask alfa lambang KKN
+    ├── data.json            ← opsional: data awal yang ikut ditanam
+    ├── vendor/              ← leaflet.js + leaflet.css
+    └── js/
+        ├── 00-core.js       ← model data, format angka, geodesi
+        ├── 10-map.js        ← peta dasar, layer vektor, penanda
+        ├── 20-charts.js     ← grafik SVG tanpa pustaka
+        ├── 25-qr.js         ← enkoder kode QR (ditulis sendiri)
+        ├── 30-panels.js     ← Beranda, Statistik, Tempat, Wilayah
+        ├── 35-gis.js        ← skala, arah, menu konteks, radius, tabel atribut
+        ├── 40-weather.js    ← Open-Meteo + skala gelombang BMKG
+        ├── 50-edit.js       ← gambar batas, formulir, ukur
+        ├── 60-kelola.js     ← impor/ekspor, penerbitan
+        └── 99-init.js       ← interaksi, pencarian, tema
+```
+
+Berkas JS digabung urut nama. Taruh `src/data.json` bila ingin data awal
+ikut tertanam saat membangun.
+
+---
+
+## Catatan teknis
+
+- **Leaflet 1.9.4** ditanam di dalam berkas — tidak ada permintaan ke CDN.
+- Grafik digambar sebagai SVG buatan sendiri; tidak ada pustaka chart.
+- Warna kategori memakai palet yang sudah diuji keterbacaannya bagi penyandang
+  buta warna, dan punya versi tersendiri untuk mode gelap.
+- Setiap grafik menyediakan tampilan **Tabel**, jadi tidak ada informasi yang
+  hanya tersampaikan lewat warna.
+- Masukan pengguna selalu di-escape sebelum ditampilkan; tautan dibatasi pada
+  skema `http`, `https`, `mailto`, `tel`, dan `data:image`.

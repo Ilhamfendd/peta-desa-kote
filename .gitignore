@@ -1,0 +1,11 @@
+# Rahasia & kaitan Vercel
+.vercel/
+.env
+.env.*
+
+# Berkas pratinjau berisi data karangan — jangan pernah dipublikasikan
+contoh-peta-desa-kote.html
+
+# Sampah Python
+__pycache__/
+*.pyc
