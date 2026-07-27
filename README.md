@@ -168,17 +168,23 @@ Google Earth) untuk batas desa, dusun, maupun titik fasilitas.
 ## Sudah online
 
 **https://peta-desa-kote.vercel.app**
+Kode: **https://github.com/Ilhamfendd/peta-desa-kote**
 
-Di-hosting gratis di Vercel, HTTPS otomatis, dan bisa dibuka siapa pun.
+Vercel tersambung ke repo GitHub, jadi **setiap push otomatis diterbitkan**
+(sekitar satu menit). Gratis, HTTPS otomatis.
 
-Memperbarui setelah menyunting data:
+Yang tersaji publik hanya isi folder `public/`. Kode sumber, skrip, dan berkas
+contoh berisi data karangan **tidak** ikut — sudah diuji, semuanya 404.
+
+Memperbarui:
 
 ```
-python build.py        # bila mengubah kode; lewati bila hanya mengubah data
-python terbitkan.py    # salin ke situs/ lalu unggah — alamatnya tetap sama
+python build.py                     # bila mengubah kode; lewati bila hanya data
+python terbitkan.py                 # salin ke public/, commit, push
+python terbitkan.py "pesan commit"  # dengan pesan sendiri
 ```
 
-Kalau datanya Anda isi lewat mode Kelola di browser: unduh **HTML mandiri**,
+Kalau datanya diisi lewat mode Kelola di browser: unduh **HTML mandiri**,
 timpa `peta-desa-kote.html`, lalu jalankan `python terbitkan.py`.
 
 > Karena sekarang berjalan di HTTPS, tombol **Pakai lokasi saya** (GPS) dan menu
