@@ -150,7 +150,15 @@ function buatPeta() {
   m.on('zoomend', aturSkalaJalan);
   m.on('zoomend', petunjukZoom);
   m.on('move zoom moveend zoomend resize', perbaruiSkala);
-  m.on('move zoom moveend zoomend resize', gambarFokus);   // topeng mengikuti tampilan
+  // Topeng dihitung dalam piksel layar, jadi tetap sejalan saat digeser.
+  // Selama animasi zoom, Leaflet men-transform panelnya sendiri sehingga
+  // topeng tertinggal — jadi disembunyikan dulu, lalu dihitung ulang.
+  m.on('move moveend resize', gambarFokus);
+  m.on('zoomstart', () => { const el = $('#fokus-luar'); if (el) el.classList.add('diam'); });
+  m.on('zoomend', () => {
+    gambarFokusSekarang();
+    const el = $('#fokus-luar'); if (el) el.classList.remove('diam');
+  });
   m.on('contextmenu', bukaMenuKonteks);   // Leaflet sendiri yang menahan menu bawaan browser
   m.on('movestart click', tutupMenuKonteks);
   perbaruiSkala();

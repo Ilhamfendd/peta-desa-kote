@@ -120,6 +120,22 @@ barisnya. **Tombol di dalam wajib diperiksa lebih dulu daripada pembungkusnya** 
 kalau tidak, `return` milik baris akan mematikan tombolnya. Ini pernah membuat
 tombol Hapus/Ubah pada daftar Tempat dan Dusun tidak berfungsi sama sekali.
 
+## Sorot wilayah desa (`#fokus-luar`)
+
+Peredam di luar batas adalah `<div>` biasa di atas peta dengan `backdrop-filter`
+dan `mask-image` SVG (persegi selayar penuh + cincin desa sebagai lubang,
+`fill-rule="evenodd"`). Tiga hal yang sempat menjebak:
+
+1. **`#map` tidak membuat stacking context** (absolut, `z-index: auto`), jadi
+   panel Leaflet 400+ bersaing langsung dengan overlay ini. Nilai kecil akan
+   tertimbun ubin — harus **z-index 500** (di atas vektor, di bawah penanda).
+2. **Topeng dihitung dalam piksel layar**, jadi tidak mungkin sejalan selama
+   animasi zoom (Leaflet men-transform panelnya sendiri). Overlay diredupkan
+   pada `zoomstart` dan dihitung ulang pada `zoomend`. Panning tetap sinkron,
+   jadi jangan ikut disembunyikan.
+3. Dibangun ulang tiap peristiwa gerakan itu berat — dibatasi satu kali per
+   bingkai lewat `requestAnimationFrame`.
+
 ## Panel Leaflet & kelegapan
 
 Tiap layer punya panel sendiri (`p-jalan`, `p-tempat`, …) yang dibuat di `buatPeta`

@@ -309,6 +309,9 @@ body.admin #topbar #btn-admin:hover { background: var(--on-brand); color: var(--
   backdrop-filter: grayscale(.88) brightness(1.06) contrast(.9);
 }
 #fokus-luar[hidden] { display: none; }
+/* Diredupkan selama animasi zoom, saat topeng tak mungkin sejalan */
+#fokus-luar { transition: opacity .16s ease; }
+#fokus-luar.diam { opacity: 0; }
 :root[data-theme="dark"] #fokus-luar {
   background: color-mix(in srgb, var(--plane) 42%, transparent);
   -webkit-backdrop-filter: grayscale(.88) brightness(.72) contrast(.9);
