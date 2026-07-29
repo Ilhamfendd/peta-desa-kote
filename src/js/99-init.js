@@ -248,6 +248,7 @@ function pasangInteraksi() {
     const t = e.target;
     if (t.matches('[data-impor]') && t.files[0]) { imporGeometri(t.files[0], t.dataset.impor); t.value = ''; }
     if (t.matches('[data-impor-json]') && t.files[0]) { imporJSON(t.files[0]); t.value = ''; }
+    if (t.matches('[data-impor-csv]') && t.files[0]) { imporCSV(t.files[0]); t.value = ''; }
     if (t.matches('[data-logo-desa]') && t.files[0]) { muatLogoDesa(t.files[0]); t.value = ''; }
   });
 

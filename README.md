@@ -191,6 +191,44 @@ Gunakan sebagai **rancangan awal**, bukan hasil akhir:
 Alur yang disarankan: muat usulannya, buka mode **Satelit**, lalu geser titiknya
 bersama perangkat desa. Jauh lebih cepat daripada menggambar dari nol.
 
+### Muat banyak tempat sekaligus (CSV)
+
+Daripada mengetik satu per satu, tempat bisa dimuat borongan lewat
+**Kelola → Tempat → Muat dari CSV**.
+
+Kolom yang dikenali — hanya tiga pertama yang wajib:
+
+```
+Nama ; Kategori ; Alamat ; Kontak ; Jam ; Website ; Keterangan ; Lintang ; Bujur
+```
+
+Yang ditangani otomatis: pemisah titik koma maupun koma, tanda kutip, koma di
+dalam sel, baris baru di dalam sel, BOM, dan koordinat berkoma desimal
+(`104,5098`). Kategori boleh ditulis sebagai id (`perikanan`) atau labelnya
+(`Ekonomi & UMKM`); yang tak dikenali jatuh ke *Lainnya*.
+
+Sebelum dimuat, muncul ringkasan: berapa siap, berapa kembar, berapa baris
+bermasalah beserta sebabnya, dan sebaran kategorinya. Ada pilihan **lewati yang
+sudah ada** (nama sama dalam radius 40 m) dan **ganti seluruh daftar**.
+
+Berkas hasil **Ekspor CSV** bisa langsung dimuat kembali — jadi bisa disunting
+di Excel lalu dikembalikan.
+
+#### Mengambil data dari OpenStreetMap
+
+```
+python ambil-tempat.py                     # radius 6 km dari pusat Desa Kote
+python ambil-tempat.py --radius 25
+python ambil-tempat.py --lat -0.49 --lon 104.56 --radius 8 --keluaran dabo.csv
+```
+
+Menghasilkan CSV siap muat, lengkap dengan pemetaan tag OSM ke 15 kategori
+aplikasi. Objek tanpa nama dilewati, dan yang kembar dibuang.
+
+> **Lisensi:** OpenStreetMap berlisensi ODbL — bebas dipakai dan disebarkan
+> selama sumbernya dicantumkan. Aplikasi sudah mencantumkannya di bilah bawah
+> peta. Data Google Maps **tidak boleh** dipakai untuk ini.
+
 ### Punya berkas dari Bappeda/BPN?
 
 **Kelola → Batas & wilayah** menerima **GeoJSON** dan **KML** (termasuk hasil ekspor

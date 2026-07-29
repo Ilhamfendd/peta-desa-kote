@@ -5484,6 +5484,200 @@ function imporJSON(file) {
   fr.readAsText(file);
 }
 
+/* ── Impor CSV ────────────────────────────────────────────────
+   Menerima berkas hasil ekspor aplikasi ini maupun keluaran
+   `ambil-tempat.py`. Pemisah, kutip, dan BOM ditangani sendiri —
+   tidak memakai pustaka luar. */
+
+function tebakPemisah(teks) {
+  const baris = (teks.split(/\r?\n/)[0] || '');
+  const hitung = s => (baris.match(new RegExp('\\' + s, 'g')) || []).length;
+  const tab = (baris.match(/\t/g) || []).length;
+  if (tab > hitung(';') && tab > hitung(',')) return '\t';
+  return hitung(';') >= hitung(',') ? ';' : ',';
+}
+
+/** Pengurai CSV yang menghormati tanda kutip, kutip ganda, dan baris
+    baru di dalam sel. */
+function uraiCSV(teks) {
+  teks = String(teks).replace(/^﻿/, '');
+  const pemisah = tebakPemisah(teks);
+  const baris = [];
+  let sel = '', deret = [], dalamKutip = false;
+
+  for (let i = 0; i < teks.length; i++) {
+    const c = teks[i];
+    if (dalamKutip) {
+      if (c === '"') {
+        if (teks[i + 1] === '"') { sel += '"'; i++; }
+        else dalamKutip = false;
+      } else sel += c;
+    } else if (c === '"') {
+      dalamKutip = true;
+    } else if (c === pemisah) {
+      deret.push(sel); sel = '';
+    } else if (c === '\n') {
+      deret.push(sel); baris.push(deret); deret = []; sel = '';
+    } else if (c !== '\r') {
+      sel += c;
+    }
+  }
+  if (sel !== '' || deret.length) { deret.push(sel); baris.push(deret); }
+  return baris.filter(r => r.some(v => String(v).trim() !== ''));
+}
+
+/* Nama kolom yang dikenali → medan internal */
+const KOLOM_CSV = {
+  nama: 'nama', name: 'nama', 'nama tempat': 'nama',
+  kategori: 'kategori', category: 'kategori', jenis: 'kategori',
+  alamat: 'alamat', address: 'alamat',
+  kontak: 'kontak', telepon: 'kontak', phone: 'kontak', 'no hp': 'kontak', hp: 'kontak',
+  jam: 'jam', 'jam buka': 'jam', 'opening hours': 'jam',
+  website: 'website', situs: 'website', web: 'website',
+  keterangan: 'deskripsi', deskripsi: 'deskripsi', description: 'deskripsi', catatan: 'deskripsi',
+  lintang: 'lat', latitude: 'lat', lat: 'lat', y: 'lat',
+  bujur: 'lon', longitude: 'lon', lon: 'lon', lng: 'lon', long: 'lon', x: 'lon'
+};
+
+/** Terima id kategori ("ekonomi") maupun labelnya ("Ekonomi & UMKM"). */
+function cocokkanKategori(nilai) {
+  const v = String(nilai || '').trim().toLowerCase();
+  if (!v) return 'lainnya';
+  if (KATEGORI[v]) return v;
+  const lewatLabel = Object.keys(KATEGORI).find(k => KATEGORI[k].label.toLowerCase() === v);
+  if (lewatLabel) return lewatLabel;
+  const sebagian = Object.keys(KATEGORI).find(k =>
+    KATEGORI[k].label.toLowerCase().split(/[&/]/)[0].trim() === v);
+  return sebagian || 'lainnya';
+}
+
+/** Angka bisa memakai titik atau koma desimal. */
+function angkaKoordinat(v) {
+  const s = String(v || '').trim().replace(/\s/g, '');
+  if (!s) return NaN;
+  // "104,506733" -> desimal koma; "1.234,5" tidak dipakai untuk koordinat
+  const n = parseFloat(s.indexOf(',') >= 0 && s.indexOf('.') < 0 ? s.replace(',', '.') : s);
+  return n;
+}
+
+function bacaTempatCSV(teks) {
+  const baris = uraiCSV(teks);
+  if (baris.length < 2) return { galat: 'Berkas tidak memuat baris data.' };
+
+  const kepala = baris[0].map(h => KOLOM_CSV[String(h).trim().toLowerCase().replace(/\s+/g, ' ')] || null);
+  if (kepala.indexOf('nama') < 0 || kepala.indexOf('lat') < 0 || kepala.indexOf('lon') < 0) {
+    return { galat: 'Kolom wajib tidak ditemukan. Berkas harus memuat Nama, Lintang, dan Bujur.' };
+  }
+
+  const sah = [], bermasalah = [];
+  baris.slice(1).forEach((r, i) => {
+    const o = {};
+    kepala.forEach((medan, k) => { if (medan) o[medan] = String(r[k] == null ? '' : r[k]).trim(); });
+
+    const lat = angkaKoordinat(o.lat), lon = angkaKoordinat(o.lon);
+    const alasan = !o.nama ? 'nama kosong'
+                 : (!isFinite(lat) || !isFinite(lon)) ? 'koordinat tidak terbaca'
+                 : (Math.abs(lat) > 90 || Math.abs(lon) > 180) ? 'koordinat di luar jangkauan'
+                 : null;
+    if (alasan) { bermasalah.push({ baris: i + 2, nama: o.nama || '(tanpa nama)', alasan }); return; }
+
+    sah.push({
+      id: idBaru(), nama: o.nama, kategori: cocokkanKategori(o.kategori),
+      deskripsi: o.deskripsi || '', alamat: o.alamat || '', kontak: o.kontak || '',
+      jam: o.jam || '', website: o.website || '', foto: [],
+      lat: +lat.toFixed(6), lon: +lon.toFixed(6)
+    });
+  });
+
+  return { sah, bermasalah };
+}
+
+function imporCSV(file) {
+  const fr = new FileReader();
+  fr.onerror = () => pesan('Berkas gagal dibaca', true);
+  fr.onload = () => {
+    const hasil = bacaTempatCSV(String(fr.result));
+    if (hasil.galat) return pesan(hasil.galat, true);
+    if (!hasil.sah.length) return pesan('Tidak ada baris yang bisa dipakai', true);
+    dialogImporCSV(hasil);
+  };
+  fr.readAsText(file, 'utf-8');
+}
+
+function dialogImporCSV(hasil) {
+  const { sah, bermasalah } = hasil;
+
+  // Anggap sama bila namanya sama dan jaraknya di bawah 40 m
+  const kembar = sah.filter(b => S.data.tempat.some(t =>
+    t.nama.trim().toLowerCase() === b.nama.trim().toLowerCase()
+    && jarak([t.lat, t.lon], [b.lat, b.lon]) < 40));
+
+  const hitung = {};
+  sah.forEach(b => { hitung[b.kategori] = (hitung[b.kategori] || 0) + 1; });
+  const rincian = Object.entries(hitung).sort((a, b) => b[1] - a[1]).map(([k, n]) => {
+    const d = KATEGORI[k] || KATEGORI.lainnya;
+    return `<span><i style="background:var(${d.warna})"></i>${esc(d.label)} ${n}</span>`;
+  }).join('');
+
+  const luarJangkauan = sah.filter(b => !batasPeta().contains([b.lat, b.lon])).length;
+
+  bukaModal({
+    judul: 'Muat tempat dari CSV',
+    isi: `
+      <div class="kv" style="font-size:13px">
+        <div><span class="k">Siap dimuat</span><span class="v"><b>${sah.length}</b> tempat</span></div>
+        ${kembar.length ? `<div><span class="k">Sudah ada</span><span class="v">${kembar.length} bernama sama di lokasi yang sama</span></div>` : ''}
+        ${bermasalah.length ? `<div><span class="k">Dilewati</span><span class="v">${bermasalah.length} baris bermasalah</span></div>` : ''}
+        ${luarJangkauan ? `<div><span class="k">Di luar peta</span><span class="v">${luarJangkauan} titik</span></div>` : ''}
+      </div>
+      <div class="legend-row" style="margin-top:11px">${rincian}</div>
+
+      ${bermasalah.length ? `<details class="acc" style="margin-top:12px"><summary>Lihat baris bermasalah</summary>
+        <div class="acc-body"><table class="dt"><thead><tr><th>Baris</th><th>Nama</th><th>Sebab</th></tr></thead>
+        <tbody>${bermasalah.slice(0, 12).map(b =>
+          `<tr><td>${b.baris}</td><td>${esc(b.nama)}</td><td style="text-align:left">${esc(b.alasan)}</td></tr>`).join('')}
+        </tbody></table>${bermasalah.length > 12 ? `<p class="chart-note">…dan ${bermasalah.length - 12} lagi</p>` : ''}</div>
+      </details>` : ''}
+
+      ${luarJangkauan ? `<div class="note warn" style="margin-top:12px">
+        ${ikon('M12 8.4v5M12 16.6h.01M10.3 4.2L2.6 17.5a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0z')}
+        <span>${luarJangkauan} titik berada di luar jangkauan peta desa. Tetap dimuat, tetapi
+        naikkan <b>Jangkauan peta</b> bila ingin melihatnya.</span></div>` : ''}
+
+      <label class="switch" style="margin-top:12px">
+        <input type="checkbox" name="lewati" ${kembar.length ? 'checked' : ''} ${kembar.length ? '' : 'disabled'}>
+        <span class="track"></span>
+        <span class="sw-label">Lewati yang sudah ada<small>Cegah tempat kembar</small></span>
+      </label>
+      <label class="switch">
+        <input type="checkbox" name="ganti">
+        <span class="track"></span>
+        <span class="sw-label">Ganti seluruh daftar<small>Hapus ${S.data.tempat.length} tempat yang ada sekarang</small></span>
+      </label>`,
+    aksi: [
+      { label: 'Batal', fn: () => {} },
+      { label: 'Muat', cls: 'primary', fn: body => {
+        const lewati = body.querySelector('[name="lewati"]').checked;
+        const ganti = body.querySelector('[name="ganti"]').checked;
+
+        let masuk = sah;
+        if (ganti) S.data.tempat = [];
+        else if (lewati) {
+          const adaKembar = b => S.data.tempat.some(t =>
+            t.nama.trim().toLowerCase() === b.nama.trim().toLowerCase()
+            && jarak([t.lat, t.lon], [b.lat, b.lon]) < 40);
+          masuk = sah.filter(b => !adaKembar(b));
+        }
+
+        S.data.tempat = S.data.tempat.concat(masuk);
+        S.kategoriAktif = new Set(Object.keys(KATEGORI));
+        simpan(); gambarTempat(); buatPanelLapis(); gambarUlang();
+        pesan(`${masuk.length} tempat dimuat dari CSV`);
+      }}
+    ]
+  });
+}
+
 /* ── Logo desa ────────────────────────────────────────────── */
 function muatLogoDesa(file) {
   kecilkanGambar(file, 256, 'image/png')
@@ -5743,7 +5937,17 @@ function panelKelola() {
       <summary>Tempat & fasilitas</summary>
       <div class="acc-body">
         <p class="chart-note" style="margin-bottom:10px">${S.data.tempat.length} tempat terdata.</p>
-        <button class="btn primary wide" data-tambah-tempat>${ikon('M12 5v14M5 12h14')}Tambah tempat di peta</button>
+        <button class="btn primary wide" data-tambah-tempat style="margin-bottom:12px">${ikon('M12 5v14M5 12h14')}Tambah tempat di peta</button>
+
+        <label class="f"><span>Muat dari CSV <em>banyak tempat sekaligus</em></span>
+          <input type="file" class="inp" accept=".csv,text/csv,text/plain" data-impor-csv></label>
+        <p class="chart-note">
+          Kolom yang dikenali: <code>Nama · Kategori · Alamat · Kontak · Jam · Website ·
+          Keterangan · Lintang · Bujur</code>. Hanya Nama, Lintang, dan Bujur yang wajib.
+          Pemisah titik koma maupun koma sama-sama diterima.</p>
+        <p class="chart-note" style="margin-top:6px">
+          Berkas hasil <b>Ekspor CSV</b> bisa langsung dimuat kembali. Untuk mengambil
+          data dari OpenStreetMap, jalankan <code>python ambil-tempat.py</code>.</p>
       </div>
     </details>
 
@@ -6054,6 +6258,7 @@ function pasangInteraksi() {
     const t = e.target;
     if (t.matches('[data-impor]') && t.files[0]) { imporGeometri(t.files[0], t.dataset.impor); t.value = ''; }
     if (t.matches('[data-impor-json]') && t.files[0]) { imporJSON(t.files[0]); t.value = ''; }
+    if (t.matches('[data-impor-csv]') && t.files[0]) { imporCSV(t.files[0]); t.value = ''; }
     if (t.matches('[data-logo-desa]') && t.files[0]) { muatLogoDesa(t.files[0]); t.value = ''; }
   });
 
