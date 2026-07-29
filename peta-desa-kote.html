@@ -720,6 +720,25 @@ svg.leaflet-image-layer.leaflet-interactive path {
   --kabut:       #eeeee9;   /* selubung di luar batas desa */
   --kabut-legap: 0.72;
 
+  /* Warna penanda tempat — terpisah dari palet grafik. Semuanya dipakai di
+     atas cakram berbingkai putih, jadi cukup pekat agar tetap terbaca baik
+     di atas citra satelit maupun peta terang. */
+  --pin-pemerintahan:  #2a5a9c;
+  --pin-pendidikan:    #de6a24;
+  --pin-kesehatan:     #d13b3b;
+  --pin-ibadah:        #1f7a3d;
+  --pin-ekonomi:       #d19000;
+  --pin-kuliner:       #a1601c;
+  --pin-perikanan:     #c94f86;
+  --pin-pertanian:     #6f9422;
+  --pin-wisata:        #0e9b8f;
+  --pin-penginapan:    #7b5cc7;
+  --pin-sosial:        #a2529f;
+  --pin-transportasi:  #4a6a86;
+  --pin-air:           #1195b5;
+  --pin-infrastruktur: #6b6f76;
+  --pin-lainnya:       #86847d;
+
   --radius:    10px;
   --radius-sm: 7px;
   --sidebar-w: 384px;
@@ -2102,16 +2121,40 @@ const APP = {
 /* ── Kategori tempat ───────────────────────────────────────
    Warna mengambil slot palet kategorikal secara tetap.
    Ikon: path 24×24, stroke.                                   */
+/* Warna penanda dipisahkan dari palet grafik: peta boleh memakai lebih banyak
+   rona karena bentuk ikonnya ikut membedakan, sementara palet grafik harus
+   tetap utuh demi keterbacaan bagi penyandang buta warna. */
 const KATEGORI = {
-  pemerintahan:   { label: 'Pemerintahan',      warna: '--series-1', ikon: 'M3 20.2h18M5.4 20.2V9.4L12 5l6.6 4.4v10.8M9.8 20.2v-4.6h4.4v4.6' },
-  pendidikan:     { label: 'Pendidikan',        warna: '--series-2', ikon: 'M12 4.2L2.6 8.8 12 13.4l9.4-4.6zM6.8 10.6v5c0 1.4 2.3 2.5 5.2 2.5s5.2-1.1 5.2-2.5v-5' },
-  kesehatan:      { label: 'Kesehatan',         warna: '--series-8', ikon: 'M10.2 3.6h3.6v6.6h6.6v3.6h-6.6v6.6h-3.6v-6.6H3.6v-3.6h6.6z' },
-  ibadah:         { label: 'Rumah ibadah',      warna: '--series-6', ikon: 'M12 3.2C9.6 5 8.3 6.8 8.3 8.7h7.4c0-1.9-1.3-3.7-3.7-5.5zM6.6 8.7h10.8v11.6H6.6zM10.2 20.3v-3.4a1.8 1.8 0 0 1 3.6 0v3.4M4.2 11.4v8.9M19.8 11.4v8.9' },
-  ekonomi:        { label: 'Ekonomi & UMKM',    warna: '--series-4', ikon: 'M4 9.6h16l-1.1 10.6H5.1zM4 9.6l1.6-5.2h12.8L20 9.6M9.4 13.8h5.2' },
-  perikanan:      { label: 'Perikanan',         warna: '--series-5', ikon: 'M21 12c-2.6 3.4-5.7 5.1-8.8 5.1S6 15.4 3.4 12C6 8.6 9.1 6.9 12.2 6.9S18.4 8.6 21 12zM3.4 12L1.3 8.9v6.2zM16 11.4h.02' },
-  wisata:         { label: 'Wisata',            warna: '--series-3', ikon: 'M12 20.4v-9.6m0 0c0-2.6 2.1-4.7 4.7-4.7M12 10.8c0-2.6-2.1-4.7-4.7-4.7M12 10.8c0-3.1 1.3-5.6 3.1-6.6M3.6 20.4h16.8' },
-  infrastruktur:  { label: 'Infrastruktur',     warna: '--series-7', ikon: 'M12 8.6v11.8M12 8.6a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8zM5 12.9a7 7 0 0 0 14 0M4 12.9h2M18 12.9h2' },
-  lainnya:        { label: 'Lainnya',           warna: '--axis',     ikon: 'M12 20.6s6.8-6.1 6.8-10.6a6.8 6.8 0 1 0-13.6 0c0 4.5 6.8 10.6 6.8 10.6zM12 10a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z' }
+  pemerintahan:  { label: 'Pemerintahan',       warna: '--pin-pemerintahan',
+                   ikon: 'M3.5 20.4h17M5.8 20.4V10.2M9.9 20.4V10.2M14.1 20.4V10.2M18.2 20.4V10.2M12 3.6l8.2 5.3H3.8z' },
+  pendidikan:    { label: 'Pendidikan',         warna: '--pin-pendidikan',
+                   ikon: 'M12 4.2 2.7 8.8 12 13.4l9.3-4.6zM6.7 10.9v4.9c0 1.4 2.4 2.5 5.3 2.5s5.3-1.1 5.3-2.5v-4.9M21.3 8.8v5.5' },
+  kesehatan:     { label: 'Kesehatan',          warna: '--pin-kesehatan',
+                   ikon: 'M10.2 3.7h3.6v6.5h6.5v3.6h-6.5v6.5h-3.6v-6.5H3.7v-3.6h6.5z' },
+  ibadah:        { label: 'Rumah ibadah',       warna: '--pin-ibadah',
+                   ikon: 'M12 3.3c-2.3 1.8-3.6 3.5-3.6 5.3h7.2c0-1.8-1.3-3.5-3.6-5.3zM6.8 8.6h10.4v11.8H6.8zM10.3 20.4v-3.3a1.7 1.7 0 0 1 3.4 0v3.3M4.3 11.3v9.1M19.7 11.3v9.1' },
+  ekonomi:       { label: 'Ekonomi & UMKM',     warna: '--pin-ekonomi',
+                   ikon: 'M4 9.5h16l-1 10.9H5zM4 9.5 5.6 4.3h12.8L20 9.5M9.4 13.7h5.2v6.7H9.4z' },
+  kuliner:       { label: 'Kuliner & warung',   warna: '--pin-kuliner',
+                   ikon: 'M7.2 3.6v6.8a2 2 0 0 0 4 0V3.6M9.2 10.4v10M15.6 3.6c-1.3 0-2.4 1.6-2.4 3.6s1.1 3.6 2.4 3.6S18 9.2 18 7.2s-1.1-3.6-2.4-3.6zM15.6 10.8v9.6' },
+  perikanan:     { label: 'Perikanan',          warna: '--pin-perikanan',
+                   ikon: 'M20.8 12c-2.5 3.3-5.6 5-8.6 5s-6.1-1.7-8.6-5c2.5-3.3 5.6-5 8.6-5s6.1 1.7 8.6 5zM3.6 12 1.4 8.9v6.2M16 10.7h.02' },
+  pertanian:     { label: 'Pertanian & kebun',  warna: '--pin-pertanian',
+                   ikon: 'M12 20.4V9.2M12 9.2C12 6.1 9.5 3.6 6.4 3.6c0 3.1 2.5 5.6 5.6 5.6zM12 11.8c0-2.5 2-4.5 4.5-4.5 0 2.5-2 4.5-4.5 4.5zM4.6 20.4h14.8' },
+  wisata:        { label: 'Wisata',             warna: '--pin-wisata',
+                   ikon: 'M12 20.4v-8.8M12 11.6c0-2.3 1.9-4.2 4.2-4.2M12 11.6c0-2.3-1.9-4.2-4.2-4.2M12 11.6c0-2.7 1.2-5 2.9-6M3.6 20.4h16.8' },
+  penginapan:    { label: 'Penginapan',         warna: '--pin-penginapan',
+                   ikon: 'M3.6 19.8V8.4M20.4 19.8v-6.6H3.6M7.4 13.2V9.8h6.9v3.4M3.6 16.4h16.8' },
+  sosial:        { label: 'Sosial & budaya',    warna: '--pin-sosial',
+                   ikon: 'M9 11.6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3.6 20a5.5 5.5 0 0 1 10.8 0M16.4 8.4a2.5 2.5 0 1 0 0-5M17 15.3c2 .5 3.4 2 3.4 4.7' },
+  transportasi:  { label: 'Transportasi',       warna: '--pin-transportasi',
+                   ikon: 'M3.8 16.8h16.4l-2.1 3.8H5.9zM6.6 16.8v-5.6h10.8v5.6M12 11.2V6.4M9.2 6.4h5.6' },
+  air:           { label: 'Air bersih',         warna: '--pin-air',
+                   ikon: 'M12 3.5s6.1 6.5 6.1 10.3a6.1 6.1 0 1 1-12.2 0C5.9 10 12 3.5 12 3.5z' },
+  infrastruktur: { label: 'Infrastruktur',      warna: '--pin-infrastruktur',
+                   ikon: 'M12 3.6v16.8M6.8 20.4 12 3.6l5.2 16.8M8.6 10h6.8M7.4 15h9.2' },
+  lainnya:       { label: 'Lainnya',            warna: '--pin-lainnya',
+                   ikon: 'M12 20.6s6.8-6.1 6.8-10.6a6.8 6.8 0 1 0-13.6 0c0 4.5 6.8 10.6 6.8 10.6zM12 10a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z' }
 };
 
 /* ── Kerangka data desa (kosong — diisi lewat mode Kelola) ── */

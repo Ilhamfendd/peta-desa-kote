@@ -15,7 +15,7 @@ unggah ke website desa.
 |---|---|
 | **Beranda** | Identitas desa, angka pokok, visi, kontak, cuaca ringkas |
 | **Statistik** | Penduduk, kepadatan, rasio jenis kelamin, piramida umur, pendidikan, mata pencaharian, agama — tiap grafik punya tampilan **Tabel** |
-| **Tempat** | Fasilitas per kategori (pemerintahan, pendidikan, kesehatan, ibadah, ekonomi, perikanan, wisata, infrastruktur), lengkap dengan **foto**, penyaring, dan tombol bagikan |
+| **Tempat** | Fasilitas dalam **15 kategori**, lengkap dengan **foto**, penyaring, dan tombol bagikan |
 | **Cuaca** | Kondisi terkini, prakiraan 7 hari, arah & kekuatan angin, matahari terbit/terbenam, serta **peringatan gelombang** berskala BMKG |
 | **Wilayah** | Batas desa (luas & keliling terhitung otomatis), dusun/RW, koordinat, desa sekitar beserta jaraknya |
 | **Kelola** | Semua formulir pengisian data, impor/ekspor, dan penerbitan |
@@ -72,6 +72,26 @@ Jangkauannya bisa diubah di **Kelola → Identitas desa → Jangkauan peta** (1�
 Alat lain: cari lokasi saya, pencarian, cetak/PDF, dan mode terang/gelap.
 
 ---
+
+### Kategori tempat
+
+15 kategori, dipilih untuk kebutuhan desa pesisir:
+
+| | | |
+|---|---|---|
+| Pemerintahan | Pendidikan | Kesehatan |
+| Rumah ibadah | Ekonomi & UMKM | Kuliner & warung |
+| Perikanan | Pertanian & kebun | Wisata |
+| Penginapan | Sosial & budaya | Transportasi |
+| Air bersih | Infrastruktur | Lainnya |
+
+Warna penanda **sengaja dipisahkan dari palet grafik** (`--pin-*` di `style.css`).
+Peta boleh memakai lebih banyak rona karena bentuk ikon ikut membedakan, sementara
+palet grafik harus tetap utuh demi keterbacaan bagi penyandang buta warna.
+
+Menambah kategori: tambahkan satu baris di `KATEGORI` (`src/js/00-core.js`) dan satu
+warna `--pin-<id>` di `style.css`. Seluruh penyaring, legenda, dan formulir mengikuti
+sendiri.
 
 ## Identitas visual
 

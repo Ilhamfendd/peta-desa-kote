@@ -51,6 +51,25 @@
   --kabut:       #eeeee9;   /* selubung di luar batas desa */
   --kabut-legap: 0.72;
 
+  /* Warna penanda tempat — terpisah dari palet grafik. Semuanya dipakai di
+     atas cakram berbingkai putih, jadi cukup pekat agar tetap terbaca baik
+     di atas citra satelit maupun peta terang. */
+  --pin-pemerintahan:  #2a5a9c;
+  --pin-pendidikan:    #de6a24;
+  --pin-kesehatan:     #d13b3b;
+  --pin-ibadah:        #1f7a3d;
+  --pin-ekonomi:       #d19000;
+  --pin-kuliner:       #a1601c;
+  --pin-perikanan:     #c94f86;
+  --pin-pertanian:     #6f9422;
+  --pin-wisata:        #0e9b8f;
+  --pin-penginapan:    #7b5cc7;
+  --pin-sosial:        #a2529f;
+  --pin-transportasi:  #4a6a86;
+  --pin-air:           #1195b5;
+  --pin-infrastruktur: #6b6f76;
+  --pin-lainnya:       #86847d;
+
   --radius:    10px;
   --radius-sm: 7px;
   --sidebar-w: 384px;

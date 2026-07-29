@@ -71,11 +71,19 @@ TEMPAT = [
      '', '', 'Setiap hari 05.30–11.00'),
     ('BUMDes Kote Bahari',          'ekonomi',      -0.0049, +0.0040, 'Badan usaha milik desa bidang perikanan.',
      '', '0812-0000-0003', 'Senin–Jumat 08.00–16.00'),
+    ('Warung Makan Bu Sari',        'kuliner',      -0.0069, +0.0061, 'Masakan laut dan menu harian.', '', '', 'Setiap hari 07.00–20.00'),
+    ('Kedai Kopi Pesisir',          'kuliner',      +0.0021, +0.0044, '', '', '', 'Setiap hari 06.00–22.00'),
     ('Dermaga Nelayan Kote',        'perikanan',    +0.0019, +0.0126, 'Tambatan perahu dan bongkar hasil tangkapan.', '', '', ''),
     ('Tempat Pelelangan Ikan',      'perikanan',    +0.0044, +0.0108, 'Lelang hasil laut setiap pagi.', '', '', 'Setiap hari 06.00–09.00'),
+    ('Kebun Kelapa Warga',          'pertanian',    -0.0158, -0.0092, 'Hamparan kebun kelapa milik warga.', '', '', ''),
+    ('Tambak Udang Kote',           'pertanian',    +0.0175, +0.0071, '', '', '', ''),
     ('Pantai Kote',                 'wisata',       -0.0201, +0.0152, 'Pantai berpasir di sisi barat desa.', '', '', ''),
-    ('Menara Air Bersih',           'infrastruktur', -0.0064, -0.0084, 'Sumber air bersih warga dusun II.', '', '', ''),
-    ('Lapangan Desa Kote',          'lainnya',      +0.0007, -0.0061, 'Lapangan serbaguna dan olahraga.', '', '', ''),
+    ('Homestay Bahari',             'penginapan',   -0.0112, +0.0113, 'Penginapan sederhana milik warga.', '', '0812-0000-0004', ''),
+    ('Lapangan Desa Kote',          'sosial',       +0.0007, -0.0061, 'Lapangan serbaguna dan olahraga.', '', '', ''),
+    ('Balai Adat Melayu',           'sosial',       -0.0038, -0.0038, '', '', '', ''),
+    ('Pelabuhan Kote',              'transportasi', +0.0098, +0.0134, 'Singgah kapal angkutan barang.', '', '', ''),
+    ('Menara Air Bersih',           'air',          -0.0064, -0.0084, 'Sumber air bersih warga dusun II.', '', '', ''),
+    ('Tower Telekomunikasi',        'infrastruktur', +0.0142, -0.0106, '', '', '', ''),
 ]
 
 
