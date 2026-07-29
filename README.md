@@ -132,9 +132,16 @@ Perubahan tersimpan otomatis di browser Anda (`localStorage`).
 **Pintasan saat menggambar:** `Enter` selesai · `Esc` batal · `Backspace` mundur satu
 titik · seret bulatan untuk menggeser titik · klik bulatan untuk menghapusnya.
 
-### Foto tempat
+### Foto tempat & panel rincian
 
-Saat menambah atau mengubah tempat, tekan **Ambil foto atau pilih dari galeri**.
+Klik penanda di peta — atau namanya di daftar Tempat — untuk membuka **panel
+rincian**: foto besar, galeri, keterangan lengkap, kontak yang bisa ditelepon,
+jam buka, dan koordinat. Klik fotonya untuk melihat **layar penuh** (bisa
+digeser dengan panah kiri/kanan, ditutup dengan Esc).
+
+Satu tempat boleh punya **banyak foto**. Foto pertama jadi foto utama.
+
+Saat menambah atau mengubah tempat, tekan **Ambil foto atau pilih dari galeri** — bisa memilih beberapa sekaligus.
 Di HP, tombol itu menawarkan kamera maupun galeri. Fotonya dikecilkan otomatis ke
 1000 px dan disimpan di dalam data peta — tidak perlu hosting gambar terpisah.
 

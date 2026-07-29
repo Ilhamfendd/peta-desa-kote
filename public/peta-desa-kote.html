@@ -925,6 +925,7 @@ body.admin #topbar #btn-admin:hover { background: var(--on-brand); color: var(--
 #main { flex: 1; display: flex; min-height: 0; position: relative; }
 
 #sidebar {
+  position: relative;          /* wadah acuan bagi #detail yang menumpanginya */
   width: var(--sidebar-w); flex: none;
   display: flex; flex-direction: column; min-height: 0;
   background: var(--surface-1);
@@ -1575,6 +1576,120 @@ details.acc > summary::after {
 details.acc[open] > summary::after { transform: rotate(225deg) translateY(-2px); }
 details.acc > .acc-body { padding: 0 2px 14px; }
 
+/* ─────────── Panel rincian tempat ─────────── */
+#detail {
+  position: absolute; inset: 0; z-index: 60;
+  display: flex; flex-direction: column;
+  background: var(--plane);
+  overflow-y: auto; overscroll-behavior: contain;
+}
+#detail[hidden] { display: none; }
+
+.dt-head {
+  position: sticky; top: 0; z-index: 2;
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  background: color-mix(in srgb, var(--plane) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+.dt-kat {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 600; letter-spacing: .05em;
+  text-transform: uppercase; color: var(--muted);
+}
+.dt-kat i { width: 9px; height: 9px; border-radius: 2px; flex: none; }
+
+.dt-isi { padding: 12px 16px 40px; }
+.dt-isi h2 { font-size: 20px; letter-spacing: -.02em; margin-top: 12px; }
+.dt-desk {
+  font-size: 13.5px; line-height: 1.62; color: var(--ink-2);
+  margin-top: 7px; white-space: pre-wrap;
+}
+
+/* Galeri: satu foto besar + deretan mini */
+.dt-galeri { margin: 0 -4px; }
+.dt-utama {
+  position: relative; display: block; width: 100%; padding: 0;
+  background: var(--surface-2); border: 0; border-radius: var(--radius);
+  overflow: hidden; cursor: zoom-in;
+}
+.dt-utama img { width: 100%; max-height: 260px; object-fit: cover; display: block; }
+.dt-jml {
+  position: absolute; right: 8px; bottom: 8px;
+  display: flex; align-items: center; gap: 5px;
+  padding: 3px 9px; font-size: 11px; font-weight: 600;
+  background: rgba(0,0,0,.62); color: #fff; border-radius: 999px;
+}
+.dt-jml svg { width: 12px; height: 12px; }
+.dt-mini { display: flex; gap: 6px; margin-top: 6px; overflow-x: auto; padding-bottom: 2px; }
+.dt-mini-btn {
+  flex: none; width: 62px; height: 46px; padding: 0;
+  background: none; border: 2px solid transparent; border-radius: 7px;
+  overflow: hidden; cursor: pointer;
+}
+.dt-mini-btn img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dt-mini-btn.aktif { border-color: var(--accent); }
+
+.dt-info { margin: 14px 0 0; display: grid; gap: 1px; }
+.dt-info > div {
+  display: grid; grid-template-columns: 20px 88px 1fr; gap: 9px;
+  align-items: baseline; padding: 8px 0;
+  border-top: 1px solid var(--grid); font-size: 13px;
+}
+.dt-info svg { width: 15px; height: 15px; color: var(--muted); align-self: center; }
+.dt-info dt { color: var(--muted); font-size: 12px; }
+.dt-info dd { margin: 0; word-break: break-word; }
+.dt-isi .btn-row { margin-top: 16px; }
+
+/* ─────────── Foto layar penuh ─────────── */
+#lightbox {
+  position: fixed; inset: 0; z-index: 1200;
+  display: grid; place-items: center;
+  background: rgba(8,8,8,.92);
+  animation: fade .14s ease-out;
+}
+#lightbox[hidden] { display: none; }
+#lightbox img {
+  max-width: 94vw; max-height: 88vh;
+  object-fit: contain; border-radius: 6px;
+}
+.lb-tutup { position: absolute; top: 14px; right: 14px; color: #fff; }
+.lb-tutup:hover { background: rgba(255,255,255,.16); color: #fff; }
+.lb-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  display: grid; place-items: center;
+  width: 46px; height: 46px;
+  background: rgba(255,255,255,.12); color: #fff;
+  border: 0; border-radius: 50%; cursor: pointer;
+}
+.lb-nav:hover { background: rgba(255,255,255,.24); }
+.lb-prev { left: 14px; }
+.lb-next { right: 14px; }
+.lb-hitung {
+  position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+  padding: 4px 12px; font-size: 12px; font-variant-numeric: tabular-nums;
+  background: rgba(255,255,255,.14); color: #fff; border-radius: 999px;
+}
+
+/* Kisi foto di formulir */
+.fo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
+.fo-item { position: relative; border-radius: var(--radius-sm); overflow: hidden; background: var(--surface-2); }
+.fo-item img { width: 100%; height: 74px; object-fit: cover; display: block; }
+.fo-hapus {
+  position: absolute; top: 3px; right: 3px;
+  display: grid; place-items: center;
+  width: 22px; height: 22px; padding: 0;
+  background: rgba(0,0,0,.6); color: #fff;
+  border: 0; border-radius: 50%; cursor: pointer;
+}
+.fo-hapus svg { width: 12px; height: 12px; stroke-width: 2.4; }
+.fo-utama {
+  position: absolute; left: 3px; bottom: 3px;
+  padding: 1px 6px; font-size: 9.5px; font-weight: 600;
+  background: var(--accent); color: var(--accent-in); border-radius: 4px;
+}
+
 /* ─────────── Modal ─────────── */
 .modal-bg {
   position: fixed; inset: 0; z-index: 1100;
@@ -1757,6 +1872,9 @@ body.admin .list.admin-only { display: flex; }
         <button role="tab" data-tab="kelola"    aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h16M4 12h16M4 16.5h16"/><circle cx="9" cy="7.5" r="1.9" class="fill"/><circle cx="15.5" cy="16.5" r="1.9" class="fill"/></svg><span>Kelola</span></button>
       </nav>
 
+      <!-- Panel rinci sebuah tempat — menutupi panel tab saat dibuka -->
+      <div id="detail" hidden aria-label="Rincian tempat"></div>
+
       <div class="panels">
         <section class="panel" data-panel="beranda"   role="tabpanel" aria-label="Beranda"></section>
         <section class="panel" data-panel="statistik" role="tabpanel" aria-label="Statistik" hidden></section>
@@ -1826,6 +1944,9 @@ body.admin .list.admin-only { display: flex; }
     </div>
   </main>
 </div>
+
+<!-- Tampilan foto layar penuh -->
+<div id="lightbox" hidden role="dialog" aria-modal="true" aria-label="Foto"></div>
 
 <script id="desa-data" type="application/json">{
   "_sumber": [
@@ -2203,7 +2324,23 @@ function muatData() {
   let dipakai = lokal;
   if (!lokal || (tertanam && waktu(tertanam) > waktu(lokal))) dipakai = tertanam;
 
-  return gabung(dataKosong(), dipakai || {});
+  const d = gabung(dataKosong(), dipakai || {});
+
+  // Dulu satu tempat hanya menyimpan satu foto sebagai teks. Sekarang daftar,
+  // jadi data lama dinaikkan bentuknya di sini.
+  (d.tempat || []).forEach(t => {
+    if (typeof t.foto === 'string') t.foto = t.foto ? [t.foto] : [];
+    else if (!Array.isArray(t.foto)) t.foto = [];
+  });
+  return d;
+}
+
+/** Daftar foto sebuah tempat, apa pun bentuk simpanannya. */
+function daftarFoto(t) {
+  const f = t && t.foto;
+  if (Array.isArray(f)) return f.map(safeUrl).filter(Boolean);
+  const s = safeUrl(f);
+  return s ? [s] : [];
 }
 
 /** Gabung dangkal-rekursif: menjaga kunci baru tetap ada saat data lama dimuat. */
@@ -2749,36 +2886,13 @@ function gambarTempat() {
       draggable: false,
       pane: 'p-tempat'
     });
-    mk.bindPopup(() => popupTempat(t), { maxWidth: 260, autoPanPadding: [24, 24] });
+    // Klik membuka panel rinci; popup kecil terlalu sempit untuk foto.
+    mk.bindTooltip(t.nama || 'Tanpa nama', { direction: 'top', offset: [0, -24] });
+    mk.on('click', () => bukaDetailTempat(t.id));
     mk.addTo(S.lapis.tempat);
     S.markerTempat.set(t.id, mk);
   });
   gambarLegenda();
-}
-
-function popupTempat(t) {
-  const def = KATEGORI[t.kategori] || KATEGORI.lainnya;
-  const foto = safeUrl(t.foto);
-  const web = safeUrl(t.website);
-  const baris = [];
-  if (t.alamat)  baris.push(['M12 20.6s6.8-6.1 6.8-10.6a6.8 6.8 0 1 0-13.6 0c0 4.5 6.8 10.6 6.8 10.6z', esc(t.alamat)]);
-  if (t.kontak)  baris.push(['M4.5 6.2c0 7.5 5.8 13.3 13.3 13.3l1.7-3.4-4.2-2.1-2 2a13.6 13.6 0 0 1-5.3-5.3l2-2L8 4.5z', esc(t.kontak)]);
-  if (t.jam)     baris.push(['M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17zM12 7.4V12l3.1 1.8', esc(t.jam)]);
-  if (web)       baris.push(['M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17zM3.5 12h17M12 3.5a13 13 0 0 1 0 17 13 13 0 0 1 0-17z',
-                             `<a href="${esc(web)}" target="_blank" rel="noopener noreferrer">${esc(t.website)}</a>`]);
-
-  return `<div class="pop">
-    <div class="pop-cat"><i style="background:var(${def.warna})"></i>${esc(def.label)}</div>
-    <h4>${esc(t.nama || 'Tanpa nama')}</h4>
-    ${t.deskripsi ? `<div class="pop-desc">${esc(t.deskripsi)}</div>` : ''}
-    ${foto ? `<img src="${esc(foto)}" alt="" loading="lazy">` : ''}
-    ${baris.length ? `<div class="pop-meta">${baris.map(([p, v]) => `<div>${ikon(p)}<span>${v}</span></div>`).join('')}</div>` : ''}
-    <div class="pop-act">
-      <button class="btn sm" data-rute="${esc(t.id)}">${ikon('M12 20.6s6.8-6.1 6.8-10.6a6.8 6.8 0 1 0-13.6 0c0 4.5 6.8 10.6 6.8 10.6z')}Rute</button>
-      <button class="btn sm" data-bagi="${esc(t.id)}">${ikon('M14.5 7.5l-5 3M9.5 13.5l5 3M6.8 14.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8zM17.2 8.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8zM17.2 20.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8z')}Bagikan</button>
-      <button class="btn sm admin-only" data-edit-tempat="${esc(t.id)}">Ubah</button>
-    </div>
-  </div>`;
 }
 
 function sorotTempat(id) {
@@ -2787,7 +2901,6 @@ function sorotTempat(id) {
   if (!t) return;
   if (!mk) { S.kategoriAktif.add(t.kategori); gambarTempat(); return sorotTempat(id); }
   S.peta.setView([t.lat, t.lon], Math.max(S.peta.getZoom(), 16), { animate: true });
-  mk.openPopup();
   const el = mk.getElement && mk.getElement();
   if (el) { const p = el.querySelector('.poi-pin'); if (p) { p.classList.add('on'); setTimeout(() => p.classList.remove('on'), 2200); } }
   aturLembar(false);
@@ -3781,7 +3894,7 @@ function panelTempat() {
 
   const daftar = tampil.map(t => {
     const d = KATEGORI[t.kategori] || KATEGORI.lainnya;
-    return `<div class="list-item" data-ke-tempat="${esc(t.id)}" role="button" tabindex="0">
+    return `<div class="list-item" data-detail-tempat="${esc(t.id)}" role="button" tabindex="0">
       <span class="li-ico" style="background:var(${d.warna})">${ikon(d.ikon)}</span>
       <span class="li-txt"><b>${esc(t.nama || 'Tanpa nama')}</b><small>${esc(d.label)}${t.alamat ? ' · ' + esc(t.alamat) : ''}</small></span>
       <span class="li-act admin-only">
@@ -3937,6 +4050,124 @@ function panelWilayah() {
         </div>`).join('')}</div>
       <p class="chart-note" style="margin-top:8px">Jarak garis lurus dari titik pusat desa, bukan jarak tempuh.</p>
     </div>`;
+}
+
+/* ── Rincian satu tempat ──────────────────────────────────────
+   Menggantikan popup kecil di peta: foto besar, galeri, dan
+   keterangan lengkap — supaya potensi desa layak dipamerkan. */
+function bukaDetailTempat(id) {
+  const t = S.data.tempat.find(x => x.id === id);
+  if (!t) return;
+  S.detailAktif = id;
+
+  const d = KATEGORI[t.kategori] || KATEGORI.lainnya;
+  const foto = daftarFoto(t);
+  const web = safeUrl(t.website);
+  const tel = String(t.kontak || '').replace(/[^\d+]/g, '');
+
+  const galeri = foto.length ? `
+    <div class="dt-galeri">
+      <button class="dt-utama" data-foto-besar="0" aria-label="Perbesar foto">
+        <img src="${esc(foto[0])}" alt="Foto ${esc(t.nama)}" loading="lazy">
+        ${foto.length > 1 ? `<span class="dt-jml">${ikon('M4.5 16.5V5.8h10.7')}${foto.length} foto</span>` : ''}
+      </button>
+      ${foto.length > 1 ? `<div class="dt-mini">${foto.map((f, i) => `
+        <button class="dt-mini-btn${i === 0 ? ' aktif' : ''}" data-foto-pilih="${i}" aria-label="Foto ${i + 1}">
+          <img src="${esc(f)}" alt="" loading="lazy"></button>`).join('')}</div>` : ''}
+    </div>` : '';
+
+  const baris = [];
+  if (t.alamat) baris.push(['M12 20.6s6.8-6.1 6.8-10.6a6.8 6.8 0 1 0-13.6 0c0 4.5 6.8 10.6 6.8 10.6z', 'Alamat', esc(t.alamat)]);
+  if (t.kontak) baris.push(['M4.5 6.2c0 7.5 5.8 13.3 13.3 13.3l1.7-3.4-4.2-2.1-2 2a13.6 13.6 0 0 1-5.3-5.3l2-2L8 4.5z', 'Kontak',
+    tel ? `<a href="tel:${esc(tel)}">${esc(t.kontak)}</a>` : esc(t.kontak)]);
+  if (t.jam) baris.push(['M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17zM12 7.4V12l3.1 1.8', 'Jam buka', esc(t.jam)]);
+  if (web) baris.push(['M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17zM3.5 12h17M12 3.5a13 13 0 0 1 0 17 13 13 0 0 1 0-17z', 'Situs',
+    `<a href="${esc(web)}" target="_blank" rel="noopener noreferrer">${esc(t.website)}</a>`]);
+  baris.push(['M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM12 2.2v3M12 19v3M21.8 12h-3M5.2 12h-3', 'Koordinat',
+    `${t.lat.toFixed(6)}, ${t.lon.toFixed(6)}`]);
+
+  $('#detail').innerHTML = `
+    <div class="dt-head">
+      <button class="icon-btn" data-detail-tutup aria-label="Kembali">
+        ${ikon('M15 5l-7 7 7 7')}</button>
+      <span class="dt-kat"><i style="background:var(${d.warna})"></i>${esc(d.label)}</span>
+    </div>
+    <div class="dt-isi">
+      ${galeri}
+      <h2>${esc(t.nama || 'Tanpa nama')}</h2>
+      ${t.deskripsi ? `<p class="dt-desk">${esc(t.deskripsi)}</p>` : ''}
+      <dl class="dt-info">${baris.map(([p, k, v]) => `
+        <div>${ikon(p)}<dt>${esc(k)}</dt><dd>${v}</dd></div>`).join('')}</dl>
+      <div class="btn-row">
+        <button class="btn" data-ke-tempat="${esc(t.id)}">${ikon('M12 20.6s6.8-6.1 6.8-10.6a6.8 6.8 0 1 0-13.6 0c0 4.5 6.8 10.6 6.8 10.6z')}Lihat di peta</button>
+        <button class="btn" data-rute="${esc(t.id)}">${ikon('M4 17.5L20 4l-6.5 16-2-6z')}Rute</button>
+        <button class="btn" data-bagi="${esc(t.id)}">${ikon('M14.5 7.5l-5 3M9.5 13.5l5 3M6.8 14.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8zM17.2 8.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8zM17.2 20.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8z')}Bagikan</button>
+        <button class="btn admin-only" data-edit-tempat="${esc(t.id)}">${ikon('M4.5 19.5h4L19 9a2.5 2.5 0 0 0-3.5-3.5L5 16z')}Ubah</button>
+      </div>
+    </div>`;
+  $('#detail').hidden = false;
+  $('#detail').scrollTop = 0;
+  aturLembar(true);
+
+  // Geser peta ke tempatnya tanpa mengubah zoom, agar tetap dalam konteks
+  if (S.peta) S.peta.panTo([t.lat, t.lon], { animate: true });
+  const mk = S.markerTempat.get(id);
+  const el = mk && mk.getElement && mk.getElement();
+  if (el) {
+    const p = el.querySelector('.poi-pin');
+    if (p) { p.classList.add('on'); setTimeout(() => p.classList.remove('on'), 2200); }
+  }
+}
+
+function tutupDetail() {
+  $('#detail').hidden = true;
+  S.detailAktif = null;
+}
+
+/** Ganti foto utama tanpa menggambar ulang seluruh panel. */
+function pilihFoto(i) {
+  const t = S.data.tempat.find(x => x.id === S.detailAktif);
+  const foto = daftarFoto(t);
+  if (!foto[i]) return;
+  const utama = $('#detail .dt-utama');
+  utama.querySelector('img').src = foto[i];
+  utama.dataset.fotoBesar = i;
+  $$('#detail .dt-mini-btn').forEach((b, j) => b.classList.toggle('aktif', j === i));
+}
+
+/* ── Foto layar penuh ─────────────────────────────────────── */
+let lbFoto = [], lbIdx = 0;
+
+function bukaLightbox(daftar, i) {
+  lbFoto = daftar; lbIdx = i;
+  gambarLightbox();
+  $('#lightbox').hidden = false;
+  document.addEventListener('keydown', tombolLightbox);
+}
+
+function gambarLightbox() {
+  $('#lightbox').innerHTML = `
+    <button class="lb-tutup icon-btn" data-lb-tutup aria-label="Tutup">${ikon('M6 6l12 12M18 6L6 18')}</button>
+    ${lbFoto.length > 1 ? `<button class="lb-nav lb-prev" data-lb-geser="-1" aria-label="Foto sebelumnya">${ikon('M15 5l-7 7 7 7')}</button>
+    <button class="lb-nav lb-next" data-lb-geser="1" aria-label="Foto berikutnya">${ikon('M9 5l7 7-7 7')}</button>` : ''}
+    <img src="${esc(lbFoto[lbIdx])}" alt="">
+    ${lbFoto.length > 1 ? `<span class="lb-hitung">${lbIdx + 1} / ${lbFoto.length}</span>` : ''}`;
+}
+
+function geserLightbox(arah) {
+  lbIdx = (lbIdx + arah + lbFoto.length) % lbFoto.length;
+  gambarLightbox();
+}
+
+function tutupLightbox() {
+  $('#lightbox').hidden = true;
+  document.removeEventListener('keydown', tombolLightbox);
+}
+
+function tombolLightbox(e) {
+  if (e.key === 'Escape') tutupLightbox();
+  else if (e.key === 'ArrowLeft') geserLightbox(-1);
+  else if (e.key === 'ArrowRight') geserLightbox(1);
 }
 
 /* ── Router panel ─────────────────────────────────────────── */
@@ -4134,7 +4365,7 @@ function gambarRadius(ll, r) {
     </div>
     ${di.length ? `<div class="rad-list">${di.slice(0, 8).map(x => {
       const d = KATEGORI[x.t.kategori] || KATEGORI.lainnya;
-      return `<button class="rad-item" data-ke-tempat="${esc(x.t.id)}">
+      return `<button class="rad-item" data-detail-tempat="${esc(x.t.id)}">
         <i style="background:var(${d.warna})"></i>
         <span>${esc(x.t.nama)}</span><em>${teksJarak(x.d)}</em></button>`;
     }).join('')}${di.length > 8 ? `<p class="chart-note" style="margin-top:5px">…dan ${di.length - 8} lainnya</p>` : ''}</div>`
@@ -4814,7 +5045,7 @@ function formTempat(awal) {
       </div>
     </div>`;
 
-  let fotoData = t.foto || '';          // dipegang di luar DOM agar tidak hilang saat digambar ulang
+  let fotoData = daftarFoto(t).slice();   // dipegang di luar DOM agar tidak hilang saat digambar ulang
 
   const aksi = [];
   if (!baru) aksi.push({ label: 'Hapus', cls: 'danger', fn: () => {
@@ -4857,41 +5088,53 @@ function formTempat(awal) {
   const kotak = bg.querySelector('[data-foto-kotak]');
 
   const gambarKotak = () => {
-    const src = safeUrl(fotoData);
-    kotak.innerHTML = src
-      ? `<div style="position:relative">
-           <img src="${esc(src)}" alt="" style="width:100%;max-height:170px;object-fit:cover;border-radius:var(--radius-sm);display:block">
-           <div class="btn-row" style="margin-top:7px">
-             <button type="button" class="btn sm" data-foto-ganti>Ganti foto</button>
-             <button type="button" class="btn sm danger" data-foto-hapus>Hapus foto</button>
-           </div>
-         </div>`
-      : `<button type="button" class="btn wide" data-foto-ganti>
-           ${ikon('M4.5 18.5h15a1.5 1.5 0 0 0 1.5-1.5V8.5A1.5 1.5 0 0 0 19.5 7h-3l-1.4-2H8.9L7.5 7h-3A1.5 1.5 0 0 0 3 8.5V17a1.5 1.5 0 0 0 1.5 1.5z')}
-           Ambil foto atau pilih dari galeri</button>`;
+    const daftar = fotoData.map((f, i) => `
+      <div class="fo-item">
+        <img src="${esc(safeUrl(f))}" alt="Foto ${i + 1}">
+        <button type="button" class="fo-hapus" data-foto-hapus="${i}" aria-label="Hapus foto ${i + 1}">
+          ${ikon('M6 6l12 12M18 6L6 18')}</button>
+        ${i === 0 ? '<span class="fo-utama">Utama</span>' : ''}
+      </div>`).join('');
+
+    kotak.innerHTML = `
+      ${fotoData.length ? `<div class="fo-grid">${daftar}</div>` : ''}
+      <button type="button" class="btn ${fotoData.length ? 'sm' : 'wide'}" data-foto-tambah>
+        ${ikon('M4.5 18.5h15a1.5 1.5 0 0 0 1.5-1.5V8.5A1.5 1.5 0 0 0 19.5 7h-3l-1.4-2H8.9L7.5 7h-3A1.5 1.5 0 0 0 3 8.5V17a1.5 1.5 0 0 0 1.5 1.5z')}
+        ${fotoData.length ? 'Tambah foto lagi' : 'Ambil foto atau pilih dari galeri'}</button>
+      ${fotoData.length > 1 ? '<p class="chart-note" style="margin-top:6px">Foto pertama dipakai sebagai foto utama.</p>' : ''}`;
   };
   gambarKotak();
 
   const pilih = document.createElement('input');
   pilih.type = 'file';
   pilih.accept = 'image/*';
+  pilih.multiple = true;                 // beberapa foto sekaligus
   pilih.style.display = 'none';
   bg.appendChild(pilih);
 
   pilih.addEventListener('change', () => {
-    const f = pilih.files[0];
-    if (!f) return;
-    kotak.innerHTML = '<p class="chart-note">Mengolah foto…</p>';
-    // 1000 px / kualitas 0,7 — cukup tajam di layar, tetap ringan saat ditanam
-    kecilkanGambar(f, 1000, 'image/jpeg', 0.7)
-      .then(d => { fotoData = d; gambarKotak(); pesan(`Foto siap (${teksUkuran(Math.round(d.length * 0.75))})`); })
-      .catch(e => { pesan(e.message, true); gambarKotak(); });
+    const berkas = Array.from(pilih.files || []);
     pilih.value = '';
+    if (!berkas.length) return;
+
+    kotak.innerHTML = `<p class="chart-note">Mengolah ${berkas.length} foto…</p>`;
+    // 1000 px / kualitas 0,7 — cukup tajam di layar, tetap ringan saat ditanam
+    Promise.all(berkas.map(f => kecilkanGambar(f, 1000, 'image/jpeg', 0.7).catch(() => null)))
+      .then(hasil => {
+        const sah = hasil.filter(Boolean);
+        fotoData = fotoData.concat(sah);
+        gambarKotak();
+        const gagal = hasil.length - sah.length;
+        const besar = sah.reduce((s, d) => s + d.length * 0.75, 0);
+        pesan(`${sah.length} foto ditambahkan (${teksUkuran(Math.round(besar))})`
+              + (gagal ? ` · ${gagal} gagal dibaca` : ''), !!gagal);
+      });
   });
 
   kotak.addEventListener('click', e => {
-    if (e.target.closest('[data-foto-ganti]')) { e.preventDefault(); pilih.click(); }
-    else if (e.target.closest('[data-foto-hapus]')) { e.preventDefault(); fotoData = ''; gambarKotak(); }
+    const hapus = e.target.closest('[data-foto-hapus]');
+    if (hapus) { e.preventDefault(); fotoData.splice(+hapus.dataset.fotoHapus, 1); gambarKotak(); }
+    else if (e.target.closest('[data-foto-tambah]')) { e.preventDefault(); pilih.click(); }
   });
 
   /* ── Jam buka: sembunyikan pemilih waktu saat "24 jam" ── */
@@ -5587,7 +5830,7 @@ function bukaHasil(h) {
   $('#q').value = '';
   $('#q-results').hidden = true;
   $('#q-clear').hidden = true;
-  if (h.jenis === 'tempat') sorotTempat(h.id);
+  if (h.jenis === 'tempat') return bukaDetailTempat(h.id);
   else if (h.jenis === 'dusun') zoomDusun(h.idx);
   else if (h.ll) S.peta.setView(h.ll, 14, { animate: true });
   aturLembar(false);
@@ -5798,7 +6041,19 @@ function aksiKlik(e) {
     return gambarUlangDusun(+n.dataset.ubahDusun);
   }
 
-  if ((n = T('[data-ke-tempat]')))     return sorotTempat(n.dataset.keTempat);
+  /* Rincian tempat & foto */
+  if (T('[data-detail-tutup]'))         return tutupDetail();
+  if ((n = T('[data-foto-pilih]')))     return pilihFoto(+n.dataset.fotoPilih);
+  if ((n = T('[data-foto-besar]'))) {
+    const t = S.data.tempat.find(x => x.id === S.detailAktif);
+    return bukaLightbox(daftarFoto(t), +n.dataset.fotoBesar);
+  }
+  if (T('[data-lb-tutup]'))             return tutupLightbox();
+  if ((n = T('[data-lb-geser]')))       return geserLightbox(+n.dataset.lbGeser);
+  if (e.target.id === 'lightbox')       return tutupLightbox();
+
+  if ((n = T('[data-detail-tempat]'))) return bukaDetailTempat(n.dataset.detailTempat);
+  if ((n = T('[data-ke-tempat]')))     { tutupDetail(); aturLembar(false); return sorotTempat(n.dataset.keTempat); }
   if ((n = T('[data-ke-dusun]')))      return zoomDusun(+n.dataset.keDusun);
   if (T('[data-tambah-tempat]'))       return modeTambahTempat();
   if ((n = T('[data-ke-koord]'))) {

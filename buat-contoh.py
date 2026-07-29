@@ -9,7 +9,7 @@ tidak tersentuh sama sekali.
 
 Membatalkannya: hapus berkas contoh itu. Tidak ada yang perlu dipulihkan.
 """
-import json, math, pathlib, sys
+import json, math, pathlib, re, sys
 
 AKAR = pathlib.Path(__file__).parent
 ASLI = AKAR / 'peta-desa-kote.html'
@@ -150,13 +150,16 @@ def main():
         sys.exit('peta-desa-kote.html belum dibangun — jalankan python build.py dulu')
 
     html = ASLI.read_text(encoding='utf-8')
-    tanda = '<script id="desa-data" type="application/json">null</script>'
-    if tanda not in html:
-        sys.exit('Berkas asli sudah memuat data; hentikan agar tidak tertimpa.')
+
+    # Ganti seluruh blok datanya, apa pun isinya sekarang. Hasilnya ditulis ke
+    # berkas lain, jadi berkas asli tetap utuh.
+    pola = re.compile(r'(<script id="desa-data" type="application/json">).*?(</script>)', re.S)
+    if not pola.search(html):
+        sys.exit('Blok data tidak ditemukan di peta-desa-kote.html')
 
     data = bangun_data()
     isi = json.dumps(data, ensure_ascii=False).replace('<', '\\u003c')
-    html = html.replace(tanda, f'<script id="desa-data" type="application/json">{isi}</script>')
+    html = pola.sub(lambda m: m.group(1) + isi + m.group(2), html, count=1)
     html = html.replace('<title>Peta Digital Desa Kote', '<title>[CONTOH] Peta Digital Desa Kote')
 
     KELUARAN.write_text(html, encoding='utf-8')

@@ -430,36 +430,13 @@ function gambarTempat() {
       draggable: false,
       pane: 'p-tempat'
     });
-    mk.bindPopup(() => popupTempat(t), { maxWidth: 260, autoPanPadding: [24, 24] });
+    // Klik membuka panel rinci; popup kecil terlalu sempit untuk foto.
+    mk.bindTooltip(t.nama || 'Tanpa nama', { direction: 'top', offset: [0, -24] });
+    mk.on('click', () => bukaDetailTempat(t.id));
     mk.addTo(S.lapis.tempat);
     S.markerTempat.set(t.id, mk);
   });
   gambarLegenda();
-}
-
-function popupTempat(t) {
-  const def = KATEGORI[t.kategori] || KATEGORI.lainnya;
-  const foto = safeUrl(t.foto);
-  const web = safeUrl(t.website);
-  const baris = [];
-  if (t.alamat)  baris.push(['M12 20.6s6.8-6.1 6.8-10.6a6.8 6.8 0 1 0-13.6 0c0 4.5 6.8 10.6 6.8 10.6z', esc(t.alamat)]);
-  if (t.kontak)  baris.push(['M4.5 6.2c0 7.5 5.8 13.3 13.3 13.3l1.7-3.4-4.2-2.1-2 2a13.6 13.6 0 0 1-5.3-5.3l2-2L8 4.5z', esc(t.kontak)]);
-  if (t.jam)     baris.push(['M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17zM12 7.4V12l3.1 1.8', esc(t.jam)]);
-  if (web)       baris.push(['M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17zM3.5 12h17M12 3.5a13 13 0 0 1 0 17 13 13 0 0 1 0-17z',
-                             `<a href="${esc(web)}" target="_blank" rel="noopener noreferrer">${esc(t.website)}</a>`]);
-
-  return `<div class="pop">
-    <div class="pop-cat"><i style="background:var(${def.warna})"></i>${esc(def.label)}</div>
-    <h4>${esc(t.nama || 'Tanpa nama')}</h4>
-    ${t.deskripsi ? `<div class="pop-desc">${esc(t.deskripsi)}</div>` : ''}
-    ${foto ? `<img src="${esc(foto)}" alt="" loading="lazy">` : ''}
-    ${baris.length ? `<div class="pop-meta">${baris.map(([p, v]) => `<div>${ikon(p)}<span>${v}</span></div>`).join('')}</div>` : ''}
-    <div class="pop-act">
-      <button class="btn sm" data-rute="${esc(t.id)}">${ikon('M12 20.6s6.8-6.1 6.8-10.6a6.8 6.8 0 1 0-13.6 0c0 4.5 6.8 10.6 6.8 10.6z')}Rute</button>
-      <button class="btn sm" data-bagi="${esc(t.id)}">${ikon('M14.5 7.5l-5 3M9.5 13.5l5 3M6.8 14.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8zM17.2 8.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8zM17.2 20.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8z')}Bagikan</button>
-      <button class="btn sm admin-only" data-edit-tempat="${esc(t.id)}">Ubah</button>
-    </div>
-  </div>`;
 }
 
 function sorotTempat(id) {
@@ -468,7 +445,6 @@ function sorotTempat(id) {
   if (!t) return;
   if (!mk) { S.kategoriAktif.add(t.kategori); gambarTempat(); return sorotTempat(id); }
   S.peta.setView([t.lat, t.lon], Math.max(S.peta.getZoom(), 16), { animate: true });
-  mk.openPopup();
   const el = mk.getElement && mk.getElement();
   if (el) { const p = el.querySelector('.poi-pin'); if (p) { p.classList.add('on'); setTimeout(() => p.classList.remove('on'), 2200); } }
   aturLembar(false);

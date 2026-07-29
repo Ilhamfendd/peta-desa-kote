@@ -105,7 +105,7 @@ function bukaHasil(h) {
   $('#q').value = '';
   $('#q-results').hidden = true;
   $('#q-clear').hidden = true;
-  if (h.jenis === 'tempat') sorotTempat(h.id);
+  if (h.jenis === 'tempat') return bukaDetailTempat(h.id);
   else if (h.jenis === 'dusun') zoomDusun(h.idx);
   else if (h.ll) S.peta.setView(h.ll, 14, { animate: true });
   aturLembar(false);
@@ -316,7 +316,19 @@ function aksiKlik(e) {
     return gambarUlangDusun(+n.dataset.ubahDusun);
   }
 
-  if ((n = T('[data-ke-tempat]')))     return sorotTempat(n.dataset.keTempat);
+  /* Rincian tempat & foto */
+  if (T('[data-detail-tutup]'))         return tutupDetail();
+  if ((n = T('[data-foto-pilih]')))     return pilihFoto(+n.dataset.fotoPilih);
+  if ((n = T('[data-foto-besar]'))) {
+    const t = S.data.tempat.find(x => x.id === S.detailAktif);
+    return bukaLightbox(daftarFoto(t), +n.dataset.fotoBesar);
+  }
+  if (T('[data-lb-tutup]'))             return tutupLightbox();
+  if ((n = T('[data-lb-geser]')))       return geserLightbox(+n.dataset.lbGeser);
+  if (e.target.id === 'lightbox')       return tutupLightbox();
+
+  if ((n = T('[data-detail-tempat]'))) return bukaDetailTempat(n.dataset.detailTempat);
+  if ((n = T('[data-ke-tempat]')))     { tutupDetail(); aturLembar(false); return sorotTempat(n.dataset.keTempat); }
   if ((n = T('[data-ke-dusun]')))      return zoomDusun(+n.dataset.keDusun);
   if (T('[data-tambah-tempat]'))       return modeTambahTempat();
   if ((n = T('[data-ke-koord]'))) {

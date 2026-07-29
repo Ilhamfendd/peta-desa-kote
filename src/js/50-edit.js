@@ -303,7 +303,7 @@ function formTempat(awal) {
       </div>
     </div>`;
 
-  let fotoData = t.foto || '';          // dipegang di luar DOM agar tidak hilang saat digambar ulang
+  let fotoData = daftarFoto(t).slice();   // dipegang di luar DOM agar tidak hilang saat digambar ulang
 
   const aksi = [];
   if (!baru) aksi.push({ label: 'Hapus', cls: 'danger', fn: () => {
@@ -346,41 +346,53 @@ function formTempat(awal) {
   const kotak = bg.querySelector('[data-foto-kotak]');
 
   const gambarKotak = () => {
-    const src = safeUrl(fotoData);
-    kotak.innerHTML = src
-      ? `<div style="position:relative">
-           <img src="${esc(src)}" alt="" style="width:100%;max-height:170px;object-fit:cover;border-radius:var(--radius-sm);display:block">
-           <div class="btn-row" style="margin-top:7px">
-             <button type="button" class="btn sm" data-foto-ganti>Ganti foto</button>
-             <button type="button" class="btn sm danger" data-foto-hapus>Hapus foto</button>
-           </div>
-         </div>`
-      : `<button type="button" class="btn wide" data-foto-ganti>
-           ${ikon('M4.5 18.5h15a1.5 1.5 0 0 0 1.5-1.5V8.5A1.5 1.5 0 0 0 19.5 7h-3l-1.4-2H8.9L7.5 7h-3A1.5 1.5 0 0 0 3 8.5V17a1.5 1.5 0 0 0 1.5 1.5z')}
-           Ambil foto atau pilih dari galeri</button>`;
+    const daftar = fotoData.map((f, i) => `
+      <div class="fo-item">
+        <img src="${esc(safeUrl(f))}" alt="Foto ${i + 1}">
+        <button type="button" class="fo-hapus" data-foto-hapus="${i}" aria-label="Hapus foto ${i + 1}">
+          ${ikon('M6 6l12 12M18 6L6 18')}</button>
+        ${i === 0 ? '<span class="fo-utama">Utama</span>' : ''}
+      </div>`).join('');
+
+    kotak.innerHTML = `
+      ${fotoData.length ? `<div class="fo-grid">${daftar}</div>` : ''}
+      <button type="button" class="btn ${fotoData.length ? 'sm' : 'wide'}" data-foto-tambah>
+        ${ikon('M4.5 18.5h15a1.5 1.5 0 0 0 1.5-1.5V8.5A1.5 1.5 0 0 0 19.5 7h-3l-1.4-2H8.9L7.5 7h-3A1.5 1.5 0 0 0 3 8.5V17a1.5 1.5 0 0 0 1.5 1.5z')}
+        ${fotoData.length ? 'Tambah foto lagi' : 'Ambil foto atau pilih dari galeri'}</button>
+      ${fotoData.length > 1 ? '<p class="chart-note" style="margin-top:6px">Foto pertama dipakai sebagai foto utama.</p>' : ''}`;
   };
   gambarKotak();
 
   const pilih = document.createElement('input');
   pilih.type = 'file';
   pilih.accept = 'image/*';
+  pilih.multiple = true;                 // beberapa foto sekaligus
   pilih.style.display = 'none';
   bg.appendChild(pilih);
 
   pilih.addEventListener('change', () => {
-    const f = pilih.files[0];
-    if (!f) return;
-    kotak.innerHTML = '<p class="chart-note">Mengolah foto…</p>';
-    // 1000 px / kualitas 0,7 — cukup tajam di layar, tetap ringan saat ditanam
-    kecilkanGambar(f, 1000, 'image/jpeg', 0.7)
-      .then(d => { fotoData = d; gambarKotak(); pesan(`Foto siap (${teksUkuran(Math.round(d.length * 0.75))})`); })
-      .catch(e => { pesan(e.message, true); gambarKotak(); });
+    const berkas = Array.from(pilih.files || []);
     pilih.value = '';
+    if (!berkas.length) return;
+
+    kotak.innerHTML = `<p class="chart-note">Mengolah ${berkas.length} foto…</p>`;
+    // 1000 px / kualitas 0,7 — cukup tajam di layar, tetap ringan saat ditanam
+    Promise.all(berkas.map(f => kecilkanGambar(f, 1000, 'image/jpeg', 0.7).catch(() => null)))
+      .then(hasil => {
+        const sah = hasil.filter(Boolean);
+        fotoData = fotoData.concat(sah);
+        gambarKotak();
+        const gagal = hasil.length - sah.length;
+        const besar = sah.reduce((s, d) => s + d.length * 0.75, 0);
+        pesan(`${sah.length} foto ditambahkan (${teksUkuran(Math.round(besar))})`
+              + (gagal ? ` · ${gagal} gagal dibaca` : ''), !!gagal);
+      });
   });
 
   kotak.addEventListener('click', e => {
-    if (e.target.closest('[data-foto-ganti]')) { e.preventDefault(); pilih.click(); }
-    else if (e.target.closest('[data-foto-hapus]')) { e.preventDefault(); fotoData = ''; gambarKotak(); }
+    const hapus = e.target.closest('[data-foto-hapus]');
+    if (hapus) { e.preventDefault(); fotoData.splice(+hapus.dataset.fotoHapus, 1); gambarKotak(); }
+    else if (e.target.closest('[data-foto-tambah]')) { e.preventDefault(); pilih.click(); }
   });
 
   /* ── Jam buka: sembunyikan pemilih waktu saat "24 jam" ── */

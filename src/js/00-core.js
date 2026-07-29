@@ -246,7 +246,23 @@ function muatData() {
   let dipakai = lokal;
   if (!lokal || (tertanam && waktu(tertanam) > waktu(lokal))) dipakai = tertanam;
 
-  return gabung(dataKosong(), dipakai || {});
+  const d = gabung(dataKosong(), dipakai || {});
+
+  // Dulu satu tempat hanya menyimpan satu foto sebagai teks. Sekarang daftar,
+  // jadi data lama dinaikkan bentuknya di sini.
+  (d.tempat || []).forEach(t => {
+    if (typeof t.foto === 'string') t.foto = t.foto ? [t.foto] : [];
+    else if (!Array.isArray(t.foto)) t.foto = [];
+  });
+  return d;
+}
+
+/** Daftar foto sebuah tempat, apa pun bentuk simpanannya. */
+function daftarFoto(t) {
+  const f = t && t.foto;
+  if (Array.isArray(f)) return f.map(safeUrl).filter(Boolean);
+  const s = safeUrl(f);
+  return s ? [s] : [];
 }
 
 /** Gabung dangkal-rekursif: menjaga kunci baru tetap ada saat data lama dimuat. */

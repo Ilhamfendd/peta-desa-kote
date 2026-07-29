@@ -239,7 +239,7 @@ function panelTempat() {
 
   const daftar = tampil.map(t => {
     const d = KATEGORI[t.kategori] || KATEGORI.lainnya;
-    return `<div class="list-item" data-ke-tempat="${esc(t.id)}" role="button" tabindex="0">
+    return `<div class="list-item" data-detail-tempat="${esc(t.id)}" role="button" tabindex="0">
       <span class="li-ico" style="background:var(${d.warna})">${ikon(d.ikon)}</span>
       <span class="li-txt"><b>${esc(t.nama || 'Tanpa nama')}</b><small>${esc(d.label)}${t.alamat ? ' · ' + esc(t.alamat) : ''}</small></span>
       <span class="li-act admin-only">
@@ -395,6 +395,124 @@ function panelWilayah() {
         </div>`).join('')}</div>
       <p class="chart-note" style="margin-top:8px">Jarak garis lurus dari titik pusat desa, bukan jarak tempuh.</p>
     </div>`;
+}
+
+/* ── Rincian satu tempat ──────────────────────────────────────
+   Menggantikan popup kecil di peta: foto besar, galeri, dan
+   keterangan lengkap — supaya potensi desa layak dipamerkan. */
+function bukaDetailTempat(id) {
+  const t = S.data.tempat.find(x => x.id === id);
+  if (!t) return;
+  S.detailAktif = id;
+
+  const d = KATEGORI[t.kategori] || KATEGORI.lainnya;
+  const foto = daftarFoto(t);
+  const web = safeUrl(t.website);
+  const tel = String(t.kontak || '').replace(/[^\d+]/g, '');
+
+  const galeri = foto.length ? `
+    <div class="dt-galeri">
+      <button class="dt-utama" data-foto-besar="0" aria-label="Perbesar foto">
+        <img src="${esc(foto[0])}" alt="Foto ${esc(t.nama)}" loading="lazy">
+        ${foto.length > 1 ? `<span class="dt-jml">${ikon('M4.5 16.5V5.8h10.7')}${foto.length} foto</span>` : ''}
+      </button>
+      ${foto.length > 1 ? `<div class="dt-mini">${foto.map((f, i) => `
+        <button class="dt-mini-btn${i === 0 ? ' aktif' : ''}" data-foto-pilih="${i}" aria-label="Foto ${i + 1}">
+          <img src="${esc(f)}" alt="" loading="lazy"></button>`).join('')}</div>` : ''}
+    </div>` : '';
+
+  const baris = [];
+  if (t.alamat) baris.push(['M12 20.6s6.8-6.1 6.8-10.6a6.8 6.8 0 1 0-13.6 0c0 4.5 6.8 10.6 6.8 10.6z', 'Alamat', esc(t.alamat)]);
+  if (t.kontak) baris.push(['M4.5 6.2c0 7.5 5.8 13.3 13.3 13.3l1.7-3.4-4.2-2.1-2 2a13.6 13.6 0 0 1-5.3-5.3l2-2L8 4.5z', 'Kontak',
+    tel ? `<a href="tel:${esc(tel)}">${esc(t.kontak)}</a>` : esc(t.kontak)]);
+  if (t.jam) baris.push(['M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17zM12 7.4V12l3.1 1.8', 'Jam buka', esc(t.jam)]);
+  if (web) baris.push(['M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17zM3.5 12h17M12 3.5a13 13 0 0 1 0 17 13 13 0 0 1 0-17z', 'Situs',
+    `<a href="${esc(web)}" target="_blank" rel="noopener noreferrer">${esc(t.website)}</a>`]);
+  baris.push(['M12 15.2a3.2 3.2 0 1 0 0-6.4 3.2 3.2 0 0 0 0 6.4zM12 2.2v3M12 19v3M21.8 12h-3M5.2 12h-3', 'Koordinat',
+    `${t.lat.toFixed(6)}, ${t.lon.toFixed(6)}`]);
+
+  $('#detail').innerHTML = `
+    <div class="dt-head">
+      <button class="icon-btn" data-detail-tutup aria-label="Kembali">
+        ${ikon('M15 5l-7 7 7 7')}</button>
+      <span class="dt-kat"><i style="background:var(${d.warna})"></i>${esc(d.label)}</span>
+    </div>
+    <div class="dt-isi">
+      ${galeri}
+      <h2>${esc(t.nama || 'Tanpa nama')}</h2>
+      ${t.deskripsi ? `<p class="dt-desk">${esc(t.deskripsi)}</p>` : ''}
+      <dl class="dt-info">${baris.map(([p, k, v]) => `
+        <div>${ikon(p)}<dt>${esc(k)}</dt><dd>${v}</dd></div>`).join('')}</dl>
+      <div class="btn-row">
+        <button class="btn" data-ke-tempat="${esc(t.id)}">${ikon('M12 20.6s6.8-6.1 6.8-10.6a6.8 6.8 0 1 0-13.6 0c0 4.5 6.8 10.6 6.8 10.6z')}Lihat di peta</button>
+        <button class="btn" data-rute="${esc(t.id)}">${ikon('M4 17.5L20 4l-6.5 16-2-6z')}Rute</button>
+        <button class="btn" data-bagi="${esc(t.id)}">${ikon('M14.5 7.5l-5 3M9.5 13.5l5 3M6.8 14.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8zM17.2 8.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8zM17.2 20.4a2.4 2.4 0 1 0 0-4.8 2.4 2.4 0 0 0 0 4.8z')}Bagikan</button>
+        <button class="btn admin-only" data-edit-tempat="${esc(t.id)}">${ikon('M4.5 19.5h4L19 9a2.5 2.5 0 0 0-3.5-3.5L5 16z')}Ubah</button>
+      </div>
+    </div>`;
+  $('#detail').hidden = false;
+  $('#detail').scrollTop = 0;
+  aturLembar(true);
+
+  // Geser peta ke tempatnya tanpa mengubah zoom, agar tetap dalam konteks
+  if (S.peta) S.peta.panTo([t.lat, t.lon], { animate: true });
+  const mk = S.markerTempat.get(id);
+  const el = mk && mk.getElement && mk.getElement();
+  if (el) {
+    const p = el.querySelector('.poi-pin');
+    if (p) { p.classList.add('on'); setTimeout(() => p.classList.remove('on'), 2200); }
+  }
+}
+
+function tutupDetail() {
+  $('#detail').hidden = true;
+  S.detailAktif = null;
+}
+
+/** Ganti foto utama tanpa menggambar ulang seluruh panel. */
+function pilihFoto(i) {
+  const t = S.data.tempat.find(x => x.id === S.detailAktif);
+  const foto = daftarFoto(t);
+  if (!foto[i]) return;
+  const utama = $('#detail .dt-utama');
+  utama.querySelector('img').src = foto[i];
+  utama.dataset.fotoBesar = i;
+  $$('#detail .dt-mini-btn').forEach((b, j) => b.classList.toggle('aktif', j === i));
+}
+
+/* ── Foto layar penuh ─────────────────────────────────────── */
+let lbFoto = [], lbIdx = 0;
+
+function bukaLightbox(daftar, i) {
+  lbFoto = daftar; lbIdx = i;
+  gambarLightbox();
+  $('#lightbox').hidden = false;
+  document.addEventListener('keydown', tombolLightbox);
+}
+
+function gambarLightbox() {
+  $('#lightbox').innerHTML = `
+    <button class="lb-tutup icon-btn" data-lb-tutup aria-label="Tutup">${ikon('M6 6l12 12M18 6L6 18')}</button>
+    ${lbFoto.length > 1 ? `<button class="lb-nav lb-prev" data-lb-geser="-1" aria-label="Foto sebelumnya">${ikon('M15 5l-7 7 7 7')}</button>
+    <button class="lb-nav lb-next" data-lb-geser="1" aria-label="Foto berikutnya">${ikon('M9 5l7 7-7 7')}</button>` : ''}
+    <img src="${esc(lbFoto[lbIdx])}" alt="">
+    ${lbFoto.length > 1 ? `<span class="lb-hitung">${lbIdx + 1} / ${lbFoto.length}</span>` : ''}`;
+}
+
+function geserLightbox(arah) {
+  lbIdx = (lbIdx + arah + lbFoto.length) % lbFoto.length;
+  gambarLightbox();
+}
+
+function tutupLightbox() {
+  $('#lightbox').hidden = true;
+  document.removeEventListener('keydown', tombolLightbox);
+}
+
+function tombolLightbox(e) {
+  if (e.key === 'Escape') tutupLightbox();
+  else if (e.key === 'ArrowLeft') geserLightbox(-1);
+  else if (e.key === 'ArrowRight') geserLightbox(1);
 }
 
 /* ── Router panel ─────────────────────────────────────────── */

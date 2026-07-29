@@ -159,7 +159,7 @@ function gambarRadius(ll, r) {
     </div>
     ${di.length ? `<div class="rad-list">${di.slice(0, 8).map(x => {
       const d = KATEGORI[x.t.kategori] || KATEGORI.lainnya;
-      return `<button class="rad-item" data-ke-tempat="${esc(x.t.id)}">
+      return `<button class="rad-item" data-detail-tempat="${esc(x.t.id)}">
         <i style="background:var(${d.warna})"></i>
         <span>${esc(x.t.nama)}</span><em>${teksJarak(x.d)}</em></button>`;
     }).join('')}${di.length > 8 ? `<p class="chart-note" style="margin-top:5px">…dan ${di.length - 8} lainnya</p>` : ''}</div>`
