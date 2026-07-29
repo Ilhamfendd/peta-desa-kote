@@ -282,8 +282,14 @@ function muatUsulanBatas() {
   const f = S.basemap.usulanBatas.features[0];
   const r = cincinLuar(f);
 
+  const luasUsulan = luasPoligon(r) / 1e6;
+  const luasResmi = S.data.statistik.ringkas.luas;
+  const beda = (luasResmi && luasResmi > 0)
+    ? ` Luas poligon ini ${angka1(luasUsulan)} km², padahal luas resmi desa ${angka1(luasResmi)} km² — jadi jelas kebesaran dan perlu dikecilkan.`
+    : '';
+
   konfirmasi('Muat batas usulan?',
-    `Poligon dari basis data GADM seluas ${teksLuas(luasPoligon(r)).replace(/<[^>]+>/g, '')} dengan ${r.length} titik akan dipasang sebagai batas desa. ` +
+    `Poligon dari basis data GADM dengan ${r.length} titik akan dipasang sebagai batas desa.${beda} ` +
     'Ini rancangan awal yang kasar — periksa dan geser titiknya bersama perangkat desa sebelum diterbitkan.', () => {
       S.data.batas.desa = JSON.parse(JSON.stringify(f));
       S.data.batas.desa.properties = { nama: S.data.meta.nama, sumber: 'GADM 4.1 — perlu diperiksa' };
@@ -296,12 +302,22 @@ function panelWilayah() {
   const r = b && cincinLuar(b);
   const pusat = S.data.meta.pusat || APP.pusat;
 
+  // Luas dari poligon vs luas resmi: bila jauh berbeda, katakan terus terang.
+  const luasGambar = r && r.length > 2 ? luasPoligon(r) / 1e6 : null;
+  const luasResmi = S.data.statistik.ringkas.luas;
+  const selisih = (luasGambar && luasResmi > 0) ? Math.abs(luasGambar / luasResmi - 1) : 0;
+
   const info = r && r.length > 2 ? `
     <div class="kv">
-      <div><span class="k">Luas</span><span class="v">${teksLuas(luasPoligon(r))}</span></div>
+      <div><span class="k">Luas digambar</span><span class="v">${teksLuas(luasPoligon(r))}</span></div>
+      ${luasResmi ? `<div><span class="k">Luas resmi</span><span class="v">${angka2(luasResmi)} km² <span class="dim">BPS 2023</span></span></div>` : ''}
       <div><span class="k">Keliling</span><span class="v">${teksJarak(panjangJalur(r.concat([r[0]])))}</span></div>
       <div><span class="k">Titik batas</span><span class="v">${NF.format(r.length)} titik</span></div>
     </div>
+    ${selisih > 0.15 ? `<div class="note warn" style="margin:10px 0 0">
+      ${ikon('M12 8.4v5M12 16.6h.01M10.3 4.2L2.6 17.5a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0z')}
+      <span>Poligon yang digambar ${angka1(selisih * 100)}% ${luasGambar > luasResmi ? 'lebih besar' : 'lebih kecil'}
+      dari luas resmi. Geser titiknya agar mendekati ${angka2(luasResmi)} km².</span></div>` : ''}
     <div class="btn-row" style="margin-top:11px">
       <button class="btn sm" data-zoom-batas>Lihat di peta</button>
       <button class="btn sm admin-only" data-gambar-batas>Gambar ulang</button>

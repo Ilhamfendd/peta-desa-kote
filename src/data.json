@@ -1,0 +1,105 @@
+{
+  "_sumber": [
+    "Luas, jarak, RT/RW, penduduk, tempat ibadah: BPS Kabupaten Lingga, 'Kecamatan Singkep Pesisir Dalam Angka 2024' (data tahun 2023), katalog 1102001.2104022.",
+    "Kode pos & kode wilayah: Wikipedia bahasa Indonesia + simpul OpenStreetMap 'Kote' (Wikidata Q12492286).",
+    "Pelabuhan, Pulau Serang, industri mikro: BPS, 'Statistik Daerah Kecamatan Singkep Pesisir 2016' (data 2015).",
+    "TIDAK ADA data resmi tingkat desa untuk: jumlah KK, jumlah dusun, kelompok umur, pendidikan, pekerjaan, agama. Semua dibiarkan kosong."
+  ],
+  "meta": {
+    "nama": "Desa Kote",
+    "kecamatan": "Singkep Pesisir",
+    "kabupaten": "Lingga",
+    "provinsi": "Kepulauan Riau",
+    "kode": "21.04.06.2004",
+    "kodepos": "29870",
+    "pusat": [-0.3657998, 104.5098449],
+    "jangkauan": 8,
+    "logoDesa": "",
+    "diperbarui": "2026-07-29T09:00:00.000Z",
+    "versiApl": "1.0.0"
+  },
+  "profil": {
+    "kepala": "",
+    "alamat": "",
+    "telepon": "",
+    "email": "",
+    "website": "",
+    "visi": "",
+    "misi": "",
+    "sejarah": "",
+    "potensi": "Desa Kote memiliki satu-satunya pelabuhan di Kecamatan Singkep Pesisir, yang menjadi tempat singgah kapal angkutan barang. Desa ini juga tercatat sebagai desa dengan industri mikro terbanyak di kecamatannya, serta memiliki objek wisata Pulau Serang.\n\nCatatan: keterangan ini bersumber dari BPS, Statistik Daerah Kecamatan Singkep Pesisir 2016 (data 2015), sehingga perlu diperiksa ulang kondisi terkininya.",
+    "sumberStat": "BPS Kabupaten Lingga — Kecamatan Singkep Pesisir Dalam Angka 2024 (data 2023)",
+    "tim": "KKN Kelompok 67",
+    "institusi": "",
+    "tahun": "2026",
+    "urlPublik": "https://peta-desa-kote.vercel.app"
+  },
+  "statistik": {
+    "ringkas": {
+      "penduduk": 1033,
+      "kk": null,
+      "luas": 13.55,
+      "dusun": null,
+      "rt": 10,
+      "rw": 5
+    },
+    "gender": {
+      "judul": "Jenis kelamin",
+      "satuan": "jiwa",
+      "baris": [
+        { "l": "Laki-laki", "v": 537 },
+        { "l": "Perempuan", "v": 496 }
+      ]
+    },
+    "usia": {
+      "judul": "Kelompok umur",
+      "satuan": "jiwa",
+      "baris": [
+        { "l": "0–4", "lk": null, "pr": null },
+        { "l": "5–14", "lk": null, "pr": null },
+        { "l": "15–24", "lk": null, "pr": null },
+        { "l": "25–44", "lk": null, "pr": null },
+        { "l": "45–64", "lk": null, "pr": null },
+        { "l": "65+", "lk": null, "pr": null }
+      ]
+    },
+    "pendidikan": {
+      "judul": "Pendidikan terakhir",
+      "satuan": "jiwa",
+      "baris": [
+        { "l": "Tidak/belum sekolah", "v": null },
+        { "l": "SD / sederajat", "v": null },
+        { "l": "SMP / sederajat", "v": null },
+        { "l": "SMA / sederajat", "v": null },
+        { "l": "Diploma", "v": null },
+        { "l": "Sarjana ke atas", "v": null }
+      ]
+    },
+    "pekerjaan": {
+      "judul": "Mata pencaharian",
+      "satuan": "jiwa",
+      "baris": [
+        { "l": "Nelayan", "v": null },
+        { "l": "Petani / pekebun", "v": null },
+        { "l": "Wiraswasta", "v": null },
+        { "l": "Karyawan swasta", "v": null },
+        { "l": "PNS / TNI / Polri", "v": null },
+        { "l": "Lainnya", "v": null }
+      ]
+    },
+    "agama": {
+      "judul": "Agama",
+      "satuan": "jiwa",
+      "baris": [
+        { "l": "Islam", "v": null },
+        { "l": "Kristen", "v": null },
+        { "l": "Katolik", "v": null },
+        { "l": "Buddha", "v": null },
+        { "l": "Hindu", "v": null },
+        { "l": "Konghucu", "v": null }
+      ]
+    }
+  },
+  "batas": { "desa": null, "dusun": [] },
+  "tempat": []
+}

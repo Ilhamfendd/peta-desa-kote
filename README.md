@@ -251,6 +251,30 @@ Bila ubin gagal dimuat, aplikasi otomatis beralih ke mode **Luring**.
 
 ---
 
+## Data yang sudah terisi
+
+Ditanam lewat `src/data.json`, semuanya dari sumber resmi:
+
+| Data | Nilai | Sumber |
+|---|---|---|
+| Penduduk | 1.033 jiwa (L 537 · P 496) | Disdukcapil Kab. Lingga, via BPS |
+| Luas wilayah | 13,55 km² (12,29% kecamatan) | Setda Kab. Lingga, via BPS |
+| RT / RW | 10 / 5 | Setda Kab. Lingga, via BPS |
+| Kode pos | 29870 | Wikipedia ID |
+| Kode wilayah | 21.04.06.2004 | OSM / Kemendagri |
+
+Sumber utama: **BPS Kabupaten Lingga — [Kecamatan Singkep Pesisir Dalam Angka
+2024](https://linggakab.bps.go.id/id/publication/2024/09/26/63a0b930826a98e1426963d2/kecamatan-singkep-pesisir-dalam-angka-2024.html)** (data tahun 2023).
+
+Kepadatan (76 jiwa/km²) dan rasio jenis kelamin (108) dihitung sendiri oleh
+aplikasi, dan hasilnya sama persis dengan angka BPS — sekaligus jadi bukti
+tabelnya terbaca benar.
+
+**Masih kosong karena tidak ada sumber resmi tingkat desa:** jumlah KK, jumlah
+dusun, kelompok umur, pendidikan, mata pencaharian, agama, dan daftar tempat.
+BPS mencatat Desa Kote punya 2 masjid dan 2 musala, tetapi **tanpa koordinat** —
+jadi tidak ditaruh di peta, karena menebak letaknya sama saja mengarang.
+
 ## Sumber data
 
 - **Geometri dasar** — OpenStreetMap ([ODbL](https://www.openstreetmap.org/copyright)):
