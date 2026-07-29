@@ -71,7 +71,7 @@ const LAPIS_VEKTOR = [
    di atas 600 = penanda dan label. */
 const URUTAN_PANE = {
   perairan: 401, pantai: 402, jalan: 403, pulau: 404,
-  wilayah: 406, batas: 407, radius: 408,
+  fokus: 405, wilayah: 406, batas: 407, radius: 408,
   tetangga: 601, tempat: 610, sunting: 620
 };
 
@@ -150,15 +150,6 @@ function buatPeta() {
   m.on('zoomend', aturSkalaJalan);
   m.on('zoomend', petunjukZoom);
   m.on('move zoom moveend zoomend resize', perbaruiSkala);
-  // Topeng dihitung dalam piksel layar, jadi tetap sejalan saat digeser.
-  // Selama animasi zoom, Leaflet men-transform panelnya sendiri sehingga
-  // topeng tertinggal — jadi disembunyikan dulu, lalu dihitung ulang.
-  m.on('move moveend resize', gambarFokus);
-  m.on('zoomstart', () => { const el = $('#fokus-luar'); if (el) el.classList.add('diam'); });
-  m.on('zoomend', () => {
-    gambarFokusSekarang();
-    const el = $('#fokus-luar'); if (el) el.classList.remove('diam');
-  });
   m.on('contextmenu', bukaMenuKonteks);   // Leaflet sendiri yang menahan menu bawaan browser
   m.on('movestart click', tutupMenuKonteks);
   perbaruiSkala();
@@ -416,34 +407,23 @@ function gambarBatas() {
    kelabu dan pudar lewat backdrop-filter, sementara di dalam batas
    tidak disentuh sama sekali. Jadi desanya yang menyala — berwarna
    penuh dan tajam — bukan sekelilingnya yang redup. */
-/* Digeser terus-menerus akan membangun ulang topeng tiap peristiwa; satu
-   penjadwalan per bingkai sudah cukup dan jauh lebih ringan. */
-let fokusTerjadwal = false;
+/* Poligon selebar dunia dengan batas desa sebagai lubang, digambar oleh
+   Leaflet sendiri. Karena ikut penggambar SVG Leaflet, ia menempel sempurna
+   selama animasi zoom — tidak seperti elemen DOM di luar sistem transform,
+   yang selalu tertinggal saat zoom. */
 function gambarFokus() {
-  if (fokusTerjadwal) return;
-  fokusTerjadwal = true;
-  requestAnimationFrame(() => { fokusTerjadwal = false; gambarFokusSekarang(); });
-}
-
-function gambarFokusSekarang() {
-  const el = $('#fokus-luar');
-  if (!el || !S.peta) return;
+  const g = S.lapis.fokus;
+  if (!g) return;
+  g.clearLayers();
 
   const r = S.data.batas.desa && cincinLuar(S.data.batas.desa);
-  if (!S.fokusDesa || !r || r.length < 3) { el.hidden = true; return; }
+  if (!S.fokusDesa || !r || r.length < 3) return;
 
-  const uk = S.peta.getSize();
-  const p = r.map(ll => S.peta.latLngToContainerPoint(ll));
-
-  // Persegi selayar penuh, lalu cincin desa sebagai lubang (fill-rule evenodd)
-  const d = `M0 0H${uk.x}V${uk.y}H0Z M${p.map(q => `${q.x.toFixed(1)} ${q.y.toFixed(1)}`).join('L')}Z`;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${uk.x}" height="${uk.y}">`
-            + `<path d="${d}" fill="#fff" fill-rule="evenodd"/></svg>`;
-  const url = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
-
-  el.style.webkitMaskImage = url;
-  el.style.maskImage = url;
-  el.hidden = false;
+  const dunia = [[-85, -180], [-85, 180], [85, 180], [85, -180]];
+  L.polygon([dunia, r], gy({
+    pane: 'p-fokus', interactive: false, stroke: false,
+    fillColor: 'var(--kabut)', fillOpacity: parseFloat(cv('--kabut-legap')) || 0.75
+  })).addTo(g);
 }
 
 function alihFokus(nyala) {

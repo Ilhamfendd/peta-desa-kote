@@ -120,21 +120,19 @@ barisnya. **Tombol di dalam wajib diperiksa lebih dulu daripada pembungkusnya** 
 kalau tidak, `return` milik baris akan mematikan tombolnya. Ini pernah membuat
 tombol Hapus/Ubah pada daftar Tempat dan Dusun tidak berfungsi sama sekali.
 
-## Sorot wilayah desa (`#fokus-luar`)
+## Sorot wilayah desa
 
-Peredam di luar batas adalah `<div>` biasa di atas peta dengan `backdrop-filter`
-dan `mask-image` SVG (persegi selayar penuh + cincin desa sebagai lubang,
-`fill-rule="evenodd"`). Tiga hal yang sempat menjebak:
+Poligon selebar dunia dengan batas desa sebagai lubang, **digambar oleh Leaflet
+sendiri** (`L.polygon([dunia, cincinDesa])`) di pane `p-fokus`. Warnanya dari
+`--kabut` / `--kabut-legap`.
 
-1. **`#map` tidak membuat stacking context** (absolut, `z-index: auto`), jadi
-   panel Leaflet 400+ bersaing langsung dengan overlay ini. Nilai kecil akan
-   tertimbun ubin — harus **z-index 500** (di atas vektor, di bawah penanda).
-2. **Topeng dihitung dalam piksel layar**, jadi tidak mungkin sejalan selama
-   animasi zoom (Leaflet men-transform panelnya sendiri). Overlay diredupkan
-   pada `zoomstart` dan dihitung ulang pada `zoomend`. Panning tetap sinkron,
-   jadi jangan ikut disembunyikan.
-3. Dibangun ulang tiap peristiwa gerakan itu berat — dibatasi satu kali per
-   bingkai lewat `requestAnimationFrame`.
+**Pernah dicoba dan gagal:** `<div>` di atas peta dengan `backdrop-filter` +
+`mask-image`. Efeknya lebih bagus (luar jadi kelabu, dalam berwarna penuh),
+tetapi elemen DOM di luar sistem transform Leaflet **mustahil sejalan selama
+animasi zoom** — Leaflet menskalakan panelnya sendiri, topeng piksel-layar
+tertinggal. Menyembunyikannya selama zoom hanya menutupi gejala dan terasa
+seperti fitur yang hilang. Jangan diulang tanpa memindahkan overlay ke dalam
+sistem layer Leaflet.
 
 ## Panel Leaflet & kelegapan
 

@@ -48,6 +48,8 @@
   --map-water: #c9dbe8;
   --road-1:    #6b6763;  --road-2: #8b8681;  --road-3: #a8a39c;
   --coast:     #4a80a8;
+  --kabut:       #eeeee9;   /* selubung di luar batas desa */
+  --kabut-legap: 0.72;
 
   --radius:    10px;
   --radius-sm: 7px;
@@ -88,6 +90,8 @@
   --map-water: #16242e;
   --road-1:    #8e8981;  --road-2: #6a6660;  --road-3: #4d4a45;
   --coast:     #5b93bd;
+  --kabut:       #090909;
+  --kabut-legap: 0.7;
 }
 
 /* ─────────── Dasar ─────────── */
@@ -298,25 +302,6 @@ body.admin #topbar #btn-admin:hover { background: var(--on-brand); color: var(--
 /* Sorot wilayah desa: yang DI LUAR batas dibuat kelabu dan pudar, sehingga
    bagian dalam menonjol karena tetap berwarna penuh. Bila backdrop-filter
    tidak didukung, tersisa selubung warna biasa — tetap masuk akal. */
-/* z-index 500: di atas ubin dan layer vektor (401–408), tetapi di bawah
-   penanda (601+) sehingga pin tetap tajam. #map tidak membuat stacking
-   context, jadi panel Leaflet bersaing langsung di sini — nilai kecil
-   akan tertimbun ubin. */
-#fokus-luar {
-  position: absolute; inset: 0; z-index: 500; pointer-events: none;
-  background: color-mix(in srgb, var(--plane) 30%, transparent);
-  -webkit-backdrop-filter: grayscale(.88) brightness(1.06) contrast(.9);
-  backdrop-filter: grayscale(.88) brightness(1.06) contrast(.9);
-}
-#fokus-luar[hidden] { display: none; }
-/* Diredupkan selama animasi zoom, saat topeng tak mungkin sejalan */
-#fokus-luar { transition: opacity .16s ease; }
-#fokus-luar.diam { opacity: 0; }
-:root[data-theme="dark"] #fokus-luar {
-  background: color-mix(in srgb, var(--plane) 42%, transparent);
-  -webkit-backdrop-filter: grayscale(.88) brightness(.72) contrast(.9);
-  backdrop-filter: grayscale(.88) brightness(.72) contrast(.9);
-}
 
 #map-tools { position: absolute; top: 12px; right: 12px; z-index: 620; }
 .tool-group {
