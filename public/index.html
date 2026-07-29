@@ -1938,6 +1938,7 @@ body.admin .list.admin-only { display: flex; }
         <span id="coords" title="Koordinat kursor">—</span>
         <span class="sep" aria-hidden="true">·</span>
         <span id="attrib"></span>
+        <span id="zoom-hint" hidden></span>
       </div>
       <div id="draw-hud" hidden role="status"></div>
       <div id="toast-wrap" aria-live="polite"></div>
@@ -2471,13 +2472,16 @@ const PETA_DASAR = {
     label: 'Satelit', sub: 'Citra udara',
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     berlabel: false, gelapUbin: true,
-    opsi: { maxZoom: 19, attribution: 'Citra © Esri, Maxar, Earthstar Geographics' }
+    // Di Singkep, citra asli Esri berhenti di zoom 18; di atas itu ia
+    // mengembalikan ubin abu-abu "Map data not yet available". maxNativeZoom
+    // membuat Leaflet memperbesar ubin z18 — buram, tapi tetap terbaca.
+    opsi: { maxZoom: 19, maxNativeZoom: 18, attribution: 'Citra © Esri, Maxar, Earthstar Geographics' }
   },
   medan: {
     label: 'Medan', sub: 'Kontur & bukit',
     url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
     berlabel: true,
-    opsi: { maxZoom: 17, subdomains: 'abc', attribution: '© <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)' }
+    opsi: { maxZoom: 19, maxNativeZoom: 17, subdomains: 'abc', attribution: '© <a href="https://opentopomap.org" target="_blank" rel="noopener">OpenTopoMap</a> (CC-BY-SA)' }
   },
   polos: {
     label: 'Polos', sub: 'Enak untuk data',
@@ -2601,6 +2605,7 @@ function buatPeta() {
   });
   m.on('mouseout', () => { $('#coords').textContent = '—'; });
   m.on('zoomend', aturSkalaJalan);
+  m.on('zoomend', petunjukZoom);
   m.on('move zoom moveend zoomend resize', perbaruiSkala);
   m.on('contextmenu', bukaMenuKonteks);   // Leaflet sendiri yang menahan menu bawaan browser
   m.on('movestart click', tutupMenuKonteks);
@@ -2693,7 +2698,20 @@ function gantiDasar(kunci) {
   terapkanLabel();
 
   $('#attrib').innerHTML = def.opsi.attribution || '';
+  petunjukZoom();
   buatPemilihDasar();
+}
+
+/** Beri tahu saat peta diperbesar melewati resolusi asli ubinnya, supaya
+    tampilan buram tidak dikira aplikasinya yang rusak. */
+function petunjukZoom() {
+  const el = $('#zoom-hint');
+  if (!el || !S.peta) return;
+  const def = PETA_DASAR[dasarTerpilih] || PETA_DASAR.osm;
+  const asli = def.opsi && def.opsi.maxNativeZoom;
+  const lewat = asli && S.peta.getZoom() > asli;
+  el.hidden = !lewat;
+  el.textContent = lewat ? `· citra diperbesar melebihi resolusi asli (maks z${asli})` : '';
 }
 
 /** Ubin berlabel sudah memuat nama tempat; nama milik kita hanya ditumpangkan

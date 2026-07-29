@@ -33,6 +33,11 @@ Desa Kote** — jadi pratinjaunya benar-benar memperlihatkan hasilnya:
 | **Polos** | CARTO | Latar tenang saat menonjolkan data desa |
 | **Luring** | Tertanam di berkas | Tanpa internet sama sekali |
 
+**Batas resolusi citra.** Untuk daerah terpencil seperti Singkep, citra asli
+berhenti di zoom tertentu — Esri di **z18**, OpenTopoMap di **z17**. Di atas itu
+peta memperbesar ubin terakhir (buram tapi tetap terbaca) dan memberi keterangan
+di bilah bawah, alih-alih menampilkan kotak abu-abu *"Map data not yet available"*.
+
 Saklar **Nama tempat** menumpangkan nama desa di atas mode yang tidak punya label
 (Satelit dan Luring). Secara otomatis menyala di kedua mode itu dan mati di mode
 lain agar nama tidak tercetak dua kali — tapi bisa Anda paksa kapan saja.
