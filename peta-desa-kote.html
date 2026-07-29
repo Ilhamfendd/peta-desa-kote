@@ -964,6 +964,26 @@ body.admin #topbar #btn-admin:hover { background: var(--on-brand); color: var(--
 .leaflet-container { font-family: var(--font); background: var(--map-bg); }
 .leaflet-control-attribution { display: none; }
 
+/* Sorot wilayah desa: yang DI LUAR batas dibuat kelabu dan pudar, sehingga
+   bagian dalam menonjol karena tetap berwarna penuh. Bila backdrop-filter
+   tidak didukung, tersisa selubung warna biasa — tetap masuk akal. */
+/* z-index 500: di atas ubin dan layer vektor (401–408), tetapi di bawah
+   penanda (601+) sehingga pin tetap tajam. #map tidak membuat stacking
+   context, jadi panel Leaflet bersaing langsung di sini — nilai kecil
+   akan tertimbun ubin. */
+#fokus-luar {
+  position: absolute; inset: 0; z-index: 500; pointer-events: none;
+  background: color-mix(in srgb, var(--plane) 30%, transparent);
+  -webkit-backdrop-filter: grayscale(.88) brightness(1.06) contrast(.9);
+  backdrop-filter: grayscale(.88) brightness(1.06) contrast(.9);
+}
+#fokus-luar[hidden] { display: none; }
+:root[data-theme="dark"] #fokus-luar {
+  background: color-mix(in srgb, var(--plane) 42%, transparent);
+  -webkit-backdrop-filter: grayscale(.88) brightness(.72) contrast(.9);
+  backdrop-filter: grayscale(.88) brightness(.72) contrast(.9);
+}
+
 #map-tools { position: absolute; top: 12px; right: 12px; z-index: 620; }
 .tool-group {
   display: flex; flex-direction: column;
@@ -1887,6 +1907,8 @@ body.admin .list.admin-only { display: flex; }
 
     <div id="map-wrap">
       <div id="map" role="application" aria-label="Peta Desa Kote"></div>
+      <!-- Peredam di luar batas desa; bagian dalam dibiarkan berwarna penuh -->
+      <div id="fokus-luar" hidden aria-hidden="true"></div>
 
       <div id="map-tools">
         <div class="tool-group">
@@ -2528,7 +2550,7 @@ const LAPIS_VEKTOR = [
    di atas 600 = penanda dan label. */
 const URUTAN_PANE = {
   perairan: 401, pantai: 402, jalan: 403, pulau: 404,
-  fokus: 405, wilayah: 406, batas: 407, radius: 408,
+  wilayah: 406, batas: 407, radius: 408,
   tetangga: 601, tempat: 610, sunting: 620
 };
 
@@ -2607,6 +2629,7 @@ function buatPeta() {
   m.on('zoomend', aturSkalaJalan);
   m.on('zoomend', petunjukZoom);
   m.on('move zoom moveend zoomend resize', perbaruiSkala);
+  m.on('move zoom moveend zoomend resize', gambarFokus);   // topeng mengikuti tampilan
   m.on('contextmenu', bukaMenuKonteks);   // Leaflet sendiri yang menahan menu bawaan browser
   m.on('movestart click', tutupMenuKonteks);
   perbaruiSkala();
@@ -2829,10 +2852,17 @@ function gambarBatas() {
 
   const b = S.data.batas.desa;
   if (b) {
+    // Garis lebar semitransparan sebagai halo, lalu garis tipis tajam di atasnya —
+    // tepi desa jadi terbaca baik di atas citra terang maupun gelap.
     L.geoJSON(b, {
-      style: gy({ color: 'var(--accent)', weight: 2.4, opacity: .95, fillColor: 'var(--accent)', fillOpacity: .07 }),
-      interactive: false,
-      pane: 'p-batas'
+      style: gy({ color: 'var(--surface-1)', weight: 7, opacity: .55, fill: false }),
+      interactive: false, pane: 'p-batas'
+    }).addTo(S.lapis.batas);
+
+    L.geoJSON(b, {
+      style: gy({ color: 'var(--accent)', weight: 2.6, opacity: 1,
+                  fillColor: 'var(--accent)', fillOpacity: S.fokusDesa ? .04 : .07 }),
+      interactive: false, pane: 'p-batas'
     }).addTo(S.lapis.batas);
   }
 
@@ -2853,22 +2883,38 @@ function gambarBatas() {
 }
 
 /* ── Sorot wilayah desa ───────────────────────────────────────
-   Satu poligon selebar dunia dengan batas desa sebagai lubang.
-   Bagian luar teredam, jadi mata langsung tertuju ke desanya —
-   cara baku di GIS untuk menegaskan wilayah kajian. */
+   Bukan sekadar menggelapkan sekeliling: bagian luar dijadikan
+   kelabu dan pudar lewat backdrop-filter, sementara di dalam batas
+   tidak disentuh sama sekali. Jadi desanya yang menyala — berwarna
+   penuh dan tajam — bukan sekelilingnya yang redup. */
+/* Digeser terus-menerus akan membangun ulang topeng tiap peristiwa; satu
+   penjadwalan per bingkai sudah cukup dan jauh lebih ringan. */
+let fokusTerjadwal = false;
 function gambarFokus() {
-  const g = S.lapis.fokus;
-  if (!g) return;
-  g.clearLayers();
+  if (fokusTerjadwal) return;
+  fokusTerjadwal = true;
+  requestAnimationFrame(() => { fokusTerjadwal = false; gambarFokusSekarang(); });
+}
+
+function gambarFokusSekarang() {
+  const el = $('#fokus-luar');
+  if (!el || !S.peta) return;
 
   const r = S.data.batas.desa && cincinLuar(S.data.batas.desa);
-  if (!S.fokusDesa || !r || r.length < 3) return;
+  if (!S.fokusDesa || !r || r.length < 3) { el.hidden = true; return; }
 
-  const dunia = [[-85, -180], [-85, 180], [85, 180], [85, -180]];
-  L.polygon([dunia, r], gy({
-    pane: 'p-fokus', interactive: false, stroke: false,
-    fillColor: 'var(--plane)', fillOpacity: .68
-  })).addTo(g);
+  const uk = S.peta.getSize();
+  const p = r.map(ll => S.peta.latLngToContainerPoint(ll));
+
+  // Persegi selayar penuh, lalu cincin desa sebagai lubang (fill-rule evenodd)
+  const d = `M0 0H${uk.x}V${uk.y}H0Z M${p.map(q => `${q.x.toFixed(1)} ${q.y.toFixed(1)}`).join('L')}Z`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${uk.x}" height="${uk.y}">`
+            + `<path d="${d}" fill="#fff" fill-rule="evenodd"/></svg>`;
+  const url = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+
+  el.style.webkitMaskImage = url;
+  el.style.maskImage = url;
+  el.hidden = false;
 }
 
 function alihFokus(nyala) {
@@ -6188,7 +6234,11 @@ function mulai() {
   pasangInteraksi();
   pilihTab('beranda', false);   // di ponsel, peta dulu yang terlihat
 
-  if (S.data.meta.demo) $('#demo-bar').hidden = false;
+  if (S.data.meta.demo) {
+    $('#demo-bar').hidden = false;
+    // Bilah ini memakan tinggi setelah peta dibuat — beri tahu Leaflet.
+    if (S.peta) setTimeout(() => { S.peta.invalidateSize({ animate: false }); gambarFokus(); }, 60);
+  }
 
   if (new URLSearchParams(location.search).get('kelola') === '1') alihAdmin(true);
 

@@ -445,7 +445,11 @@ function mulai() {
   pasangInteraksi();
   pilihTab('beranda', false);   // di ponsel, peta dulu yang terlihat
 
-  if (S.data.meta.demo) $('#demo-bar').hidden = false;
+  if (S.data.meta.demo) {
+    $('#demo-bar').hidden = false;
+    // Bilah ini memakan tinggi setelah peta dibuat — beri tahu Leaflet.
+    if (S.peta) setTimeout(() => { S.peta.invalidateSize({ animate: false }); gambarFokus(); }, 60);
+  }
 
   if (new URLSearchParams(location.search).get('kelola') === '1') alihAdmin(true);
 

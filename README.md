@@ -63,6 +63,7 @@ Jangkauannya bisa diubah di **Kelola → Identitas desa → Jangkauan peta** (1�
 | **Menu klik-kanan** | Klik kanan (atau tekan lama di HP) pada peta: koordinat DMS & desimal, salin koordinat, radius dari sini, ukur dari sini, pusatkan, tambah tempat |
 | **Analisis radius** | Menghitung tempat dalam jarak tertentu — mis. jangkauan layanan posyandu. Menampilkan luas, jumlah, dan daftar terurut jarak |
 | **Ukur jarak & luas** | Panjang tiap ruas tertulis di titik tengahnya; luas dan keliling di bilah atas |
+| **Sorot wilayah desa** | Area di luar batas dibuat kelabu dan pudar, sementara di dalam batas tidak disentuh — jadi desanya yang menonjol, bukan sekelilingnya yang sekadar digelapkan. Bisa dimatikan di panel layer |
 | **Kelegapan layer** | Penggeser transparansi tiap layer di panel layer |
 | **Tabel atribut** | Semua tempat dalam tabel yang bisa diurutkan per kolom; klik baris untuk melompat ke peta |
 | **Ekspor CSV** | Untuk Excel — memakai BOM dan pemisah titik koma agar huruf beraksen tidak rusak |

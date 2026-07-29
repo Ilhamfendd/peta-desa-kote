@@ -295,6 +295,26 @@ body.admin #topbar #btn-admin:hover { background: var(--on-brand); color: var(--
 .leaflet-container { font-family: var(--font); background: var(--map-bg); }
 .leaflet-control-attribution { display: none; }
 
+/* Sorot wilayah desa: yang DI LUAR batas dibuat kelabu dan pudar, sehingga
+   bagian dalam menonjol karena tetap berwarna penuh. Bila backdrop-filter
+   tidak didukung, tersisa selubung warna biasa — tetap masuk akal. */
+/* z-index 500: di atas ubin dan layer vektor (401–408), tetapi di bawah
+   penanda (601+) sehingga pin tetap tajam. #map tidak membuat stacking
+   context, jadi panel Leaflet bersaing langsung di sini — nilai kecil
+   akan tertimbun ubin. */
+#fokus-luar {
+  position: absolute; inset: 0; z-index: 500; pointer-events: none;
+  background: color-mix(in srgb, var(--plane) 30%, transparent);
+  -webkit-backdrop-filter: grayscale(.88) brightness(1.06) contrast(.9);
+  backdrop-filter: grayscale(.88) brightness(1.06) contrast(.9);
+}
+#fokus-luar[hidden] { display: none; }
+:root[data-theme="dark"] #fokus-luar {
+  background: color-mix(in srgb, var(--plane) 42%, transparent);
+  -webkit-backdrop-filter: grayscale(.88) brightness(.72) contrast(.9);
+  backdrop-filter: grayscale(.88) brightness(.72) contrast(.9);
+}
+
 #map-tools { position: absolute; top: 12px; right: 12px; z-index: 620; }
 .tool-group {
   display: flex; flex-direction: column;
