@@ -247,7 +247,9 @@ body.admin #topbar #btn-admin:hover { background: var(--on-brand); color: var(--
   background: var(--wash); padding: 1px 5px; border-radius: 4px;
 }
 @media (max-width: 720px) {
-  #demo-bar { font-size: 11px; padding: 6px 9px; gap: 7px; }
+  /* Di ponsel cukup inti peringatannya — sisanya memakan tinggi peta */
+  #demo-bar { font-size: 11px; padding: 5px 9px; gap: 7px; line-height: 1.35; }
+  #demo-bar .panjang { display: none; }
 }
 
 /* ─────────── Kerangka ─────────── */
@@ -398,7 +400,7 @@ body.admin #topbar #btn-admin:hover { background: var(--on-brand); color: var(--
 .bs-sw .sw-label { font-size: 12.5px; }
 
 @media (max-width: 720px) {
-  #base-switch { bottom: 55px; }
+  /* Posisi tegaknya diatur bersama tumpukan bawah lain, di blok responsif */
   .bs-toggle { width: 58px; }
   .bs-toggle .bs-thumb { height: 44px; }
   .bs-row { max-width: calc(100vw - 46px); overflow-x: auto; padding-bottom: 3px; }
@@ -961,24 +963,32 @@ body.admin .list.admin-only { display: flex; }
 
   #main { flex-direction: column; }
   #map-wrap { flex: 1; min-height: 0; }
+  /* Tinggi mengintip = tinggi baris tab, supaya labelnya tidak terpotong */
+  :root { --intip: 58px; }
   #sidebar {
     position: absolute; left: 0; right: 0; bottom: 0; top: auto;
     width: auto; height: 62dvh;
     border-right: 0; border-top: 1px solid var(--border);
     border-radius: 16px 16px 0 0;
     box-shadow: 0 -4px 24px rgba(0,0,0,.14);
-    transform: translateY(calc(100% - 47px));
+    transform: translateY(calc(100% - var(--intip)));
     transition: transform .22s ease;
     z-index: 700;
   }
   #sidebar::before {
-    content: ""; position: absolute; top: 7px; left: 50%; transform: translateX(-50%);
+    content: ""; position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
     width: 34px; height: 4px; border-radius: 2px; background: var(--axis);
   }
   body.sheet-open #sidebar { transform: translateY(0); }
-  .tabs { padding-top: 14px; }
+  .tabs { padding: 11px 4px 0; }
+  .tabs button { padding: 4px 2px 6px; }
+  .tabs button svg { width: 17px; height: 17px; }
+  .tabs button span { font-size: 9.5px; }
   #legend { display: none; }
-  #statusbar { bottom: 47px; }
+
+  /* Tumpukan di bawah: bilah status di atas tab, pemilih mode di atasnya */
+  #statusbar { bottom: var(--intip); }
+  #base-switch { bottom: calc(var(--intip) + 22px); }
 
   /* Di ponsel, peta yang terlihat cuma sekitar 300 px — tumpukan tombol
      setinggi itu tidak masuk akal. Sisakan yang benar-benar dipakai. */

@@ -108,14 +108,14 @@ function bukaHasil(h) {
   if (h.jenis === 'tempat') sorotTempat(h.id);
   else if (h.jenis === 'dusun') zoomDusun(h.idx);
   else if (h.ll) S.peta.setView(h.ll, 14, { animate: true });
-  if (window.innerWidth <= 720) document.body.classList.remove('sheet-open');
+  aturLembar(false);
 }
 
 function zoomDusun(i) {
   const d = S.data.batas.dusun[i];
   const r = d && d.geo && cincinLuar(d.geo);
   if (r && r.length > 2) S.peta.fitBounds(L.latLngBounds(r), { padding: [40, 40] });
-  if (window.innerWidth <= 720) document.body.classList.remove('sheet-open');
+  aturLembar(false);
 }
 
 /* ── Interaksi global ─────────────────────────────────────── */
@@ -128,10 +128,8 @@ function pasangInteraksi() {
   $('#btn-theme').addEventListener('click', () =>
     terapkanTema(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
   $('#btn-admin').addEventListener('click', () => alihAdmin());
-  $('#btn-sidebar').addEventListener('click', () => {
-    const on = document.body.classList.toggle('sheet-open');
-    $('#btn-sidebar').setAttribute('aria-expanded', String(on));
-  });
+  $('#btn-sidebar').addEventListener('click', () =>
+    aturLembar(!document.body.classList.contains('sheet-open')));
 
   /* Alat peta */
   $('#btn-layers').addEventListener('click', () => {
@@ -185,6 +183,7 @@ function pasangInteraksi() {
 
   /* Panel layer */
   $('#layer-panel').addEventListener('change', e => {
+    if (e.target.matches('[data-fokus]')) return alihFokus(e.target.checked);
     const c = e.target.closest('[data-lapis]');
     if (!c) return;
     alihLapis(c.dataset.lapis, c.checked);
@@ -323,7 +322,7 @@ function aksiKlik(e) {
   if ((n = T('[data-ke-koord]'))) {
     const [la, lo] = n.dataset.keKoord.split(',').map(Number);
     S.peta.setView([la, lo], 14, { animate: true });
-    if (window.innerWidth <= 720) document.body.classList.remove('sheet-open');
+    aturLembar(false);
     return;
   }
 
@@ -432,7 +431,7 @@ function mulai() {
   siapkanTooltip();
   buatPeta();
   pasangInteraksi();
-  pilihTab('beranda');
+  pilihTab('beranda', false);   // di ponsel, peta dulu yang terlihat
 
   if (S.data.meta.demo) $('#demo-bar').hidden = false;
 

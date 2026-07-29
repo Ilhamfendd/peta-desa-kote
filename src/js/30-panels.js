@@ -402,11 +402,13 @@ function gambarUlang(nama) {
   gambarPanel(S.tabAktif);
 }
 
-function pilihTab(nama) {
+/** `bukaLembar: false` dipakai saat pemuatan awal — di ponsel, peta yang
+    harus terlihat lebih dulu, bukan panelnya. */
+function pilihTab(nama, bukaLembar) {
   S.tabAktif = nama;
   $$('.tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === nama)));
   $$('.panel').forEach(p => { p.hidden = p.dataset.panel !== nama; });
   gambarPanel(nama);
   const wrap = $('.panels'); if (wrap) wrap.scrollTop = 0;
-  if (window.innerWidth <= 720) document.body.classList.add('sheet-open');
+  if (bukaLembar !== false) aturLembar(true);
 }

@@ -68,7 +68,7 @@ const LAPIS_VEKTOR = [
    di atas 600 = penanda dan label. */
 const URUTAN_PANE = {
   perairan: 401, pantai: 402, jalan: 403, pulau: 404,
-  wilayah: 405, batas: 406, radius: 407,
+  fokus: 405, wilayah: 406, batas: 407, radius: 408,
   tetangga: 601, tempat: 610, sunting: 620
 };
 
@@ -104,7 +104,10 @@ function buatPeta() {
     minZoom: 10,
     maxZoom: 19,
     worldCopyJump: false,
-    maxBoundsViscosity: 1
+    maxBoundsViscosity: 1,
+    // Zoom pecahan: fitBounds bisa pas ke batas desa, tidak dibulatkan
+    // ke bawah sehingga desanya tampak kecil di tengah layar.
+    zoomSnap: 0.5
   });
   // Zoom memakai tombol sendiri agar seluruh alat peta berada dalam satu
   // tumpukan; kontrol bawaan Leaflet dulu menimpa dua tombol teratas.
@@ -122,7 +125,9 @@ function buatPeta() {
   try {
     const l = localStorage.getItem(APP.simpanan + '/label');
     if (l !== null) S.labelTempat = JSON.parse(l);
-  } catch (e) { /* pilihan tersimpan rusak — pakai otomatis */ }
+    const f = localStorage.getItem(APP.simpanan + '/fokus');
+    if (f !== null) S.fokusDesa = JSON.parse(f);
+  } catch (e) { /* pilihan tersimpan rusak — pakai bawaan */ }
 
   let dasarAwal = 'osm';
   try { dasarAwal = localStorage.getItem(APP.simpanan + '/dasar') || 'osm'; } catch (e) {}
@@ -150,10 +155,25 @@ function buatPeta() {
   return m;
 }
 
+/** Buka/tutup lembar bawah di ponsel, lalu hitung ulang ukuran peta.
+    Tanpa invalidateSize, Leaflet masih memakai ukuran wadah yang lama dan
+    tampilannya melenceng dari desa. */
+function aturLembar(buka) {
+  if (window.innerWidth > 720) return;
+  document.body.classList.toggle('sheet-open', !!buka);
+  const t = $('#btn-sidebar');
+  if (t) t.setAttribute('aria-expanded', String(!!buka));
+  if (S.peta) setTimeout(() => S.peta.invalidateSize({ animate: false }), 260);
+}
+
 function fokusAwal() {
   const r = S.data.batas.desa && cincinLuar(S.data.batas.desa);
-  if (r && r.length > 2) S.peta.fitBounds(L.latLngBounds(r), { padding: [40, 40] });
-  else S.peta.setView(S.data.meta.pusat || APP.pusat, APP.zoom);
+  const sempit = window.innerWidth <= 720;
+  if (r && r.length > 2) {
+    S.peta.fitBounds(L.latLngBounds(r), { padding: sempit ? [14, 14] : [40, 40] });
+  } else {
+    S.peta.setView(S.data.meta.pusat || APP.pusat, APP.zoom);
+  }
 }
 
 /** Wilayah jelajah peta: kotak di sekitar pusat desa, digabung dengan batas
@@ -353,8 +373,34 @@ function gambarBatas() {
       .addTo(S.lapis.wilayah);
   });
 
+  gambarFokus();
   terapkanBatasPeta();     // batas desa yang baru digambar ikut memperluas jelajah
   gambarLegenda();
+}
+
+/* ── Sorot wilayah desa ───────────────────────────────────────
+   Satu poligon selebar dunia dengan batas desa sebagai lubang.
+   Bagian luar teredam, jadi mata langsung tertuju ke desanya —
+   cara baku di GIS untuk menegaskan wilayah kajian. */
+function gambarFokus() {
+  const g = S.lapis.fokus;
+  if (!g) return;
+  g.clearLayers();
+
+  const r = S.data.batas.desa && cincinLuar(S.data.batas.desa);
+  if (!S.fokusDesa || !r || r.length < 3) return;
+
+  const dunia = [[-85, -180], [-85, 180], [85, 180], [85, -180]];
+  L.polygon([dunia, r], gy({
+    pane: 'p-fokus', interactive: false, stroke: false,
+    fillColor: 'var(--plane)', fillOpacity: .68
+  })).addTo(g);
+}
+
+function alihFokus(nyala) {
+  S.fokusDesa = nyala;
+  try { localStorage.setItem(APP.simpanan + '/fokus', JSON.stringify(nyala)); } catch (e) {}
+  gambarFokus();
 }
 
 /* ── Penanda tempat ───────────────────────────────────────── */
@@ -425,7 +471,7 @@ function sorotTempat(id) {
   mk.openPopup();
   const el = mk.getElement && mk.getElement();
   if (el) { const p = el.querySelector('.poi-pin'); if (p) { p.classList.add('on'); setTimeout(() => p.classList.remove('on'), 2200); } }
-  if (window.innerWidth <= 720) document.body.classList.remove('sheet-open');
+  aturLembar(false);
 }
 
 /* ── Pemilih mode peta (bergambar, seperti peta daring umumnya) ── */
@@ -506,6 +552,7 @@ function buatPanelLapis() {
 
   $('#layer-panel').innerHTML = `
     <h3 style="font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:2px 0 4px 2px">Layer data</h3>
+    <label class="switch"><input type="checkbox" data-fokus ${S.fokusDesa ? 'checked' : ''} ${punyaBatas ? '' : 'disabled'}><span class="track"></span><span class="sw-label">Sorot wilayah desa${punyaBatas ? '<small>Redupkan luar batas</small>' : '<small>Perlu batas desa</small>'}</span></label>
     <label class="switch"><input type="checkbox" data-lapis="batas" ${punyaBatas ? 'checked' : ''} ${punyaBatas ? '' : 'disabled'}><span class="track"></span><span class="sw-label">Batas desa${punyaBatas ? '' : '<small>Belum digambar</small>'}</span></label>
     ${punyaBatas && S.aktif.batas !== false ? geser('batas') : ''}
     <label class="switch"><input type="checkbox" data-lapis="wilayah" ${punyaDusun ? 'checked' : ''} ${punyaDusun ? '' : 'disabled'}><span class="track"></span><span class="sw-label">Dusun / RW${punyaDusun ? '' : '<small>Belum digambar</small>'}</span></label>

@@ -916,7 +916,9 @@ body.admin #topbar #btn-admin:hover { background: var(--on-brand); color: var(--
   background: var(--wash); padding: 1px 5px; border-radius: 4px;
 }
 @media (max-width: 720px) {
-  #demo-bar { font-size: 11px; padding: 6px 9px; gap: 7px; }
+  /* Di ponsel cukup inti peringatannya — sisanya memakan tinggi peta */
+  #demo-bar { font-size: 11px; padding: 5px 9px; gap: 7px; line-height: 1.35; }
+  #demo-bar .panjang { display: none; }
 }
 
 /* ─────────── Kerangka ─────────── */
@@ -1067,7 +1069,7 @@ body.admin #topbar #btn-admin:hover { background: var(--on-brand); color: var(--
 .bs-sw .sw-label { font-size: 12.5px; }
 
 @media (max-width: 720px) {
-  #base-switch { bottom: 55px; }
+  /* Posisi tegaknya diatur bersama tumpukan bawah lain, di blok responsif */
   .bs-toggle { width: 58px; }
   .bs-toggle .bs-thumb { height: 44px; }
   .bs-row { max-width: calc(100vw - 46px); overflow-x: auto; padding-bottom: 3px; }
@@ -1630,24 +1632,32 @@ body.admin .list.admin-only { display: flex; }
 
   #main { flex-direction: column; }
   #map-wrap { flex: 1; min-height: 0; }
+  /* Tinggi mengintip = tinggi baris tab, supaya labelnya tidak terpotong */
+  :root { --intip: 58px; }
   #sidebar {
     position: absolute; left: 0; right: 0; bottom: 0; top: auto;
     width: auto; height: 62dvh;
     border-right: 0; border-top: 1px solid var(--border);
     border-radius: 16px 16px 0 0;
     box-shadow: 0 -4px 24px rgba(0,0,0,.14);
-    transform: translateY(calc(100% - 47px));
+    transform: translateY(calc(100% - var(--intip)));
     transition: transform .22s ease;
     z-index: 700;
   }
   #sidebar::before {
-    content: ""; position: absolute; top: 7px; left: 50%; transform: translateX(-50%);
+    content: ""; position: absolute; top: 5px; left: 50%; transform: translateX(-50%);
     width: 34px; height: 4px; border-radius: 2px; background: var(--axis);
   }
   body.sheet-open #sidebar { transform: translateY(0); }
-  .tabs { padding-top: 14px; }
+  .tabs { padding: 11px 4px 0; }
+  .tabs button { padding: 4px 2px 6px; }
+  .tabs button svg { width: 17px; height: 17px; }
+  .tabs button span { font-size: 9.5px; }
   #legend { display: none; }
-  #statusbar { bottom: 47px; }
+
+  /* Tumpukan di bawah: bilah status di atas tab, pemilih mode di atasnya */
+  #statusbar { bottom: var(--intip); }
+  #base-switch { bottom: calc(var(--intip) + 22px); }
 
   /* Di ponsel, peta yang terlihat cuma sekitar 300 px — tumpukan tombol
      setinggi itu tidak masuk akal. Sisakan yang benar-benar dipakai. */
@@ -1729,8 +1739,9 @@ body.admin .list.admin-only { display: flex; }
   <!-- Hanya tampil pada berkas contoh (meta.demo) -->
   <div id="demo-bar" hidden role="status">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.4v5M12 16.6h.01M10.3 4.2L2.6 17.5a2 2 0 0 0 1.7 3h15.4a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0z"/></svg>
-    <span><b>Data contoh.</b> Semua angka dan tempat di halaman ini karangan untuk pratinjau tampilan —
-      <b>bukan data Desa Kote</b>. Berkas asli yang masih kosong: <code>peta-desa-kote.html</code></span>
+    <span><b>Data contoh</b> — angka dan tempat di halaman ini karangan,
+      <b>bukan data Desa Kote</b>.<span class="panjang"> Berkas asli yang masih kosong:
+      <code>peta-desa-kote.html</code></span></span>
     <button class="btn sm" data-kosongkan-contoh>Kosongkan</button>
   </div>
 
@@ -2099,6 +2110,7 @@ const S = {
   markerTempat: new Map(),
   admin: false,
   labelTempat: null,    // null = ikut peta dasar, true/false = paksaan pengguna
+  fokusDesa: true,      // redupkan area di luar batas desa
   mode: null,           // null | 'tempat' | 'batas' | 'dusun' | 'ukur'
   cuaca: null,
   tabAktif: 'beranda'
@@ -2257,7 +2269,7 @@ const LAPIS_VEKTOR = [
    di atas 600 = penanda dan label. */
 const URUTAN_PANE = {
   perairan: 401, pantai: 402, jalan: 403, pulau: 404,
-  wilayah: 405, batas: 406, radius: 407,
+  fokus: 405, wilayah: 406, batas: 407, radius: 408,
   tetangga: 601, tempat: 610, sunting: 620
 };
 
@@ -2293,7 +2305,10 @@ function buatPeta() {
     minZoom: 10,
     maxZoom: 19,
     worldCopyJump: false,
-    maxBoundsViscosity: 1
+    maxBoundsViscosity: 1,
+    // Zoom pecahan: fitBounds bisa pas ke batas desa, tidak dibulatkan
+    // ke bawah sehingga desanya tampak kecil di tengah layar.
+    zoomSnap: 0.5
   });
   // Zoom memakai tombol sendiri agar seluruh alat peta berada dalam satu
   // tumpukan; kontrol bawaan Leaflet dulu menimpa dua tombol teratas.
@@ -2311,7 +2326,9 @@ function buatPeta() {
   try {
     const l = localStorage.getItem(APP.simpanan + '/label');
     if (l !== null) S.labelTempat = JSON.parse(l);
-  } catch (e) { /* pilihan tersimpan rusak — pakai otomatis */ }
+    const f = localStorage.getItem(APP.simpanan + '/fokus');
+    if (f !== null) S.fokusDesa = JSON.parse(f);
+  } catch (e) { /* pilihan tersimpan rusak — pakai bawaan */ }
 
   let dasarAwal = 'osm';
   try { dasarAwal = localStorage.getItem(APP.simpanan + '/dasar') || 'osm'; } catch (e) {}
@@ -2339,10 +2356,25 @@ function buatPeta() {
   return m;
 }
 
+/** Buka/tutup lembar bawah di ponsel, lalu hitung ulang ukuran peta.
+    Tanpa invalidateSize, Leaflet masih memakai ukuran wadah yang lama dan
+    tampilannya melenceng dari desa. */
+function aturLembar(buka) {
+  if (window.innerWidth > 720) return;
+  document.body.classList.toggle('sheet-open', !!buka);
+  const t = $('#btn-sidebar');
+  if (t) t.setAttribute('aria-expanded', String(!!buka));
+  if (S.peta) setTimeout(() => S.peta.invalidateSize({ animate: false }), 260);
+}
+
 function fokusAwal() {
   const r = S.data.batas.desa && cincinLuar(S.data.batas.desa);
-  if (r && r.length > 2) S.peta.fitBounds(L.latLngBounds(r), { padding: [40, 40] });
-  else S.peta.setView(S.data.meta.pusat || APP.pusat, APP.zoom);
+  const sempit = window.innerWidth <= 720;
+  if (r && r.length > 2) {
+    S.peta.fitBounds(L.latLngBounds(r), { padding: sempit ? [14, 14] : [40, 40] });
+  } else {
+    S.peta.setView(S.data.meta.pusat || APP.pusat, APP.zoom);
+  }
 }
 
 /** Wilayah jelajah peta: kotak di sekitar pusat desa, digabung dengan batas
@@ -2542,8 +2574,34 @@ function gambarBatas() {
       .addTo(S.lapis.wilayah);
   });
 
+  gambarFokus();
   terapkanBatasPeta();     // batas desa yang baru digambar ikut memperluas jelajah
   gambarLegenda();
+}
+
+/* ── Sorot wilayah desa ───────────────────────────────────────
+   Satu poligon selebar dunia dengan batas desa sebagai lubang.
+   Bagian luar teredam, jadi mata langsung tertuju ke desanya —
+   cara baku di GIS untuk menegaskan wilayah kajian. */
+function gambarFokus() {
+  const g = S.lapis.fokus;
+  if (!g) return;
+  g.clearLayers();
+
+  const r = S.data.batas.desa && cincinLuar(S.data.batas.desa);
+  if (!S.fokusDesa || !r || r.length < 3) return;
+
+  const dunia = [[-85, -180], [-85, 180], [85, 180], [85, -180]];
+  L.polygon([dunia, r], gy({
+    pane: 'p-fokus', interactive: false, stroke: false,
+    fillColor: 'var(--plane)', fillOpacity: .68
+  })).addTo(g);
+}
+
+function alihFokus(nyala) {
+  S.fokusDesa = nyala;
+  try { localStorage.setItem(APP.simpanan + '/fokus', JSON.stringify(nyala)); } catch (e) {}
+  gambarFokus();
 }
 
 /* ── Penanda tempat ───────────────────────────────────────── */
@@ -2614,7 +2672,7 @@ function sorotTempat(id) {
   mk.openPopup();
   const el = mk.getElement && mk.getElement();
   if (el) { const p = el.querySelector('.poi-pin'); if (p) { p.classList.add('on'); setTimeout(() => p.classList.remove('on'), 2200); } }
-  if (window.innerWidth <= 720) document.body.classList.remove('sheet-open');
+  aturLembar(false);
 }
 
 /* ── Pemilih mode peta (bergambar, seperti peta daring umumnya) ── */
@@ -2695,6 +2753,7 @@ function buatPanelLapis() {
 
   $('#layer-panel').innerHTML = `
     <h3 style="font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:2px 0 4px 2px">Layer data</h3>
+    <label class="switch"><input type="checkbox" data-fokus ${S.fokusDesa ? 'checked' : ''} ${punyaBatas ? '' : 'disabled'}><span class="track"></span><span class="sw-label">Sorot wilayah desa${punyaBatas ? '<small>Redupkan luar batas</small>' : '<small>Perlu batas desa</small>'}</span></label>
     <label class="switch"><input type="checkbox" data-lapis="batas" ${punyaBatas ? 'checked' : ''} ${punyaBatas ? '' : 'disabled'}><span class="track"></span><span class="sw-label">Batas desa${punyaBatas ? '' : '<small>Belum digambar</small>'}</span></label>
     ${punyaBatas && S.aktif.batas !== false ? geser('batas') : ''}
     <label class="switch"><input type="checkbox" data-lapis="wilayah" ${punyaDusun ? 'checked' : ''} ${punyaDusun ? '' : 'disabled'}><span class="track"></span><span class="sw-label">Dusun / RW${punyaDusun ? '' : '<small>Belum digambar</small>'}</span></label>
@@ -3767,13 +3826,15 @@ function gambarUlang(nama) {
   gambarPanel(S.tabAktif);
 }
 
-function pilihTab(nama) {
+/** `bukaLembar: false` dipakai saat pemuatan awal — di ponsel, peta yang
+    harus terlihat lebih dulu, bukan panelnya. */
+function pilihTab(nama, bukaLembar) {
   S.tabAktif = nama;
   $$('.tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === nama)));
   $$('.panel').forEach(p => { p.hidden = p.dataset.panel !== nama; });
   gambarPanel(nama);
   const wrap = $('.panels'); if (wrap) wrap.scrollTop = 0;
-  if (window.innerWidth <= 720) document.body.classList.add('sheet-open');
+  if (bukaLembar !== false) aturLembar(true);
 }
 
 
@@ -4378,7 +4439,7 @@ function mulaiGambar(o) {
 
   if (o.tipe === 'ukur') $('#btn-measure').setAttribute('aria-pressed', 'true');
   perbaruiGambar();
-  if (window.innerWidth <= 720) document.body.classList.remove('sheet-open');
+  aturLembar(false);
 }
 
 function klikGambar(e) {
@@ -4508,7 +4569,7 @@ function modeTambahTempat(draf) {
   $('#draw-hud').innerHTML = `<span class="hud-txt">${draf && draf.nama
       ? `Klik letak untuk “${esc(draf.nama)}”` : 'Klik di peta untuk menaruh tempat baru'}</span>
     <button class="btn sm" data-gambar-batal>Batal</button>`;
-  if (window.innerWidth <= 720) document.body.classList.remove('sheet-open');
+  aturLembar(false);
 
   const sekali = e => {
     S.peta.off('click', sekali);
@@ -5395,14 +5456,14 @@ function bukaHasil(h) {
   if (h.jenis === 'tempat') sorotTempat(h.id);
   else if (h.jenis === 'dusun') zoomDusun(h.idx);
   else if (h.ll) S.peta.setView(h.ll, 14, { animate: true });
-  if (window.innerWidth <= 720) document.body.classList.remove('sheet-open');
+  aturLembar(false);
 }
 
 function zoomDusun(i) {
   const d = S.data.batas.dusun[i];
   const r = d && d.geo && cincinLuar(d.geo);
   if (r && r.length > 2) S.peta.fitBounds(L.latLngBounds(r), { padding: [40, 40] });
-  if (window.innerWidth <= 720) document.body.classList.remove('sheet-open');
+  aturLembar(false);
 }
 
 /* ── Interaksi global ─────────────────────────────────────── */
@@ -5415,10 +5476,8 @@ function pasangInteraksi() {
   $('#btn-theme').addEventListener('click', () =>
     terapkanTema(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
   $('#btn-admin').addEventListener('click', () => alihAdmin());
-  $('#btn-sidebar').addEventListener('click', () => {
-    const on = document.body.classList.toggle('sheet-open');
-    $('#btn-sidebar').setAttribute('aria-expanded', String(on));
-  });
+  $('#btn-sidebar').addEventListener('click', () =>
+    aturLembar(!document.body.classList.contains('sheet-open')));
 
   /* Alat peta */
   $('#btn-layers').addEventListener('click', () => {
@@ -5472,6 +5531,7 @@ function pasangInteraksi() {
 
   /* Panel layer */
   $('#layer-panel').addEventListener('change', e => {
+    if (e.target.matches('[data-fokus]')) return alihFokus(e.target.checked);
     const c = e.target.closest('[data-lapis]');
     if (!c) return;
     alihLapis(c.dataset.lapis, c.checked);
@@ -5610,7 +5670,7 @@ function aksiKlik(e) {
   if ((n = T('[data-ke-koord]'))) {
     const [la, lo] = n.dataset.keKoord.split(',').map(Number);
     S.peta.setView([la, lo], 14, { animate: true });
-    if (window.innerWidth <= 720) document.body.classList.remove('sheet-open');
+    aturLembar(false);
     return;
   }
 
@@ -5719,7 +5779,7 @@ function mulai() {
   siapkanTooltip();
   buatPeta();
   pasangInteraksi();
-  pilihTab('beranda');
+  pilihTab('beranda', false);   // di ponsel, peta dulu yang terlihat
 
   if (S.data.meta.demo) $('#demo-bar').hidden = false;
 

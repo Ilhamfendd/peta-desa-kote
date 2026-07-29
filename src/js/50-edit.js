@@ -62,7 +62,7 @@ function mulaiGambar(o) {
 
   if (o.tipe === 'ukur') $('#btn-measure').setAttribute('aria-pressed', 'true');
   perbaruiGambar();
-  if (window.innerWidth <= 720) document.body.classList.remove('sheet-open');
+  aturLembar(false);
 }
 
 function klikGambar(e) {
@@ -192,7 +192,7 @@ function modeTambahTempat(draf) {
   $('#draw-hud').innerHTML = `<span class="hud-txt">${draf && draf.nama
       ? `Klik letak untuk “${esc(draf.nama)}”` : 'Klik di peta untuk menaruh tempat baru'}</span>
     <button class="btn sm" data-gambar-batal>Batal</button>`;
-  if (window.innerWidth <= 720) document.body.classList.remove('sheet-open');
+  aturLembar(false);
 
   const sekali = e => {
     S.peta.off('click', sekali);

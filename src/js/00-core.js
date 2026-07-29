@@ -271,6 +271,7 @@ const S = {
   markerTempat: new Map(),
   admin: false,
   labelTempat: null,    // null = ikut peta dasar, true/false = paksaan pengguna
+  fokusDesa: true,      // redupkan area di luar batas desa
   mode: null,           // null | 'tempat' | 'batas' | 'dusun' | 'ukur'
   cuaca: null,
   tabAktif: 'beranda'
