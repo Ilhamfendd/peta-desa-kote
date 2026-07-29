@@ -101,5 +101,19 @@
     }
   },
   "batas": { "desa": null, "dusun": [] },
-  "tempat": []
+  "tempat": [
+    {
+      "id": "osm-dermaga-kote",
+      "nama": "Dermaga Kote",
+      "kategori": "infrastruktur",
+      "deskripsi": "Dermaga di pesisir Desa Kote. BPS mencatat Kote memiliki satu-satunya pelabuhan di Kecamatan Singkep Pesisir, tempat singgah kapal angkutan barang.\n\nKoordinat dari OpenStreetMap (man_made=pier); namanya belum tercatat di sana, jadi mohon dipastikan di lapangan.",
+      "alamat": "",
+      "kontak": "",
+      "jam": "",
+      "website": "",
+      "foto": "",
+      "lat": -0.362489,
+      "lon": 104.506733
+    }
+  ]
 }
