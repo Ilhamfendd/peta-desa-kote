@@ -322,6 +322,12 @@ Bila ubin gagal dimuat, aplikasi otomatis beralih ke mode **Luring**.
 
 ---
 
+## Apa yang masih perlu dikumpulkan
+
+Daftar kerja lengkap ada di **[DATA-YANG-DIBUTUHKAN.md](DATA-YANG-DIBUTUHKAN.md)** —
+memilah mana yang sudah terisi, mana yang tinggal diminta ke kantor desa, dan mana
+yang harus disurvei sendiri, lengkap dengan daftar periksa fasilitas.
+
 ## Data yang sudah terisi
 
 Ditanam lewat `src/data.json`, semuanya dari sumber resmi:
