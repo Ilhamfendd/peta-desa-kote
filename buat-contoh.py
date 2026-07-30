@@ -3,17 +3,18 @@
 
     python buat-contoh.py
 
-Hasil: contoh-peta-desa-kote.html — berkas terpisah, berlabel jelas di dalam
+Hasil: lokal/contoh-peta-desa-kote.html — berkas terpisah, berlabel jelas di dalam
 aplikasinya, dan memakai penyimpanan browser sendiri. `peta-desa-kote.html`
 tidak tersentuh sama sekali.
 
-Membatalkannya: hapus berkas contoh itu. Tidak ada yang perlu dipulihkan.
+Membatalkannya: hapus berkas di folder lokal/. Tidak ada yang perlu dipulihkan.
 """
 import json, math, pathlib, re, sys
 
 AKAR = pathlib.Path(__file__).parent
 ASLI = AKAR / 'peta-desa-kote.html'
-KELUARAN = AKAR / 'contoh-peta-desa-kote.html'
+LOKAL = AKAR / 'lokal'
+KELUARAN = LOKAL / 'contoh-peta-desa-kote.html'
 
 CY, CX = -0.3657998, 104.5098449          # pusat Desa Kote (simpul OSM)
 R_BUMI = 6371008.8
@@ -170,6 +171,7 @@ def main():
     html = pola.sub(lambda m: m.group(1) + isi + m.group(2), html, count=1)
     html = html.replace('<title>Peta Digital Desa Kote', '<title>[CONTOH] Peta Digital Desa Kote')
 
+    LOKAL.mkdir(exist_ok=True)
     KELUARAN.write_text(html, encoding='utf-8')
 
     st = data['statistik']
@@ -177,7 +179,7 @@ def main():
     print(f'  {len(data["tempat"])} tempat - {len(data["batas"]["dusun"])} dusun - '
           f'luas {st["ringkas"]["luas"]} km2')
     print(f'  {ASLI.name} tidak disentuh')
-    print('\n  Membatalkan: hapus contoh-peta-desa-kote.html')
+    print('\n  Membatalkan: hapus folder lokal/')
 
 
 if __name__ == '__main__':

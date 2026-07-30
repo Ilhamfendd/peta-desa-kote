@@ -3,13 +3,11 @@
 .env
 .env.*
 
-# Berkas pratinjau berisi data karangan — jangan pernah dipublikasikan
-contoh-peta-desa-kote.html
 
 # Sampah Python
 __pycache__/
 *.pyc
 
-# Keluaran skrip pengambil data (buat ulang: python ambil-tempat.py)
-tempat-osm.csv
-uji-tempat.csv
+# Berkas kerja lokal — hasil olahan, tidak pernah ikut ke GitHub.
+# Termasuk berkas pratinjau berisi data karangan dan keluaran ambil-tempat.py.
+lokal/

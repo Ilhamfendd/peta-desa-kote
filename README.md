@@ -124,7 +124,7 @@ samping lambang KKN. Nama tim, institusi, dan tahun juga bisa diubah di sana.
 
 ## Berkas pratinjau berisi data karangan
 
-`contoh-peta-desa-kote.html` dibuat khusus untuk melihat wujud aplikasi dalam
+`lokal/contoh-peta-desa-kote.html` dibuat khusus untuk melihat wujud aplikasi dalam
 keadaan terisi. **Seluruh angka dan tempat di dalamnya karangan** — bukan data
 Desa Kote.
 
@@ -137,7 +137,7 @@ Pengamannya berlapis:
   tidak mungkin bocor ke berkas asli
 - Tombol **Kosongkan** di bilah itu mengembalikannya ke keadaan kosong
 
-Membatalkannya: **hapus saja berkasnya.** Tidak ada yang perlu dipulihkan.
+Membatalkannya: **hapus folder `lokal/`.** Tidak ada yang perlu dipulihkan.
 Untuk membuatnya lagi: `python buat-contoh.py`
 
 ## Cara mengisi data
@@ -368,6 +368,23 @@ jadi tidak ditaruh di peta, karena menebak letaknya sama saja mengarang.
 > batas wilayah dan daftar tempat harus digambar sendiri.
 
 ---
+
+## Susunan folder
+
+```
+peta-desa-kote/
+├── peta-desa-kote.html   ← hasil akhir, satu berkas (ikut ke GitHub)
+├── public/               ← yang disajikan Vercel
+├── src/                  ← sumber aplikasi
+├── *.py                  ← perkakas: build, terbitkan, ambil-tempat, buat-contoh
+├── *.md                  ← dokumentasi
+└── lokal/                ← berkas kerja, TIDAK PERNAH ikut ke GitHub
+```
+
+Folder **`lokal/`** menampung apa pun yang sifatnya hasil olahan atau coba-coba:
+berkas pratinjau berisi data karangan, keluaran `ambil-tempat.py`, dan CSV yang
+sedang Anda sunting. Seluruh isinya diabaikan git lewat satu baris `lokal/` di
+`.gitignore` — jadi berkas baru di situ otomatis aman tanpa perlu diatur lagi.
 
 ## Membangun ulang dari sumber
 

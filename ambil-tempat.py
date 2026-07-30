@@ -3,7 +3,7 @@
 
     python ambil-tempat.py                      # radius 6 km dari pusat Desa Kote
     python ambil-tempat.py --radius 25          # perluas jangkauan
-    python ambil-tempat.py --lat -0.49 --lon 104.58 --radius 8 --keluaran dabo.csv
+    python ambil-tempat.py --lat -0.49 --lon 104.58 --radius 8 --keluaran lokal/dabo.csv
 
 Hasilnya berkas CSV dengan kolom yang sama persis seperti ekspor aplikasi,
 jadi bisa langsung dimuat lewat **Kelola → Tempat → Muat dari CSV**.
@@ -11,7 +11,7 @@ jadi bisa langsung dimuat lewat **Kelola → Tempat → Muat dari CSV**.
 Sumber: OpenStreetMap, lisensi ODbL — bebas dipakai dan disebarkan selama
 sumbernya dicantumkan. Aplikasi sudah mencantumkannya di bilah bawah peta.
 """
-import argparse, csv, json, sys, time, urllib.error, urllib.request
+import argparse, csv, json, pathlib, sys, time, urllib.error, urllib.request
 
 CERMIN = [
     'https://overpass.kumi.systems/api/interpreter',
@@ -145,7 +145,7 @@ def main():
     ap.add_argument('--lat', type=float, default=PUSAT[0])
     ap.add_argument('--lon', type=float, default=PUSAT[1])
     ap.add_argument('--radius', type=float, default=6, help='kilometer (bawaan 6)')
-    ap.add_argument('--keluaran', default='tempat-osm.csv')
+    ap.add_argument('--keluaran', default='lokal/tempat-osm.csv')
     a = ap.parse_args()
 
     print(f'  mengambil dari OpenStreetMap — radius {a.radius:g} km '
@@ -172,6 +172,7 @@ def main():
     unik.sort(key=lambda b: (b['Kategori'], b['Nama']))
 
     # BOM + titik koma: supaya Excel Indonesia membukanya dengan benar
+    pathlib.Path(a.keluaran).parent.mkdir(parents=True, exist_ok=True)
     with open(a.keluaran, 'w', encoding='utf-8-sig', newline='') as f:
         w = csv.DictWriter(f, fieldnames=KOLOM, delimiter=';')
         w.writeheader()
