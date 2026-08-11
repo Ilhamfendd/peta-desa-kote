@@ -823,7 +823,10 @@ svg[viewBox="0 0 24 24"] .fill { fill: currentColor; stroke: none; }
   border-bottom: 1px solid var(--brand-2);
   position: relative; z-index: 900;
 }
-.brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; color: inherit; text-decoration: none; }
+/* Baru terasa bisa diklik saat memang jadi tautan ke situs desa */
+a.brand[href] { border-radius: 8px; padding: 3px 6px; margin: -3px -6px; transition: background .15s; }
+a.brand[href]:hover { background: var(--wash); }
 
 /* Lambang KKN dipasang sebagai mask, jadi tintanya mengikuti currentColor.
    Tanpa dukungan mask, kotaknya dibiarkan kosong — bukan blok warna. */
@@ -1849,13 +1852,15 @@ body.admin .list.admin-only { display: flex; }
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
 
-    <div class="brand">
+    <!-- Jadi tautan ke situs desa hanya bila peta dibuka lewat web; saat berkasnya
+         dibuka langsung dari komputer, ia tetap teks biasa. Diatur di 99-init.js -->
+    <a class="brand" id="brand">
       <span class="brand-badge" aria-hidden="true"><span class="brand-mark logo-kkn"></span></span>
       <span class="brand-txt">
         <strong id="brand-name">Desa Kote</strong>
         <small id="brand-sub">Singkep Pesisir · Lingga · Kep. Riau</small>
       </span>
-    </div>
+    </a>
 
     <div class="search-wrap">
       <svg class="search-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
@@ -2010,7 +2015,7 @@ body.admin .list.admin-only { display: flex; }
     "tim": "KKN Kelompok 67",
     "institusi": "",
     "tahun": "2026",
-    "urlPublik": "https://peta-desa-kote.vercel.app"
+    "urlPublik": "https://peta-desa-kote.vercel.app/peta"
   },
   "statistik": {
     "ringkas": {
@@ -5453,6 +5458,12 @@ function bangunHTMLMandiri() {
   const tip = doc.querySelector('.chart-tip'); if (tip) tip.remove();
   const mb = doc.querySelector('.modal-bg'); if (mb) mb.remove();
 
+  // Tautan pulang ke situs desa dilepas: berkas hasil ekspor sering dibuka
+  // langsung dari komputer, dan "/" di sana menunjuk ke akar penyimpanan.
+  // mulai() memasangnya kembali sendiri bila berkasnya disajikan lewat web.
+  const merek = doc.querySelector('#brand');
+  if (merek) { merek.removeAttribute('href'); merek.removeAttribute('title'); }
+
   doc.querySelector('body').className = '';
   doc.querySelectorAll('.panel').forEach((p, i) => { p.hidden = i !== 0; });
   doc.querySelectorAll('.tabs button').forEach((b, i) => b.setAttribute('aria-selected', String(i === 0)));
@@ -6450,6 +6461,15 @@ function mulai() {
   $('#brand-name').textContent = S.data.meta.nama;
   $('#brand-sub').textContent = `${S.data.meta.kecamatan} · ${S.data.meta.kabupaten} · ${S.data.meta.provinsi}`;
   document.title = `Peta Digital ${S.data.meta.nama} — ${S.data.meta.kecamatan}, ${S.data.meta.kabupaten}`;
+
+  // Peta ini juga dipasang di /peta pada situs desa. Bila dibuka lewat web,
+  // merek di kiri atas menjadi jalan pulang ke halaman profil desa; bila
+  // berkasnya dibuka langsung dari komputer, ia dibiarkan sebagai teks biasa.
+  if (location.protocol === 'http:' || location.protocol === 'https:') {
+    const merek = $('#brand');
+    merek.href = '/';
+    merek.title = `Buka situs ${S.data.meta.nama}`;
+  }
 
   siapkanTooltip();
   buatPeta();

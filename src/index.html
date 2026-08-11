@@ -17,13 +17,15 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
 
-    <div class="brand">
+    <!-- Jadi tautan ke situs desa hanya bila peta dibuka lewat web; saat berkasnya
+         dibuka langsung dari komputer, ia tetap teks biasa. Diatur di 99-init.js -->
+    <a class="brand" id="brand">
       <span class="brand-badge" aria-hidden="true"><span class="brand-mark logo-kkn"></span></span>
       <span class="brand-txt">
         <strong id="brand-name">Desa Kote</strong>
         <small id="brand-sub">Singkep Pesisir · Lingga · Kep. Riau</small>
       </span>
-    </div>
+    </a>
 
     <div class="search-wrap">
       <svg class="search-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>

@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
-"""Terbitkan peta terbaru ke internet.
+"""Terbitkan website desa dan peta terbaru ke internet.
 
     python terbitkan.py                            # pesan commit otomatis
     python terbitkan.py "perbarui data penduduk"
 
-Menyalin peta ke folder public/, mencatatnya sebagai commit, lalu push ke
-GitHub. Vercel tersambung ke repo itu, jadi push sekaligus menerbitkan.
+Merakit peta (build.py), membangun website profil (bangun-situs.py), lalu
+mencatatnya sebagai commit dan push ke GitHub. Vercel tersambung ke repo itu,
+jadi push sekaligus menerbitkan.
 
-    https://peta-desa-kote.vercel.app
+    https://peta-desa-kote.vercel.app        profil desa
+    https://peta-desa-kote.vercel.app/peta   peta digital
 """
-import pathlib, shutil, subprocess, sys
+import pathlib, subprocess, sys
 from datetime import date
 
 AKAR = pathlib.Path(__file__).parent
@@ -22,13 +24,13 @@ def jalankan(*perintah):
 
 
 def main():
+    for skrip in ('build.py', 'bangun-situs.py'):
+        r = subprocess.run([sys.executable, skrip], cwd=AKAR)
+        if r.returncode:
+            sys.exit(f'{skrip} gagal — perbaiki dulu sebelum menerbitkan')
+
     if not PETA.exists():
         sys.exit('peta-desa-kote.html belum ada — jalankan python build.py dulu')
-
-    PUBLIC.mkdir(exist_ok=True)
-    for nama in ('index.html', 'peta-desa-kote.html'):
-        shutil.copy2(PETA, PUBLIC / nama)
-    print(f'  disalin ke public/  ({PETA.stat().st_size / 1024:,.0f} KB)')
 
     if not jalankan('git', 'status', '--porcelain').stdout.strip():
         print('  tidak ada perubahan — tidak ada yang perlu diterbitkan')

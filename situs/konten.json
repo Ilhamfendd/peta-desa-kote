@@ -1,0 +1,111 @@
+{
+  "_petunjuk": [
+    "Seluruh isi website profil desa ada di berkas ini. Sunting di sini, lalu jalankan:",
+    "    python bangun-situs.py",
+    "",
+    "Aturan: jangan mengarang. Bagian yang masih kosong TIDAK ditampilkan di website,",
+    "dan akan disebut oleh skrip pembangun sebagai pengingat.",
+    "",
+    "Teks panjang boleh memakai baris kosong untuk memisahkan paragraf."
+  ],
+
+  "situs": {
+    "nama": "Desa Kote",
+    "kecamatan": "Singkep Pesisir",
+    "kabupaten": "Lingga",
+    "provinsi": "Kepulauan Riau",
+    "kode": "21.04.06.2004",
+    "kodepos": "29870",
+    "pusat": [-0.3657998, 104.5098449],
+    "tagline": "Desa pesisir di utara Pulau Singkep",
+    "deskripsi": "Profil resmi Desa Kote, Kecamatan Singkep Pesisir, Kabupaten Lingga, Kepulauan Riau. Data wilayah, kependudukan, potensi, layanan, dan peta digital desa.",
+    "alamat": "",
+    "telepon": "",
+    "email": "",
+    "tim": "KKN Kelompok 67",
+    "institusi": "",
+    "tahun": "2026"
+  },
+
+  "angka": {
+    "penduduk": 1033,
+    "lakiLaki": 537,
+    "perempuan": 496,
+    "luas": 13.55,
+    "rt": 10,
+    "rw": 5,
+    "kk": null,
+    "dusun": null,
+    "kepadatan": 76,
+    "sumber": "BPS Kabupaten Lingga — Kecamatan Singkep Pesisir Dalam Angka 2024 (data 2023)"
+  },
+
+  "beranda": {
+    "sambutan": {
+      "judul": "",
+      "teks": "",
+      "oleh": "",
+      "jabatan": "Kepala Desa Kote"
+    }
+  },
+
+  "profil": {
+    "sejarah": "",
+    "visi": "",
+    "misi": [],
+    "geografis": "Desa Kote terletak di pesisir utara Pulau Singkep, menghadap Selat Berhala. Wilayahnya memanjang mengikuti garis pantai, dengan permukiman terpusat di sepanjang jalan yang menghubungkan Dabo Singkep dengan Pelabuhan Jagoh.",
+    "batasWilayah": {
+      "utara": "",
+      "timur": "",
+      "selatan": "",
+      "barat": ""
+    },
+    "jarak": [
+      { "ke": "Ibu kota kecamatan (Air Pelangi, Desa Lanjut)", "km": 11 }
+    ]
+  },
+
+  "pemerintahan": {
+    "pengantar": "",
+    "perangkat": [],
+    "lembaga": []
+  },
+
+  "potensi": {
+    "pengantar": "",
+    "sektor": [
+      {
+        "nama": "Perikanan",
+        "sifat": "laut",
+        "teks": "Perikanan tangkap menjadi mata pencaharian utama warga. Desa Kote memiliki satu-satunya pelabuhan di Kecamatan Singkep Pesisir, tempat singgah kapal angkutan barang.",
+        "sumber": "BPS — Statistik Daerah Kecamatan Singkep Pesisir 2016 (data 2015), perlu diperiksa ulang"
+      },
+      {
+        "nama": "Industri mikro",
+        "sifat": "darat",
+        "teks": "Desa Kote tercatat sebagai desa dengan jumlah industri mikro terbanyak di kecamatannya.",
+        "sumber": "BPS — Statistik Daerah Kecamatan Singkep Pesisir 2016 (data 2015), perlu diperiksa ulang"
+      },
+      {
+        "nama": "Pulau Serang",
+        "sifat": "laut",
+        "teks": "Tercatat sebagai objek wisata Desa Kote.",
+        "sumber": "BPS — Statistik Daerah Kecamatan Singkep Pesisir 2016 (data 2015), perlu diperiksa ulang"
+      }
+    ],
+    "umkm": []
+  },
+
+  "berita": [],
+
+  "layanan": {
+    "pengantar": "",
+    "jam": [],
+    "daftar": []
+  },
+
+  "unduhan": {
+    "pengantar": "Peta cetak dan dokumen Desa Kote yang bisa diunduh bebas. Peta disusun dengan QGIS memakai data batas dan titik lokasi milik desa.",
+    "keterangan": {}
+  }
+}

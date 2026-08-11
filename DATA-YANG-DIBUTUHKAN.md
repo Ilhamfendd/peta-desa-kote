@@ -1,13 +1,15 @@
-# Data yang perlu dikumpulkan — Peta Digital Desa Kote
+# Data yang perlu dikumpulkan — Desa Kote
 
-Daftar kerja untuk tim KKN Kelompok 67. Dicek terakhir: **29 Juli 2026**.
+Daftar kerja untuk tim KKN Kelompok 67. Dicek terakhir: **11 Agustus 2026**.
 
-Aplikasinya sudah jadi; yang tersisa adalah mengisinya. Dokumen ini memilah mana
-yang sudah ada, mana yang tinggal diminta, dan mana yang harus disurvei sendiri.
+Dua hal sudah jadi dan tinggal diisi: **peta digital** (`/peta`) dan **website
+profil desa** (`/`). Dokumen ini memilah mana yang sudah ada, mana yang tinggal
+diminta, dan mana yang harus disurvei sendiri.
 
 > **Aturan yang dipegang sejak awal:** tidak ada angka yang boleh dikarang.
-> Kolom yang belum ada sumbernya dibiarkan kosong dan tampil "Belum diisi" —
-> itu lebih jujur daripada diisi perkiraan.
+> Kolom yang belum ada sumbernya dibiarkan kosong — di peta tampil "Belum diisi",
+> di website bagiannya tidak ditampilkan sama sekali. Itu lebih jujur daripada
+> diisi perkiraan.
 
 ---
 
@@ -19,6 +21,14 @@ yang sudah ada, mana yang tinggal diminta, dan mana yang harus disurvei sendiri.
 | 📄 Tinggal diminta ke kantor desa | 10 data |
 | 🚶 Harus disurvei sendiri | tempat + batas wilayah |
 | ✍️ Perlu ditulis/diputuskan desa | 5 data |
+| 🌐 Isi website profil | 11 bagian |
+
+Ada dua berkas isian, masing-masing punya cara mengisi sendiri:
+
+| Isi apa | Diisi di mana |
+|---|---|
+| Statistik, tempat, batas wilayah | Peta digital → mode **Kelola** di browser |
+| Teks halaman website | `situs/konten.json`, lalu `python bangun-situs.py` |
 
 ---
 
@@ -210,6 +220,67 @@ Ditulis atau dikutip dari dokumen desa. Masuk ke **Kelola → Profil & kontak**.
 - [ ] **Potensi desa** — sudah ada isian awal dari BPS 2016 (pelabuhan, industri
       mikro, Pulau Serang), tapi **perlu diperiksa apakah masih berlaku**
 - [ ] **Website desa** bila ada
+
+---
+
+## 🌐 Prioritas 5 — Isi website profil desa
+
+Sejak website profil dibuat, ada **satu berkas lagi** yang perlu diisi:
+`situs/konten.json`. Sunting dengan Notepad, VS Code, atau editor teks apa pun,
+lalu jalankan `python bangun-situs.py`.
+
+Skrip itu akan **menyebutkan sendiri bagian mana yang masih kosong** setiap kali
+dijalankan — jadi daftar di bawah ini bisa dicek langsung dari layar.
+
+> Bagian yang kosong **tidak ditampilkan** di website. Tidak akan ada tulisan
+> "Lorem ipsum" atau nama karangan yang terlanjur ikut terbit.
+
+### Halaman Beranda
+- [ ] **Sambutan kepala desa** — judul, isi sambutan, nama, jabatan
+
+### Halaman Profil
+- [ ] **Sejarah desa** — asal usul nama Kote *(sama dengan Prioritas 4)*
+- [ ] **Visi & misi** *(sama dengan Prioritas 4)*
+- [ ] **Batas wilayah** — sebelah utara, timur, selatan, barat
+
+### Halaman Pemerintahan
+- [ ] **Perangkat desa** — nama, jabatan, dan foto tiap orang
+- [ ] **Lembaga desa** — BPD, LPM, PKK, Karang Taruna, beserta keterangannya
+
+### Halaman Potensi & UMKM
+- [ ] **Daftar UMKM warga** — nama usaha, jenis produk, kontak
+- [ ] **Periksa ulang isian potensi** — sekarang masih dari BPS 2016
+
+### Halaman Layanan
+- [ ] **Jam pelayanan** kantor desa
+- [ ] **Daftar surat** yang dilayani — untuk tiap surat: syarat, lama pengurusan,
+      biaya. Ini bagian yang paling sering dicari warga.
+
+### Halaman Berita & Kegiatan
+- [ ] **Tulisan kegiatan** — judul, tanggal, ringkasan, isi
+
+### Halaman Unduhan
+- [ ] **Peta cetak hasil QGIS** — ekspor sebagai PDF atau PNG, lalu taruh
+      berkasnya di folder `public/unduhan/`. Otomatis muncul di halaman Unduhan
+      lengkap dengan ukuran berkasnya.
+
+Bahan untuk menyusun peta QGIS-nya **sudah tersedia** dan ikut diperbarui sendiri
+tiap kali dibangun, di folder yang sama:
+
+| Berkas | Isi |
+|---|---|
+| `desa-kote-peta-dasar.geojson` | Jalan, garis pantai, perairan, pulau (OSM) |
+| `desa-kote-tempat.geojson` | Titik lokasi & fasilitas desa |
+| `desa-kote-batas.geojson` | Batas desa & dusun — muncul setelah batasnya digambar |
+| `desa-kote-batas-usulan-gadm.geojson` | Rancangan batas GADM, **bukan batas resmi** |
+
+Di QGIS: **Layer → Add Layer → Add Vector Layer**, pilih berkasnya. Sistem
+koordinatnya WGS 84 (EPSG:4326).
+
+### Kontak desa
+- [ ] **Alamat kantor desa**, telepon, surel — masuk ke `situs.alamat`,
+      `situs.telepon`, `situs.email`. Tampil di kaki setiap halaman.
+- [ ] **Nama institusi** tim KKN — `situs.institusi`
 
 ---
 

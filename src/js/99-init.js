@@ -441,6 +441,15 @@ function mulai() {
   $('#brand-sub').textContent = `${S.data.meta.kecamatan} · ${S.data.meta.kabupaten} · ${S.data.meta.provinsi}`;
   document.title = `Peta Digital ${S.data.meta.nama} — ${S.data.meta.kecamatan}, ${S.data.meta.kabupaten}`;
 
+  // Peta ini juga dipasang di /peta pada situs desa. Bila dibuka lewat web,
+  // merek di kiri atas menjadi jalan pulang ke halaman profil desa; bila
+  // berkasnya dibuka langsung dari komputer, ia dibiarkan sebagai teks biasa.
+  if (location.protocol === 'http:' || location.protocol === 'https:') {
+    const merek = $('#brand');
+    merek.href = '/';
+    merek.title = `Buka situs ${S.data.meta.nama}`;
+  }
+
   siapkanTooltip();
   buatPeta();
   pasangInteraksi();

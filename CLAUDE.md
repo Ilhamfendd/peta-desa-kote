@@ -12,8 +12,11 @@ kode, dan penjelasan memakai bahasa Indonesia.**
    tidak ada di sumber publik. Berkas terbit dikirim **kosong**; angka hanya boleh
    masuk lewat mode Kelola oleh pengelola desa. Bila butuh data contoh untuk menguji
    tampilan, taruh di luar folder proyek dan beri label jelas.
-2. **Jangan sunting `peta-desa-kote.html` langsung** — itu hasil rakitan.
-   Sunting `src/`, lalu jalankan `python build.py`.
+2. **Jangan sunting berkas hasil rakitan.** `peta-desa-kote.html` dirakit dari
+   `src/` oleh `build.py`; seluruh `public/*.html` dan `public/peta/index.html`
+   dirakit dari `situs/` oleh `bangun-situs.py`. Sunting sumbernya, lalu bangun
+   ulang. Satu-satunya isi `public/` yang boleh disentuh langsung adalah
+   `public/unduhan/` — itu folder isian.
 3. **Jangan ubah palet warna grafik statistik.** Palet kategorikal itu sudah
    tervalidasi untuk buta warna. Warna merek hanya mengendalikan antarmuka
    (bilah atas, tombol, aksen, batas desa) — bukan seri grafik.
@@ -21,8 +24,15 @@ kode, dan penjelasan memakai bahasa Indonesia.**
 ## Alur kerja
 
 ```
-python build.py          # src/ -> peta-desa-kote.html (satu berkas ~558 KB)
+python build.py          # src/   -> peta-desa-kote.html (satu berkas ~654 KB)
+python bangun-situs.py   # situs/ -> public/ (7 halaman + salinan peta)
+python terbitkan.py      # jalankan keduanya, lalu commit & push
 ```
+
+Satu alamat memuat dua hal: **profil desa di `/`**, **peta digital di `/peta`**.
+Peta tetap satu berkas mandiri yang bisa dibuka lewat `file://`; karena itu
+tautan pulang ke situs desa pada merek kiri-atas hanya dipasang bila
+`location.protocol` berupa http(s) — jangan diubah jadi `href` tetap di HTML.
 
 Modul JS di `src/js/` digabung urut nama (`00-` … `99-`) menjadi satu skrip klasik.
 Karena satu lingkup, deklarasi `function` ter-hoist antar berkas — tapi `const`/`let`
@@ -92,6 +102,26 @@ yang resmi sering sibuk.
 
 Cuaca & gelombang dari Open-Meteo (tanpa kunci API), termasuk API kelautan
 karena Kote adalah desa pesisir.
+
+## Website profil (`situs/`)
+
+Arahnya **peta laut**, karena Kote desa pesisir — bukan templat website desa.
+Tiga keputusan yang saling menopang, jangan dibongkar sebagian:
+
+1. **Hero-nya garis pantai Kote yang sebenarnya**, ditarik dari `src/basemap.json`
+   oleh `hero_svg()` dan digambar sebagai linework peta laut. Bukan hiasan:
+   kalau basemap diperbarui, hero ikut berubah.
+2. **Tipografi mengikuti kaidah peta navigasi** — perairan diset serif miring
+   (`.laut`, Newsreader italic), daratan diset sans tegak (Instrument Sans).
+   Kelas `.laut` dipasang dari `sifat: "laut"` di `konten.json`.
+3. **Magenta `#a8306f` adalah warna konvensi**, bukan selera — peta laut mencetak
+   suar dan catatan peringatan dengan magenta. Dipakai tipis untuk penanda saja.
+
+Palet: `--laut-dalam #0c2229`, `--laut #14424c`, `--kertas #f3f4f1`, ditambah
+hijau KKN yang sudah ada. Ini **terpisah** dari palet aplikasi peta.
+
+Aturan isi: bagian kosong **tidak dirender**, dan disebut di akhir proses bangun
+sebagai pengingat. Jangan menggantinya dengan teks contoh atau nama karangan.
 
 ## Identitas visual
 

@@ -61,6 +61,12 @@ function bangunHTMLMandiri() {
   const tip = doc.querySelector('.chart-tip'); if (tip) tip.remove();
   const mb = doc.querySelector('.modal-bg'); if (mb) mb.remove();
 
+  // Tautan pulang ke situs desa dilepas: berkas hasil ekspor sering dibuka
+  // langsung dari komputer, dan "/" di sana menunjuk ke akar penyimpanan.
+  // mulai() memasangnya kembali sendiri bila berkasnya disajikan lewat web.
+  const merek = doc.querySelector('#brand');
+  if (merek) { merek.removeAttribute('href'); merek.removeAttribute('title'); }
+
   doc.querySelector('body').className = '';
   doc.querySelectorAll('.panel').forEach((p, i) => { p.hidden = i !== 0; });
   doc.querySelectorAll('.tabs button').forEach((b, i) => b.setAttribute('aria-selected', String(i === 0)));

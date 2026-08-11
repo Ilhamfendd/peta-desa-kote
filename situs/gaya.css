@@ -1,0 +1,362 @@
+/* ═══════════════════════════════════════════════════════════
+   Website Profil Desa Kote — sistem gaya
+
+   Arah desain: peta laut. Desa Kote adalah desa pesisir, jadi
+   perbendaharaan visualnya diambil dari peta navigasi laut —
+   termasuk kaidah tipografinya: nama perairan diset serif miring,
+   nama daratan diset sans tegak.
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* Warna diambil dari peta laut cetak */
+  --laut-dalam: #0c2229;   /* perairan dalam — dasar hero */
+  --laut:       #14424c;   /* perairan dangkal */
+  --hijau:      #263f29;   /* hijau logo KKN — identitas yang sudah ada */
+  --hijau-2:    #2a5a2f;
+  --kertas:     #f3f4f1;   /* kertas peta */
+  --kertas-2:   #e8ebe6;
+  --magenta:    #a8306f;   /* konvensi peta laut: suar & catatan peringatan */
+
+  --tinta:      #101614;
+  --tinta-2:    #47514d;
+  --tinta-3:    #7f8985;
+  --garis:      #d5dad5;
+
+  --lebar:      68rem;
+  --sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--tinta);
+  background: var(--kertas);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 { margin: 0; line-height: 1.15; font-weight: 600; letter-spacing: -.02em; }
+p { margin: 0; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--magenta);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.wadah { width: min(100% - 2.5rem, var(--lebar)); margin-inline: auto; }
+
+/* Kaidah peta laut: apa pun yang bicara tentang perairan diset miring */
+.laut { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: 0; }
+
+/* Label kecil bergaya keterangan peta */
+.eyebrow {
+  font-size: .72rem; font-weight: 600;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--tinta-3);
+}
+.eyebrow .tanda { color: var(--magenta); }
+
+/* ─────────── Kepala & navigasi ─────────── */
+.kepala {
+  position: sticky; top: 0; z-index: 50;
+  background: color-mix(in srgb, var(--kertas) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--garis);
+}
+.kepala-isi { display: flex; align-items: center; gap: 1.25rem; height: 4.25rem; }
+
+.merek { display: flex; align-items: center; gap: .7rem; text-decoration: none; margin-right: auto; }
+.merek .lambang {
+  width: 2.3rem; height: 2.3rem; flex: none;
+  background: var(--hijau);
+  -webkit-mask: var(--logo) center / contain no-repeat;
+  mask: var(--logo) center / contain no-repeat;
+}
+.merek b { display: block; font-size: 1.02rem; font-weight: 650; letter-spacing: -.02em; }
+.merek small { display: block; font-size: .72rem; color: var(--tinta-3); letter-spacing: .02em; }
+
+.nav { display: flex; gap: .25rem; align-items: center; }
+.nav a {
+  padding: .45rem .7rem; border-radius: 6px;
+  font-size: .93rem; text-decoration: none; color: var(--tinta-2);
+  transition: background .15s, color .15s;
+}
+.nav a:hover { background: var(--kertas-2); color: var(--tinta); }
+.nav a[aria-current="page"] { color: var(--hijau-2); font-weight: 600; }
+.nav a.sorot {
+  background: var(--hijau); color: #fff; font-weight: 550;
+}
+.nav a.sorot:hover { background: var(--hijau-2); color: #fff; }
+
+.tombol-nav { display: none; }
+
+/* ─────────── Hero: garis pantai asli Desa Kote ─────────── */
+.hero {
+  position: relative; overflow: hidden;
+  background: var(--laut-dalam); color: #fff;
+  padding: clamp(3.5rem, 9vw, 7rem) 0 clamp(3rem, 7vw, 5.5rem);
+}
+.hero-peta { position: absolute; inset: 0; pointer-events: none; }
+.hero-peta svg { width: 100%; height: 100%; }
+/* Peta tetap terbaca di sisi kanan, teks tetap terbaca di sisi kiri */
+.hero-peta::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(100deg,
+    var(--laut-dalam) 0%, rgba(12, 34, 41, .88) 22%,
+    rgba(12, 34, 41, .38) 46%, rgba(12, 34, 41, 0) 64%);
+}
+
+/* Linework peta: daratan diisi tipis, garis pantai ditarik tegas */
+.pesisir-darat { fill: rgba(255, 255, 255, .085); stroke: none; }
+.pesisir-garis { fill: none; stroke: rgba(255, 255, 255, .62); stroke-width: 1.2; }
+.pesisir-jalan { fill: none; stroke: rgba(255, 255, 255, .2); stroke-width: .8; }
+.pesisir-kontur { fill: none; stroke: rgba(255, 255, 255, .09); stroke-width: .7; }
+.pesisir-titik { fill: #e0559b; }
+.pesisir-dering { fill: none; stroke: #e0559b; stroke-width: 1.4; opacity: .6; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .pesisir-garis, .pesisir-jalan, .pesisir-kontur {
+    stroke-dasharray: var(--panjang, 2000);
+    stroke-dashoffset: var(--panjang, 2000);
+    animation: tarik 2.4s cubic-bezier(.4, 0, .2, 1) forwards;
+  }
+  .pesisir-jalan { animation-delay: .5s; }
+  .pesisir-titik, .pesisir-dering { opacity: 0; animation: muncul .6s ease-out 1.6s forwards; }
+  .pesisir-dering { animation-name: denyut; animation-duration: 2.6s; animation-iteration-count: infinite; }
+}
+@keyframes tarik { to { stroke-dashoffset: 0; } }
+@keyframes muncul { to { opacity: 1; } }
+@keyframes denyut {
+  0%   { opacity: 0; r: 6; }
+  40%  { opacity: .5; }
+  100% { opacity: 0; r: 22; }
+}
+
+.hero-isi { position: relative; }
+.hero h1 {
+  font-size: clamp(2.7rem, 8.5vw, 5.5rem);
+  font-weight: 600; letter-spacing: -.045em; line-height: .95;
+  margin: .9rem 0 0;
+}
+.hero h1 .laut { display: block; font-size: .42em; letter-spacing: -.01em; color: rgba(255,255,255,.72); margin-top: .5rem; }
+.hero-lokasi {
+  margin-top: 1.6rem; max-width: 34rem;
+  font-size: 1.02rem; color: rgba(255, 255, 255, .78);
+}
+.hero-koordinat {
+  margin-top: 2.2rem; display: flex; flex-wrap: wrap; gap: .5rem 1.75rem;
+  font-size: .78rem; letter-spacing: .1em; color: rgba(255, 255, 255, .55);
+  font-variant-numeric: tabular-nums;
+}
+.hero-koordinat span { display: flex; align-items: center; gap: .5rem; }
+.hero-koordinat b { font-weight: 500; color: rgba(255, 255, 255, .82); }
+
+/* ─────────── Angka pokok ─────────── */
+.angka {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  border-top: 1px solid var(--garis);
+}
+.angka > div {
+  padding: 1.6rem 0 1.5rem;
+  border-right: 1px solid var(--garis);
+  padding-right: 1.25rem;
+}
+.angka > div:last-child { border-right: 0; }
+.angka dt { font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; color: var(--tinta-3); }
+.angka dd {
+  margin: .35rem 0 0; font-size: clamp(1.8rem, 3.4vw, 2.4rem);
+  font-weight: 600; letter-spacing: -.03em; font-variant-numeric: tabular-nums;
+}
+.angka dd em { font-style: normal; font-size: .42em; font-weight: 500; color: var(--tinta-3); letter-spacing: 0; }
+
+/* ─────────── Bagian umum ─────────── */
+.bagian { padding: clamp(3rem, 7vw, 5rem) 0; }
+.bagian + .bagian { border-top: 1px solid var(--garis); }
+/* Angka pokok menempel ke hero, bukan mengambang di tengah kekosongan */
+main > .bagian:first-child { padding-top: clamp(2rem, 4vw, 3rem); }
+.bagian-kepala { max-width: 46rem; margin-bottom: 2.5rem; }
+.bagian-kepala h2 {
+  font-size: clamp(1.7rem, 3.6vw, 2.4rem); margin-top: .7rem;
+}
+.bagian-kepala p { margin-top: .9rem; color: var(--tinta-2); }
+
+.prosa { max-width: 42rem; }
+.prosa p + p { margin-top: 1.1rem; }
+.prosa h3 { font-size: 1.15rem; margin: 2rem 0 .6rem; }
+
+/* Kartu */
+.kisi { display: grid; gap: 1.25rem; }
+.kisi-2 { grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
+.kisi-3 { grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+
+.kartu {
+  background: #fff; border: 1px solid var(--garis); border-radius: 10px;
+  padding: 1.4rem 1.5rem;
+}
+.kartu h3 { font-size: 1.1rem; }
+.kartu p { margin-top: .6rem; color: var(--tinta-2); font-size: .95rem; }
+.kartu .sumber {
+  display: block; margin-top: .9rem; padding-top: .8rem;
+  border-top: 1px solid var(--garis);
+  font-size: .76rem; color: var(--tinta-3); line-height: 1.5;
+}
+
+/* Kartu orang (perangkat desa) */
+.orang { display: flex; gap: 1rem; align-items: center; }
+.orang img, .orang .tanpa-foto {
+  width: 3.6rem; height: 3.6rem; border-radius: 50%; flex: none;
+  object-fit: cover; background: var(--kertas-2);
+}
+.orang b { display: block; font-size: 1rem; }
+.orang small { display: block; color: var(--tinta-3); font-size: .86rem; }
+
+/* Daftar berdefinisi (batas wilayah, jarak) */
+.definisi { display: grid; gap: 0; max-width: 34rem; }
+.definisi > div {
+  display: flex; justify-content: space-between; gap: 1.5rem;
+  padding: .8rem 0; border-bottom: 1px solid var(--garis);
+}
+.definisi dt { color: var(--tinta-3); font-size: .95rem; }
+.definisi dd { margin: 0; text-align: right; font-weight: 550; }
+
+/* Tombol */
+.tombol {
+  display: inline-flex; align-items: center; gap: .55rem;
+  padding: .7rem 1.15rem; border-radius: 7px;
+  background: var(--hijau); color: #fff;
+  font-size: .95rem; font-weight: 550; text-decoration: none;
+  transition: background .15s;
+}
+.tombol:hover { background: var(--hijau-2); }
+.tombol.garis { background: none; color: var(--tinta); border: 1px solid var(--garis); }
+.tombol.garis:hover { background: var(--kertas-2); }
+.tombol svg { width: 1.05em; height: 1.05em; }
+
+/* Ajakan ke peta */
+.ajak-peta {
+  position: relative; overflow: hidden;
+  background: var(--laut); color: #fff;
+  border-radius: 12px; padding: clamp(1.8rem, 4vw, 2.8rem);
+}
+.ajak-peta h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
+.ajak-peta p { margin-top: .8rem; color: rgba(255,255,255,.8); max-width: 34rem; }
+.ajak-peta .tombol { margin-top: 1.6rem; background: #fff; color: var(--laut-dalam); }
+.ajak-peta .tombol:hover { background: var(--kertas); }
+
+/* Unduhan */
+.berkas { display: grid; gap: .5rem; }
+.berkas a {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1rem 1.2rem; text-decoration: none;
+  background: #fff; border: 1px solid var(--garis); border-radius: 9px;
+  transition: border-color .15s, transform .15s;
+}
+.berkas a:hover { border-color: var(--hijau-2); transform: translateY(-1px); }
+.berkas .jenis {
+  flex: none; width: 2.9rem; height: 2.9rem; border-radius: 7px;
+  display: grid; place-items: center;
+  background: var(--kertas-2); color: var(--hijau);
+  font-size: .68rem; font-weight: 700; letter-spacing: .04em;
+}
+.berkas .rincian { flex: 1; min-width: 0; }
+.berkas b { display: block; font-size: .98rem; font-weight: 550; }
+.berkas small { display: block; color: var(--tinta-3); font-size: .84rem; }
+.berkas .ukuran { color: var(--tinta-3); font-size: .84rem; font-variant-numeric: tabular-nums; flex: none; }
+
+/* Keadaan kosong — jujur, bukan isian palsu */
+.kosong {
+  border: 1px dashed var(--garis); border-radius: 10px;
+  padding: 2.25rem 1.75rem; text-align: center; color: var(--tinta-3);
+  font-size: .95rem; line-height: 1.6;
+  max-width: 44rem; margin-inline: auto;
+}
+
+/* Catatan sumber */
+.catatan {
+  margin-top: 2rem; padding-top: 1.2rem; border-top: 1px solid var(--garis);
+  font-size: .82rem; color: var(--tinta-3); line-height: 1.6; max-width: 46rem;
+}
+
+/* ─────────── Kaki ─────────── */
+.kaki {
+  background: var(--hijau); color: rgba(255,255,255,.75);
+  padding: clamp(2.5rem, 5vw, 3.5rem) 0 2rem;
+  font-size: .92rem;
+}
+.kaki-kisi { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); }
+.kaki h4 { color: #fff; font-size: .76rem; letter-spacing: .14em; text-transform: uppercase; margin-bottom: .8rem; font-weight: 600; }
+.kaki a { color: rgba(255,255,255,.75); text-decoration: none; }
+.kaki a:hover { color: #fff; text-decoration: underline; }
+.kaki ul { list-style: none; padding: 0; margin: 0; display: grid; gap: .4rem; }
+.kaki-bawah {
+  margin-top: 2.5rem; padding-top: 1.4rem;
+  border-top: 1px solid rgba(255,255,255,.14);
+  display: flex; flex-wrap: wrap; gap: .6rem 1.5rem; justify-content: space-between;
+  font-size: .82rem; color: rgba(255,255,255,.6);
+}
+.kaki-merek { display: flex; align-items: center; gap: .65rem; margin-bottom: 1rem; }
+.kaki-merek .lambang {
+  width: 2.1rem; height: 2.1rem; background: #fff;
+  -webkit-mask: var(--logo) center / contain no-repeat;
+  mask: var(--logo) center / contain no-repeat;
+}
+.kaki-merek b { color: #fff; font-size: .98rem; }
+
+/* ─────────── Ponsel ─────────── */
+@media (max-width: 800px) {
+  body { font-size: 16px; }
+  .kepala-isi { height: 3.75rem; }
+  .merek small { display: none; }
+
+  .tombol-nav {
+    display: grid; place-items: center;
+    width: 2.5rem; height: 2.5rem; margin-left: auto;
+    background: none; border: 1px solid var(--garis); border-radius: 7px;
+    color: var(--tinta); cursor: pointer;
+  }
+  .tombol-nav svg { width: 1.1rem; height: 1.1rem; }
+  .nav {
+    position: absolute; top: 100%; left: 0; right: 0;
+    flex-direction: column; align-items: stretch; gap: 0;
+    padding: .5rem 1.25rem 1rem;
+    background: var(--kertas); border-bottom: 1px solid var(--garis);
+  }
+  .nav[hidden] { display: none; }
+  .nav a { padding: .75rem .5rem; font-size: 1rem; }
+  .nav a.sorot { margin-top: .5rem; text-align: center; }
+
+  /* Layar sempit: 2×2, bukan tiga kolom lalu satu yatim */
+  .angka { grid-template-columns: 1fr 1fr; }
+  .angka > div {
+    padding: 1.15rem 1rem 1.15rem 0;
+    border-right: 1px solid var(--garis); border-bottom: 1px solid var(--garis);
+  }
+  .angka > div:nth-child(2n) { border-right: 0; padding-left: 1rem; }
+  .angka > div:nth-last-child(-n+2) { border-bottom: 0; }
+
+  /* Peta ditutupi dari bawah, bukan dari samping — biar pesisirnya tetap tampak */
+  .hero-peta::after {
+    background: linear-gradient(to bottom,
+      rgba(12, 34, 41, .3) 0%, rgba(12, 34, 41, .86) 38%, rgba(12, 34, 41, .94) 100%);
+  }
+  .definisi > div { flex-direction: column; gap: .1rem; }
+  .definisi dd { text-align: left; }
+}
+
+@media print {
+  .kepala, .ajak-peta, .tombol { display: none; }
+  body { background: #fff; font-size: 11pt; }
+  .hero { background: #fff; color: #000; padding: 0 0 1.5rem; }
+  .hero-peta { display: none; }
+  .bagian { padding: 1rem 0; }
+}

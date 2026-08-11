@@ -236,6 +236,40 @@ Google Earth) untuk batas desa, dusun, maupun titik fasilitas.
 
 ---
 
+## Website profil desa
+
+Proyek ini memuat **dua hal sekaligus** di satu alamat:
+
+| Alamat | Isi |
+|---|---|
+| `/` | Website profil Desa Kote — beranda, profil, pemerintahan, potensi, layanan, berita, unduhan |
+| `/peta` | Peta digital (aplikasi satu berkas yang dijelaskan di atas) |
+
+Seluruh isi website ada di **satu berkas**: `situs/konten.json`. Sunting berkas itu
+dengan editor teks apa pun, lalu jalankan:
+
+```
+python bangun-situs.py
+```
+
+Skrip itu menghasilkan tujuh halaman ke `public/`, menyalin peta ke `public/peta/`,
+dan **menyebutkan bagian mana saja yang masih kosong**. Bagian yang kosong tidak
+ditampilkan di website — lebih baik tidak ada daripada diisi karangan.
+
+### Halaman unduhan
+
+`public/unduhan/` adalah folder isian bebas: apa pun yang ditaruh di sana muncul
+di halaman **Unduhan** lengkap dengan ukuran berkasnya. Ini tempat menaruh **peta
+cetak hasil QGIS** (PDF/PNG).
+
+Setiap kali dibangun, skrip juga menuliskan data desa dalam GeoJSON ke folder itu —
+`tempat`, `batas`, `peta-dasar`, dan `batas-usulan-gadm`. Berkas-berkas itu bisa
+langsung dibuka di QGIS sebagai bahan menyusun peta cetak, sekaligus bisa diunduh
+pengunjung. Isinya ikut berubah sendiri setiap kali data desa diperbarui.
+
+Judul berkas bisa dirapikan lewat `situs/konten.json` → `unduhan.keterangan`,
+memakai nama berkas sebagai kuncinya.
+
 ## Sudah online
 
 **https://peta-desa-kote.vercel.app**
@@ -250,10 +284,12 @@ contoh berisi data karangan **tidak** ikut — sudah diuji, semuanya 404.
 Memperbarui:
 
 ```
-python build.py                     # bila mengubah kode; lewati bila hanya data
-python terbitkan.py                 # salin ke public/, commit, push
+python terbitkan.py                 # rakit peta + website, commit, push
 python terbitkan.py "pesan commit"  # dengan pesan sendiri
 ```
+
+`terbitkan.py` sudah menjalankan `build.py` dan `bangun-situs.py` lebih dulu, jadi
+satu perintah itu cukup.
 
 Kalau datanya diisi lewat mode Kelola di browser: unduh **HTML mandiri**,
 timpa `peta-desa-kote.html`, lalu jalankan `python terbitkan.py`.
@@ -373,13 +409,23 @@ jadi tidak ditaruh di peta, karena menebak letaknya sama saja mengarang.
 
 ```
 peta-desa-kote/
-├── peta-desa-kote.html   ← hasil akhir, satu berkas (ikut ke GitHub)
+├── peta-desa-kote.html   ← peta, satu berkas (ikut ke GitHub)
+├── src/                  ← sumber peta digital
+├── situs/                ← sumber website profil
+│   ├── konten.json       ←   seluruh isi website, sunting di sini
+│   └── gaya.css
 ├── public/               ← yang disajikan Vercel
-├── src/                  ← sumber aplikasi
-├── *.py                  ← perkakas: build, terbitkan, ambil-tempat, buat-contoh
+│   ├── *.html            ←   halaman profil (hasil rakitan)
+│   ├── peta/index.html   ←   peta digital (hasil salinan)
+│   └── unduhan/          ←   berkas unduhan + GeoJSON untuk QGIS
+├── *.py                  ← perkakas: build, bangun-situs, terbitkan, ambil-tempat
 ├── *.md                  ← dokumentasi
 └── lokal/                ← berkas kerja, TIDAK PERNAH ikut ke GitHub
 ```
+
+Berkas di `public/` **tidak disunting langsung** — semuanya hasil rakitan
+`build.py` dan `bangun-situs.py`, dan akan tertimpa saat dibangun ulang.
+Pengecualiannya `public/unduhan/`, yang memang folder isian.
 
 Folder **`lokal/`** menampung apa pun yang sifatnya hasil olahan atau coba-coba:
 berkas pratinjau berisi data karangan, keluaran `ambil-tempat.py`, dan CSV yang
@@ -389,7 +435,8 @@ sedang Anda sunting. Seluruh isinya diabaikan git lewat satu baris `lokal/` di
 ## Membangun ulang dari sumber
 
 ```
-python build.py
+python build.py          # src/   -> peta-desa-kote.html
+python bangun-situs.py   # situs/ -> public/ (+ salin peta ke public/peta/)
 ```
 
 ```
