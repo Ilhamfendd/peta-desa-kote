@@ -1983,10 +1983,12 @@ body.admin .list.admin-only { display: flex; }
 
 <script id="desa-data" type="application/json">{
   "_sumber": [
-    "Luas, jarak, RT/RW, penduduk, tempat ibadah: BPS Kabupaten Lingga, 'Kecamatan Singkep Pesisir Dalam Angka 2024' (data tahun 2023), katalog 1102001.2104022.",
-    "Kode pos & kode wilayah: Wikipedia bahasa Indonesia + simpul OpenStreetMap 'Kote' (Wikidata Q12492286).",
-    "Pelabuhan, Pulau Serang, industri mikro: BPS, 'Statistik Daerah Kecamatan Singkep Pesisir 2016' (data 2015).",
-    "TIDAK ADA data resmi tingkat desa untuk: jumlah KK, jumlah dusun, kelompok umur, pendidikan, pekerjaan, agama. Semua dibiarkan kosong."
+    "Penduduk, kelompok umur, pendidikan, pekerjaan, agama, batas wilayah, luas, kelembagaan, fasilitas: Pemerintah Desa Kote, formulir \"Permintaan Data Profil Seluruh Desa se-Kecamatan Singkep Pesisir\", data 2024. Diterima 13 Agustus 2026.",
+    "PERHATIAN — angka dalam formulir desa tidak sepenuhnya saling cocok: tabel jenis kelamin 2024 berjumlah 1.029 jiwa; tabel umur, pendidikan, dan agama sama-sama berjumlah 1.017 jiwa; tabel pekerjaan berjumlah 942 jiwa. Angka disalin apa adanya, belum disesuaikan. Perlu dikonfirmasi ke kantor desa.",
+    "PERHATIAN — luas wilayah menurut desa 2.079 ha (20,79 km²), sedangkan BPS mencatat 13,55 km². Yang dipakai di sini angka desa. Perlu dikonfirmasi mana yang berlaku.",
+    "Baris kelompok umur \"44-45\" menyimpang dari pola lima tahunan pada formulir; disalin apa adanya, kemungkinan salah ketik.",
+    "RT/RW, kode wilayah, kode pos: BPS Kabupaten Lingga \"Kecamatan Singkep Pesisir Dalam Angka 2024\" + OpenStreetMap (Wikidata Q12492286).",
+    "BELUM ADA: jumlah kepala keluarga (KK) dan jumlah dusun."
   ],
   "meta": {
     "nama": "Desa Kote",
@@ -1995,7 +1997,10 @@ body.admin .list.admin-only { display: flex; }
     "provinsi": "Kepulauan Riau",
     "kode": "21.04.06.2004",
     "kodepos": "29870",
-    "pusat": [-0.3657998, 104.5098449],
+    "pusat": [
+      -0.3657998,
+      104.5098449
+    ],
     "jangkauan": 8,
     "logoDesa": "",
     "diperbarui": "2026-07-29T09:00:00.000Z",
@@ -2010,8 +2015,8 @@ body.admin .list.admin-only { display: flex; }
     "visi": "",
     "misi": "",
     "sejarah": "",
-    "potensi": "Desa Kote memiliki satu-satunya pelabuhan di Kecamatan Singkep Pesisir, yang menjadi tempat singgah kapal angkutan barang. Desa ini juga tercatat sebagai desa dengan industri mikro terbanyak di kecamatannya, serta memiliki objek wisata Pulau Serang.\n\nCatatan: keterangan ini bersumber dari BPS, Statistik Daerah Kecamatan Singkep Pesisir 2016 (data 2015), sehingga perlu diperiksa ulang kondisi terkininya.",
-    "sumberStat": "BPS Kabupaten Lingga — Kecamatan Singkep Pesisir Dalam Angka 2024 (data 2023)",
+    "potensi": "Perikanan tangkap menjadi mata pencaharian utama warga: 125 orang tercatat sebagai nelayan, ditambah 11 buruh nelayan. Desa Kote memiliki satu-satunya pelabuhan di Kecamatan Singkep Pesisir, tempat singgah kapal angkutan barang.\n\nObjek wisata desa: Pulau Serang dan perlombaan sampan layar — keduanya bersifat musiman.\n\nDesa Kote juga memiliki BUMDes Mahkota dan Koperasi Desa Merah Putih Kote.",
+    "sumberStat": "Pemerintah Desa Kote — formulir \"Permintaan Data Profil Seluruh Desa se-Kecamatan Singkep Pesisir\", data 2024",
     "tim": "KKN Kelompok 67",
     "institusi": "",
     "tahun": "2026",
@@ -2019,9 +2024,9 @@ body.admin .list.admin-only { display: flex; }
   },
   "statistik": {
     "ringkas": {
-      "penduduk": 1033,
+      "penduduk": 1029,
       "kk": null,
-      "luas": 13.55,
+      "luas": 20.79,
       "dusun": null,
       "rt": 10,
       "rw": 5
@@ -2030,60 +2035,270 @@ body.admin .list.admin-only { display: flex; }
       "judul": "Jenis kelamin",
       "satuan": "jiwa",
       "baris": [
-        { "l": "Laki-laki", "v": 537 },
-        { "l": "Perempuan", "v": 496 }
+        {
+          "l": "Laki-laki",
+          "v": 531
+        },
+        {
+          "l": "Perempuan",
+          "v": 498
+        }
       ]
     },
     "usia": {
       "judul": "Kelompok umur",
       "satuan": "jiwa",
       "baris": [
-        { "l": "0–4", "lk": null, "pr": null },
-        { "l": "5–14", "lk": null, "pr": null },
-        { "l": "15–24", "lk": null, "pr": null },
-        { "l": "25–44", "lk": null, "pr": null },
-        { "l": "45–64", "lk": null, "pr": null },
-        { "l": "65+", "lk": null, "pr": null }
+        {
+          "l": "0–4",
+          "lk": 15,
+          "pr": 29
+        },
+        {
+          "l": "5–9",
+          "lk": 41,
+          "pr": 32
+        },
+        {
+          "l": "10–14",
+          "lk": 42,
+          "pr": 30
+        },
+        {
+          "l": "15–19",
+          "lk": 46,
+          "pr": 35
+        },
+        {
+          "l": "20–24",
+          "lk": 42,
+          "pr": 32
+        },
+        {
+          "l": "25–29",
+          "lk": 34,
+          "pr": 29
+        },
+        {
+          "l": "30–34",
+          "lk": 37,
+          "pr": 35
+        },
+        {
+          "l": "35–39",
+          "lk": 44,
+          "pr": 33
+        },
+        {
+          "l": "40–44",
+          "lk": 34,
+          "pr": 28
+        },
+        {
+          "l": "44–45",
+          "lk": 35,
+          "pr": 27
+        },
+        {
+          "l": "45–49",
+          "lk": 41,
+          "pr": 33
+        },
+        {
+          "l": "50–54",
+          "lk": 28,
+          "pr": 23
+        },
+        {
+          "l": "55–59",
+          "lk": 25,
+          "pr": 26
+        },
+        {
+          "l": "60–64",
+          "lk": 31,
+          "pr": 25
+        },
+        {
+          "l": "65–69",
+          "lk": 23,
+          "pr": 19
+        },
+        {
+          "l": "70–74",
+          "lk": 17,
+          "pr": 19
+        },
+        {
+          "l": "75+",
+          "lk": 11,
+          "pr": 16
+        }
       ]
     },
     "pendidikan": {
       "judul": "Pendidikan terakhir",
       "satuan": "jiwa",
       "baris": [
-        { "l": "Tidak/belum sekolah", "v": null },
-        { "l": "SD / sederajat", "v": null },
-        { "l": "SMP / sederajat", "v": null },
-        { "l": "SMA / sederajat", "v": null },
-        { "l": "Diploma", "v": null },
-        { "l": "Sarjana ke atas", "v": null }
+        {
+          "l": "Belum sekolah",
+          "v": 74
+        },
+        {
+          "l": "Tidak tamat SD",
+          "v": 375
+        },
+        {
+          "l": "SD",
+          "v": 321
+        },
+        {
+          "l": "SLTP",
+          "v": 62
+        },
+        {
+          "l": "SLTA",
+          "v": 132
+        },
+        {
+          "l": "D-I",
+          "v": 10
+        },
+        {
+          "l": "D-III",
+          "v": 5
+        },
+        {
+          "l": "D-IV",
+          "v": 0
+        },
+        {
+          "l": "S-1",
+          "v": 36
+        },
+        {
+          "l": "S-2",
+          "v": 2
+        },
+        {
+          "l": "S-3",
+          "v": 0
+        }
       ]
     },
     "pekerjaan": {
       "judul": "Mata pencaharian",
       "satuan": "jiwa",
       "baris": [
-        { "l": "Nelayan", "v": null },
-        { "l": "Petani / pekebun", "v": null },
-        { "l": "Wiraswasta", "v": null },
-        { "l": "Karyawan swasta", "v": null },
-        { "l": "PNS / TNI / Polri", "v": null },
-        { "l": "Lainnya", "v": null }
+        {
+          "l": "Nelayan / perikanan",
+          "v": 125
+        },
+        {
+          "l": "Wiraswasta",
+          "v": 123
+        },
+        {
+          "l": "Petani / pekebun",
+          "v": 97
+        },
+        {
+          "l": "Mengurus rumah tangga",
+          "v": 251
+        },
+        {
+          "l": "Pelajar / mahasiswa",
+          "v": 160
+        },
+        {
+          "l": "Belum bekerja",
+          "v": 104
+        },
+        {
+          "l": "Pegawai Negeri Sipil",
+          "v": 28
+        },
+        {
+          "l": "Buruh harian lepas",
+          "v": 19
+        },
+        {
+          "l": "Buruh nelayan / perikanan",
+          "v": 11
+        },
+        {
+          "l": "Perangkat desa",
+          "v": 7
+        },
+        {
+          "l": "Karyawan swasta",
+          "v": 5
+        },
+        {
+          "l": "Buruh tani / perkebunan",
+          "v": 5
+        },
+        {
+          "l": "TNI / Polri",
+          "v": 4
+        },
+        {
+          "l": "Kepala desa",
+          "v": 1
+        },
+        {
+          "l": "Sekretaris desa",
+          "v": 1
+        },
+        {
+          "l": "Tukang jahit",
+          "v": 1
+        },
+        {
+          "l": "Pedagang",
+          "v": 0
+        },
+        {
+          "l": "Karyawan honorer",
+          "v": 0
+        }
       ]
     },
     "agama": {
       "judul": "Agama",
       "satuan": "jiwa",
       "baris": [
-        { "l": "Islam", "v": null },
-        { "l": "Kristen", "v": null },
-        { "l": "Katolik", "v": null },
-        { "l": "Buddha", "v": null },
-        { "l": "Hindu", "v": null },
-        { "l": "Konghucu", "v": null }
+        {
+          "l": "Islam",
+          "v": 1017
+        },
+        {
+          "l": "Kristen",
+          "v": 0
+        },
+        {
+          "l": "Katolik",
+          "v": 0
+        },
+        {
+          "l": "Buddha",
+          "v": 0
+        },
+        {
+          "l": "Hindu",
+          "v": 0
+        },
+        {
+          "l": "Konghucu",
+          "v": 0
+        }
       ]
     }
   },
-  "batas": { "desa": null, "dusun": [] },
+  "batas": {
+    "desa": null,
+    "dusun": []
+  },
   "tempat": [
     {
       "id": "osm-dermaga-kote",
@@ -4025,9 +4240,14 @@ function muatUsulanBatas() {
 
   const luasUsulan = luasPoligon(r) / 1e6;
   const luasResmi = S.data.statistik.ringkas.luas;
-  const beda = (luasResmi && luasResmi > 0)
-    ? ` Luas poligon ini ${angka1(luasUsulan)} km², padahal luas resmi desa ${angka1(luasResmi)} km² — jadi jelas kebesaran dan perlu dikecilkan.`
-    : '';
+  // Seberapa jauh melesetnya menentukan nada peringatannya — jangan dipatok,
+  // sebab luas resmi desa bisa berubah bila datanya diperbarui.
+  const selisihUsulan = (luasResmi && luasResmi > 0) ? Math.abs(luasUsulan / luasResmi - 1) : null;
+  const beda = selisihUsulan == null ? ''
+    : ` Luas poligon ini ${angka1(luasUsulan)} km², sedangkan luas resmi desa ${angka1(luasResmi)} km²` +
+      (selisihUsulan <= 0.1
+        ? ` — selisihnya hanya ${angka1(selisihUsulan * 100)}%, jadi cukup layak sebagai rancangan awal.`
+        : ` — meleset ${angka1(selisihUsulan * 100)}%, jadi perlu banyak diperbaiki.`);
 
   konfirmasi('Muat batas usulan?',
     `Poligon dari basis data GADM dengan ${r.length} titik akan dipasang sebagai batas desa.${beda} ` +
@@ -4051,7 +4271,7 @@ function panelWilayah() {
   const info = r && r.length > 2 ? `
     <div class="kv">
       <div><span class="k">Luas digambar</span><span class="v">${teksLuas(luasPoligon(r))}</span></div>
-      ${luasResmi ? `<div><span class="k">Luas resmi</span><span class="v">${angka2(luasResmi)} km² <span class="dim">BPS 2023</span></span></div>` : ''}
+      ${luasResmi ? `<div><span class="k">Luas resmi</span><span class="v">${angka2(luasResmi)} km²</span></div>` : ''}
       <div><span class="k">Keliling</span><span class="v">${teksJarak(panjangJalur(r.concat([r[0]])))}</span></div>
       <div><span class="k">Titik batas</span><span class="v">${NF.format(r.length)} titik</span></div>
     </div>

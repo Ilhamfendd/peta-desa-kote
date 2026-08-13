@@ -17,11 +17,11 @@ diminta, dan mana yang harus disurvei sendiri.
 
 | | Jumlah |
 |---|---|
-| ✅ Sudah terisi dari sumber resmi | 7 data |
-| 📄 Tinggal diminta ke kantor desa | 10 data |
-| 🚶 Harus disurvei sendiri | tempat + batas wilayah |
-| ✍️ Perlu ditulis/diputuskan desa | 5 data |
-| 🌐 Isi website profil | 11 bagian |
+| ✅ Sudah terisi dari sumber resmi | 15 kelompok data |
+| 📄 Tinggal diminta ke kantor desa | 2 angka + susunan perangkat |
+| 🚶 Harus disurvei sendiri | titik tempat + poligon batas |
+| ✍️ Perlu ditulis/diputuskan desa | 4 naskah |
+| 🌐 Isi website profil | 9 bagian |
 
 Ada dua berkas isian, masing-masing punya cara mengisi sendiri:
 
@@ -34,50 +34,65 @@ Ada dua berkas isian, masing-masing punya cara mengisi sendiri:
 
 ## ✅ Sudah terisi — tidak perlu dikerjakan lagi
 
-Sumber: **BPS Kabupaten Lingga, "Kecamatan Singkep Pesisir Dalam Angka 2024"** (data 2023).
+Sumber utama: **Pemerintah Desa Kote**, formulir *"Permintaan Data Profil Seluruh
+Desa se-Kecamatan Singkep Pesisir"* (data 2024), diterima **13 Agustus 2026**.
 
 | Data | Nilai |
 |---|---|
-| Jumlah penduduk | 1.033 jiwa |
-| Laki-laki / perempuan | 537 / 496 |
-| Luas wilayah | 13,55 km² |
+| Jumlah penduduk | 1.029 jiwa (2024) |
+| Laki-laki / perempuan | 531 / 498 |
+| Luas wilayah | 20,79 km² (2.079 ha) |
 | Jumlah RT / RW | 10 / 5 |
-| Kode wilayah | 21.04.06.2004 |
-| Kode pos | 29870 |
-| Kepadatan & rasio jenis kelamin | dihitung otomatis (76 jiwa/km², 108) |
+| Kode wilayah / kode pos | 21.04.06.2004 · 29870 |
+| Kepadatan & rasio jenis kelamin | dihitung otomatis (49,5 jiwa/km², 106,6) |
+| Kelompok umur | 17 kelompok, laki & perempuan terpisah |
+| Pendidikan terakhir | 11 jenjang, Belum sekolah s/d S-3 |
+| Mata pencaharian | 18 jenis pekerjaan |
+| Agama | Islam 1.017, lainnya nihil |
+| Batas wilayah | keempat arah mata angin |
+| Fasilitas | masjid 2, musala 2, polindes 1, posyandu 1, pos kamling 4 |
+| Kelembagaan | PKK, Karang Taruna, LPM, kader, Linmas, BUMDes, Kopdes |
+| Objek wisata | Pulau Serang & perlombaan sampan layar (musiman) |
 
-Perlu diperbarui bila BPS merilis edisi baru, atau bila desa punya angka yang
-lebih mutakhir dari Prodeskel.
+### ⚠️ Tiga hal yang perlu dikonfirmasi ke kantor desa
+
+Angka-angka di atas disalin **apa adanya** dari formulir desa. Ada tiga
+kejanggalan yang sebaiknya ditanyakan — bukan untuk diperbaiki sendiri:
+
+1. **Jumlah totalnya berbeda-beda antar tabel.** Tabel jenis kelamin 2024
+   berjumlah **1.029** jiwa; tabel umur, pendidikan, dan agama sama-sama
+   berjumlah **1.017**; tabel pekerjaan berjumlah **942**. Selisihnya 12 dan 87
+   jiwa. Mana yang jadi pegangan?
+
+2. **Luas wilayah berbeda dengan BPS.** Desa mencatat **2.079 ha (20,79 km²)**,
+   BPS mencatat **13,55 km²** — beda hampir 7 km². Yang dipakai di aplikasi
+   sekarang adalah angka desa. Menariknya, poligon GADM (21,36 km²) justru
+   mendekati angka desa, bukan angka BPS.
+
+3. **Baris kelompok umur "44–45"** menyimpang dari pola lima tahunan, muncul di
+   antara 40–44 dan 45–49. Kemungkinan salah ketik di formulir. Disalin apa
+   adanya sampai ada kepastian.
 
 ---
 
-## 📄 Prioritas 1 — Minta ke kantor desa
+## 📄 Prioritas 1 — Masih perlu diminta ke kantor desa
 
-Semua ini biasanya sudah ada dalam **Profil Desa / Prodeskel / Laporan Desa**.
-Cukup satu kali datang membawa daftar ini.
+Sebagian besar sudah terpenuhi lewat formulir profil desa. Yang **belum**:
 
-Masuk ke: **Kelola → Statistik pokok** dan **Kelola → rincian statistik**
+Masuk ke: **Kelola → Statistik pokok**
 
 - [ ] **Jumlah kepala keluarga (KK)** — satu angka
 - [ ] **Jumlah dusun** — satu angka, sekalian nama-namanya
-- [ ] **Penduduk menurut kelompok umur** — laki & perempuan terpisah
-      (0–4, 5–14, 15–24, 25–44, 45–64, 65+)
-- [ ] **Penduduk menurut pendidikan terakhir**
-      (tidak/belum sekolah, SD, SMP, SMA, Diploma, Sarjana ke atas)
-- [ ] **Penduduk menurut mata pencaharian**
-      (nelayan, petani/pekebun, wiraswasta, karyawan swasta, PNS/TNI/Polri, lainnya)
-- [ ] **Penduduk menurut agama**
-- [ ] **Tahun data** — penting, supaya bisa dicantumkan sumbernya
-
-> Kalau rinciannya tidak tersedia, **biarkan kosong**. Jangan dibagi rata atau
-> dikira-kira dari angka kecamatan.
 
 ### Sekalian ditanyakan
 
-- [ ] **Nama kepala desa** dan masa jabatannya
+- [ ] **Nama kepala desa** dan masa jabatannya — formulir hanya mencatat
+      jumlahnya (1 kepala desa, 1 sekretaris, 7 perangkat), bukan namanya
+- [ ] **Susunan perangkat desa** — nama dan jabatan tiap orang
 - [ ] **Alamat kantor desa**, nomor telepon, dan surel resmi
 - [ ] **Logo desa** bila ada (berkas gambar) — kalau desa memakai lambang
       Kabupaten Lingga, minta berkasnya
+- [ ] **Apakah ada BPD?** — tidak tercantum di formulir, padahal lembaga wajib
 
 ---
 
@@ -197,13 +212,17 @@ Wajib hanya **Nama, Lintang, Bujur**. Kategori yang dikenali: `pemerintahan`,
    GeoJSON langsung. Ini yang paling sah karena mengikuti penetapan resmi.
 
 2. **Kalau tidak ada**, gunakan **Wilayah → Muat batas usulan**. Poligon dari
-   basis data GADM sudah ditanam di aplikasi, tapi **kasar dan kebesaran**:
-   21,36 km² padahal luas resmi 13,55 km². Pakai sebagai rancangan awal saja.
+   basis data GADM sudah ditanam di aplikasi. Bentuknya masih kasar, tapi
+   **luasnya ternyata mendekati**: 21,36 km² berbanding 20,79 km² menurut desa —
+   selisih sekitar 3%. Cukup layak sebagai rancangan awal.
+
+   > Penilaian ini berubah setelah data desa masuk. Sebelumnya poligon GADM
+   > dibandingkan dengan angka BPS (13,55 km²) dan tampak jauh kebesaran.
 
 3. **Sempurnakan bersama perangkat desa.** Buka mode **Satelit**, geser titik
    batasnya sambil ditunjukkan Pak Kades atau Sekdes. Aplikasi menampilkan luas
    terhitung berdampingan dengan luas resmi, plus peringatan bila melenceng
-   lebih dari 15% — jadi ada angka sasaran yang jelas: **13,55 km²**.
+   lebih dari 15% — jadi ada angka sasaran yang jelas: **20,79 km²**.
 
 > Batas hasil gambar sendiri **bukan penetapan resmi**. Cantumkan itu di laporan.
 > Penetapan yang sah dilakukan lewat Perbup/Perdes.

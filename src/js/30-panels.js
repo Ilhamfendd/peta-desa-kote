@@ -284,9 +284,14 @@ function muatUsulanBatas() {
 
   const luasUsulan = luasPoligon(r) / 1e6;
   const luasResmi = S.data.statistik.ringkas.luas;
-  const beda = (luasResmi && luasResmi > 0)
-    ? ` Luas poligon ini ${angka1(luasUsulan)} km², padahal luas resmi desa ${angka1(luasResmi)} km² — jadi jelas kebesaran dan perlu dikecilkan.`
-    : '';
+  // Seberapa jauh melesetnya menentukan nada peringatannya — jangan dipatok,
+  // sebab luas resmi desa bisa berubah bila datanya diperbarui.
+  const selisihUsulan = (luasResmi && luasResmi > 0) ? Math.abs(luasUsulan / luasResmi - 1) : null;
+  const beda = selisihUsulan == null ? ''
+    : ` Luas poligon ini ${angka1(luasUsulan)} km², sedangkan luas resmi desa ${angka1(luasResmi)} km²` +
+      (selisihUsulan <= 0.1
+        ? ` — selisihnya hanya ${angka1(selisihUsulan * 100)}%, jadi cukup layak sebagai rancangan awal.`
+        : ` — meleset ${angka1(selisihUsulan * 100)}%, jadi perlu banyak diperbaiki.`);
 
   konfirmasi('Muat batas usulan?',
     `Poligon dari basis data GADM dengan ${r.length} titik akan dipasang sebagai batas desa.${beda} ` +
@@ -310,7 +315,7 @@ function panelWilayah() {
   const info = r && r.length > 2 ? `
     <div class="kv">
       <div><span class="k">Luas digambar</span><span class="v">${teksLuas(luasPoligon(r))}</span></div>
-      ${luasResmi ? `<div><span class="k">Luas resmi</span><span class="v">${angka2(luasResmi)} km² <span class="dim">BPS 2023</span></span></div>` : ''}
+      ${luasResmi ? `<div><span class="k">Luas resmi</span><span class="v">${angka2(luasResmi)} km²</span></div>` : ''}
       <div><span class="k">Keliling</span><span class="v">${teksJarak(panjangJalur(r.concat([r[0]])))}</span></div>
       <div><span class="k">Titik batas</span><span class="v">${NF.format(r.length)} titik</span></div>
     </div>

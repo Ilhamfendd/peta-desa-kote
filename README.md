@@ -181,7 +181,8 @@ Di **Wilayah → Muat batas usulan** tersedia poligon Desa Kote yang sudah ditan
 di dalam berkas, diambil dari basis data **GADM 4.1** (turunan data administratif
 Indonesia): **21,36 km²**, **18 titik**.
 
-Gunakan sebagai **rancangan awal**, bukan hasil akhir:
+Luasnya **mendekati angka desa** (20,79 km²) — selisih sekitar 3%, jadi cukup
+layak sebagai titik berangkat. Tetap **rancangan awal**, bukan hasil akhir:
 
 - Hanya 18 titik untuk keliling 20,5 km — rata-rata 1,1 km antar titik, sehingga
   teluk dan tanjung terpotong lurus
@@ -370,23 +371,39 @@ Ditanam lewat `src/data.json`, semuanya dari sumber resmi:
 
 | Data | Nilai | Sumber |
 |---|---|---|
-| Penduduk | 1.033 jiwa (L 537 · P 496) | Disdukcapil Kab. Lingga, via BPS |
-| Luas wilayah | 13,55 km² (12,29% kecamatan) | Setda Kab. Lingga, via BPS |
+| Penduduk | 1.029 jiwa (L 531 · P 498), 2024 | Pemerintah Desa Kote |
+| Luas wilayah | 20,79 km² (2.079 ha) | Pemerintah Desa Kote |
+| Kelompok umur | 17 kelompok, L/P terpisah | Pemerintah Desa Kote |
+| Pendidikan | 11 jenjang | Pemerintah Desa Kote |
+| Mata pencaharian | 18 jenis | Pemerintah Desa Kote |
+| Agama | Islam 1.017 | Pemerintah Desa Kote |
+| Batas wilayah | keempat arah | Pemerintah Desa Kote |
 | RT / RW | 10 / 5 | Setda Kab. Lingga, via BPS |
 | Kode pos | 29870 | Wikipedia ID |
 | Kode wilayah | 21.04.06.2004 | OSM / Kemendagri |
 
-Sumber utama: **BPS Kabupaten Lingga — [Kecamatan Singkep Pesisir Dalam Angka
-2024](https://linggakab.bps.go.id/id/publication/2024/09/26/63a0b930826a98e1426963d2/kecamatan-singkep-pesisir-dalam-angka-2024.html)** (data tahun 2023).
+Sumber utama: **Pemerintah Desa Kote**, formulir *"Permintaan Data Profil Seluruh
+Desa se-Kecamatan Singkep Pesisir"* (data 2024), diterima 13 Agustus 2026.
+Sebelumnya dipakai [BPS Kecamatan Singkep Pesisir Dalam Angka
+2024](https://linggakab.bps.go.id/id/publication/2024/09/26/63a0b930826a98e1426963d2/kecamatan-singkep-pesisir-dalam-angka-2024.html)
+(data 2023), yang kini tinggal jadi pembanding.
 
-Kepadatan (76 jiwa/km²) dan rasio jenis kelamin (108) dihitung sendiri oleh
-aplikasi, dan hasilnya sama persis dengan angka BPS — sekaligus jadi bukti
-tabelnya terbaca benar.
+Kepadatan (49,5 jiwa/km²) dan rasio jenis kelamin (106,6) dihitung sendiri oleh
+aplikasi dari angka di atas.
 
-**Masih kosong karena tidak ada sumber resmi tingkat desa:** jumlah KK, jumlah
-dusun, kelompok umur, pendidikan, mata pencaharian, agama, dan daftar tempat.
-BPS mencatat Desa Kote punya 2 masjid dan 2 musala, tetapi **tanpa koordinat** —
-jadi tidak ditaruh di peta, karena menebak letaknya sama saja mengarang.
+**Tiga kejanggalan dalam formulir desa** — angkanya disalin apa adanya, belum
+disesuaikan, dan sudah dicatat di `src/data.json` bagian `_sumber`:
+
+1. Total tiap tabel berbeda: jenis kelamin **1.029**, umur/pendidikan/agama
+   **1.017**, pekerjaan **942**.
+2. Luas wilayah menurut desa **20,79 km²**, menurut BPS **13,55 km²**.
+   Poligon GADM (21,36 km²) justru mendekati angka desa.
+3. Baris kelompok umur **"44–45"** menyimpang dari pola lima tahunan.
+
+**Masih kosong:** jumlah KK, jumlah dusun, nama perangkat desa, dan daftar
+tempat berkoordinat. Formulir desa mencatat 2 masjid dan 2 musala, tetapi
+**tanpa koordinat** — jadi tidak ditaruh di peta, karena menebak letaknya sama
+saja mengarang.
 
 ## Sumber data
 

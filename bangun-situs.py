@@ -336,7 +336,9 @@ def hal_profil(k, kosong):
 
     # Angka yang sudah terverifikasi — tempatnya memang di halaman profil
     a = k['angka']
-    rasio = round(a['lakiLaki'] / a['perempuan'] * 100) if a.get('perempuan') else None
+    # Satu angka di belakang koma, supaya sama persis dengan tampilan di peta digital
+    rasio = (f"{a['lakiLaki'] / a['perempuan'] * 100:.1f}".replace('.', ',')
+             if a.get('perempuan') else None)
     penduduk = [
         ('Jumlah penduduk', f"{NF(a['penduduk'])} jiwa"),
         ('Laki-laki', f"{NF(a['lakiLaki'])} jiwa"),
@@ -357,10 +359,25 @@ def hal_profil(k, kosong):
   </div>
   <dl class="definisi">{baris_p}</dl>
   <p class="catatan">Sumber: {E(a['sumber'])}. Kepadatan dan rasio jenis kelamin
-  dihitung dari angka di atas. Rincian menurut umur, pendidikan, mata pencaharian,
-  dan agama belum tersedia — grafiknya sudah disiapkan di
-  <a href="/peta" style="color:var(--hijau-2)">peta digital</a> dan akan terisi
-  begitu datanya masuk.</p>
+  dihitung dari angka di atas. Rincian menurut kelompok umur, pendidikan,
+  mata pencaharian, dan agama bisa dilihat sebagai grafik di
+  <a href="/peta" style="color:var(--hijau-2)">peta digital</a>.</p>
+</div></section>"""
+
+    fasilitas = p.get('fasilitas') or []
+    if fasilitas:
+        baris_f = ''.join(
+            '<div><dt>%s</dt><dd>%s</dd></div>'
+            % (E(f['nama']), 'Belum ada' if not f['jumlah'] else E(f['jumlah']))
+            for f in fasilitas)
+        isi += f"""<section class="bagian"><div class="wadah">
+  <div class="bagian-kepala">
+    <p class="eyebrow">Sarana</p><h2>Fasilitas desa</h2>
+    <p>Jumlah sarana yang tercatat di Desa Kote. Titik lokasinya sedang dipetakan
+       satu per satu dan akan muncul di peta digital.</p>
+  </div>
+  <dl class="definisi">{baris_f}</dl>
+  <p class="catatan">Sumber: {E(a['sumber'])}.</p>
 </div></section>"""
 
     return '', isi
@@ -538,7 +555,9 @@ def ekspor_qgis(folder):
     usulan = bm.get('usulanBatas', {}).get('features', [])
     tulis('desa-kote-batas-usulan-gadm.geojson', usulan,
           'RANCANGAN, BUKAN BATAS RESMI. Sumber GADM 4.1 — luasnya 21,36 km², '
-          'sedangkan luas resmi BPS 13,55 km². Pakai sebagai kerangka awal saja.')
+          'sedangkan luas menurut Pemerintah Desa Kote 20,79 km² (2.079 ha); '
+          'selisihnya sekitar 3%. Cukup layak sebagai kerangka awal, tetap perlu '
+          'diperiksa bersama perangkat desa.')
 
     return dibuat
 
