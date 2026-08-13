@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Pengelolaan — Desa Kote</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--logo:url("__LOGO__")}
+__GAYA__
+
+/* ── Tambahan khusus halaman pengelolaan ── */
+
+/* Wajib: `display` apa pun mengalahkan atribut `hidden`. Tanpa baris ini,
+   layar masuk yang sudah di-`hidden` tetap tergambar menutupi ruang kerja. */
+[hidden] { display: none !important; }
+
+body { background: var(--kertas-2); }
+
+.masuk-latar { min-height: 100vh; display: grid; place-items: center; padding: 1.5rem; background: var(--laut-dalam); }
+.masuk-kotak { width: min(100%, 24rem); background: var(--kertas); border-radius: 14px; padding: 2rem; }
+/* display:block wajib — span itu inline, lebar & tingginya akan diabaikan */
+.masuk-kotak .lambang { display: block; width: 2.6rem; height: 2.6rem; background: var(--hijau);
+  -webkit-mask: var(--logo) center/contain no-repeat; mask: var(--logo) center/contain no-repeat; }
+.masuk-kotak h1 { font-size: 1.3rem; margin: 1rem 0 .3rem; }
+.masuk-kotak p.bantu { color: var(--tinta-3); font-size: .9rem; margin-bottom: 1.5rem; }
+
+label { display: block; font-size: .84rem; font-weight: 550; margin-bottom: .35rem; color: var(--tinta-2); }
+.inp, textarea, select {
+  width: 100%; font: inherit; font-size: .95rem; color: var(--tinta);
+  padding: .6rem .75rem; border: 1px solid var(--garis); border-radius: 7px;
+  background: #fff; transition: border-color .15s;
+}
+.inp:focus, textarea:focus, select:focus { outline: none; border-color: var(--hijau-2); box-shadow: 0 0 0 3px rgba(42,90,47,.12); }
+textarea { resize: vertical; min-height: 5rem; line-height: 1.55; }
+.medan { margin-bottom: 1rem; }
+.medan .petunjuk { font-size: .78rem; color: var(--tinta-3); margin-top: .3rem; }
+
+.tombol[disabled] { opacity: .5; pointer-events: none; }
+.tombol.penuh { width: 100%; justify-content: center; }
+.tombol.kecil { padding: .4rem .7rem; font-size: .85rem; }
+.tombol.bahaya { background: none; color: #a8302f; border: 1px solid var(--garis); }
+.tombol.bahaya:hover { background: #fdf1f0; border-color: #a8302f; }
+
+.galat { background: #fdf1f0; border: 1px solid #f0c8c5; color: #8f2a25;
+  padding: .7rem .9rem; border-radius: 7px; font-size: .9rem; margin-bottom: 1rem; }
+.berhasil { background: #eef7ef; border: 1px solid #c6e2c9; color: #22562a;
+  padding: .7rem .9rem; border-radius: 7px; font-size: .9rem; margin-bottom: 1rem; }
+
+/* Bilah atas */
+.bilah { position: sticky; top: 0; z-index: 40; background: var(--kertas);
+  border-bottom: 1px solid var(--garis); }
+.bilah-isi { display: flex; align-items: center; gap: 1rem; height: 3.9rem;
+  width: min(100% - 2.5rem, 76rem); margin-inline: auto; }
+.bilah .lambang { width: 2.1rem; height: 2.1rem; background: var(--hijau);
+  -webkit-mask: var(--logo) center/contain no-repeat; mask: var(--logo) center/contain no-repeat; }
+.bilah b { font-size: .98rem; }
+.bilah .siapa { margin-left: auto; font-size: .88rem; color: var(--tinta-3); text-align: right; }
+.bilah .siapa b { display: block; color: var(--tinta); font-size: .9rem; }
+
+.lembar { width: min(100% - 2.5rem, 76rem); margin: 1.5rem auto 5rem; display: grid;
+  grid-template-columns: 13.5rem 1fr; gap: 2rem; align-items: start; }
+.menu { position: sticky; top: 5.4rem; display: grid; gap: .15rem; }
+.menu button { display: block; width: 100%; text-align: left; font: inherit; font-size: .92rem;
+  padding: .55rem .75rem; border: 0; border-radius: 7px; background: none; color: var(--tinta-2); cursor: pointer; }
+.menu button:hover { background: var(--kertas); }
+.menu button[aria-current="true"] { background: var(--hijau); color: #fff; font-weight: 550; }
+.menu hr { border: 0; border-top: 1px solid var(--garis); margin: .6rem .2rem; }
+
+.kotak { background: #fff; border: 1px solid var(--garis); border-radius: 11px;
+  padding: 1.6rem; margin-bottom: 1.25rem; }
+.kotak > h2 { font-size: 1.15rem; margin-bottom: .3rem; }
+.kotak > p.bantu { color: var(--tinta-3); font-size: .9rem; margin-bottom: 1.4rem; }
+
+/* Baris berulang */
+.baris { border: 1px solid var(--garis); border-radius: 9px; padding: 1.1rem; margin-bottom: .8rem;
+  background: var(--kertas); }
+.baris-kepala { display: flex; align-items: center; gap: .5rem; margin-bottom: .9rem; }
+.baris-kepala span { font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--tinta-3); }
+.baris-kepala .alat { margin-left: auto; display: flex; gap: .3rem; }
+.ikon-btn { width: 1.9rem; height: 1.9rem; display: grid; place-items: center; cursor: pointer;
+  border: 1px solid var(--garis); border-radius: 6px; background: #fff; color: var(--tinta-2); }
+.ikon-btn:hover { background: var(--kertas-2); color: var(--tinta); }
+.ikon-btn svg { width: 1rem; height: 1rem; }
+.dua { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* Status simpan */
+.status { position: fixed; right: 1.25rem; bottom: 1.25rem; z-index: 60;
+  display: flex; align-items: center; gap: .6rem;
+  background: var(--tinta); color: #fff; padding: .65rem 1rem; border-radius: 8px;
+  font-size: .88rem; box-shadow: 0 6px 24px rgba(0,0,0,.18);
+  opacity: 0; transform: translateY(6px); transition: opacity .2s, transform .2s; pointer-events: none; }
+.status.tampil { opacity: 1; transform: none; }
+
+.tabel { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.tabel th { text-align: left; font-size: .76rem; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--tinta-3); padding: .5rem .6rem; border-bottom: 1px solid var(--garis); }
+.tabel td { padding: .7rem .6rem; border-bottom: 1px solid var(--garis); }
+.lencana { font-size: .74rem; padding: .15rem .5rem; border-radius: 20px;
+  background: var(--kertas-2); color: var(--tinta-2); }
+.lencana.admin { background: var(--hijau); color: #fff; }
+
+.riwayat { list-style: none; padding: 0; margin: 0; font-size: .9rem; }
+.riwayat li { padding: .6rem 0; border-bottom: 1px solid var(--garis); display: flex; gap: 1rem; }
+.riwayat time { color: var(--tinta-3); flex: none; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 820px) {
+  .lembar { grid-template-columns: 1fr; gap: 1.25rem; }
+  .menu { position: static; grid-auto-flow: column; grid-auto-columns: max-content;
+    overflow-x: auto; padding-bottom: .4rem; }
+  .dua { grid-template-columns: 1fr; }
+  .bilah .siapa b { display: inline; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Layar masuk ── -->
+<div class="masuk-latar" id="layar-masuk">
+  <form class="masuk-kotak" id="borang-masuk">
+    <span class="lambang" aria-hidden="true"></span>
+    <h1>Pengelolaan Desa Kote</h1>
+    <p class="bantu">Masuk untuk menyunting data desa dan isi website.</p>
+    <div id="masuk-galat"></div>
+    <div class="medan">
+      <label for="m-pengguna">Nama pengguna</label>
+      <input class="inp" id="m-pengguna" autocomplete="username" autocapitalize="none" required>
+    </div>
+    <div class="medan">
+      <label for="m-sandi">Kata sandi</label>
+      <input class="inp" id="m-sandi" type="password" autocomplete="current-password" required>
+    </div>
+    <button class="tombol penuh" type="submit" id="m-kirim">Masuk</button>
+  </form>
+</div>
+
+<!-- ── Ruang kerja ── -->
+<div id="ruang" hidden>
+  <header class="bilah">
+    <div class="bilah-isi">
+      <span class="lambang" aria-hidden="true"></span>
+      <b>Pengelolaan Desa Kote</b>
+      <div class="siapa">
+        <b id="nama-saya"></b>
+        <button class="tombol garis kecil" id="btn-keluar" style="margin-top:.2rem">Keluar</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="lembar">
+    <nav class="menu" id="menu"></nav>
+    <main id="isi"></main>
+  </div>
+</div>
+
+<div class="status" id="status"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════
+   Halaman pengelolaan Desa Kote
+
+   Menyunting SALINAN KERJA (draf) yang tersimpan di server. Draf belum
+   dilihat warga; yang dilihat warga baru berubah setelah Terbitkan.
+   ═══════════════════════════════════════════════════════════════════ */
+'use strict';
+
+const $ = (s, induk) => (induk || document).querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g,
+  (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+let SAYA = null;
+let DRAF = null;
+let bagianAktif = 'ringkasan';
+let jedaSimpan = null;
+let adaPerubahan = false;
+
+/* ── Bicara dengan server ── */
+async function api(jalur, pilihan = {}) {
+  const r = await fetch(jalur, {
+    headers: { 'content-type': 'application/json' },
+    ...pilihan,
+    body: pilihan.body ? JSON.stringify(pilihan.body) : undefined,
+  });
+  let isi = {};
+  try { isi = await r.json(); } catch { /* balasan tanpa JSON */ }
+  if (!r.ok) throw new Error(isi.galat || `Gagal (${r.status})`);
+  return isi;
+}
+
+function lapor(teks, lama = 2600) {
+  const s = $('#status');
+  s.textContent = teks;
+  s.classList.add('tampil');
+  clearTimeout(lapor.jeda);
+  lapor.jeda = setTimeout(() => s.classList.remove('tampil'), lama);
+}
+
+/* ── Jalan bertitik: ambil/atur nilai bersarang ── */
+function ambil(objek, jalur) {
+  return jalur.split('.').reduce((o, k) => (o == null ? o : o[k]), objek);
+}
+function atur(objek, jalur, nilai) {
+  const bagian = jalur.split('.');
+  const akhir = bagian.pop();
+  let n = objek;
+  for (const k of bagian) { if (n[k] == null || typeof n[k] !== 'object') n[k] = {}; n = n[k]; }
+  n[akhir] = nilai;
+}
+
+/* ═══ Susunan borang ═══
+   Satu tempat mendaftarkan seluruh isian website, supaya menambah kolom
+   baru cukup satu baris di sini — tidak perlu menulis HTML lagi. */
+const T = { teks: 'teks', paragraf: 'paragraf', baris: 'baris', angka: 'angka', pilih: 'pilih' };
+
+const BAGIAN = [
+  { id: 'ringkasan', judul: 'Ringkasan', khusus: true },
+
+  { id: 'kontak', judul: 'Identitas & kontak', jalur: 'situs',
+    bantu: 'Tampil di kaki setiap halaman website.',
+    medan: [
+      { k: 'alamat', l: 'Alamat kantor desa' },
+      { k: 'telepon', l: 'Telepon', petunjuk: 'Boleh nomor WhatsApp kantor desa.' },
+      { k: 'email', l: 'Surel resmi' },
+      { k: 'institusi', l: 'Institusi tim KKN' },
+    ] },
+
+  { id: 'sambutan', judul: 'Sambutan kepala desa', jalur: 'beranda.sambutan',
+    bantu: 'Tampil di beranda. Kalau isinya kosong, bagian ini tidak ditampilkan sama sekali.',
+    medan: [
+      { k: 'judul', l: 'Judul sambutan', petunjuk: 'Kosongkan untuk memakai "Sambutan Kepala Desa".' },
+      { k: 'oleh', l: 'Nama kepala desa' },
+      { k: 'jabatan', l: 'Jabatan' },
+      { k: 'teks', l: 'Isi sambutan', t: T.paragraf,
+        petunjuk: 'Pisahkan paragraf dengan satu baris kosong.' },
+    ] },
+
+  { id: 'profil', judul: 'Profil desa', jalur: 'profil',
+    medan: [
+      { k: 'sejarah', l: 'Sejarah desa', t: T.paragraf,
+        petunjuk: 'Asal usul nama Kote dan cerita permukiman pesisirnya.' },
+      { k: 'visi', l: 'Visi desa', t: T.paragraf },
+      { k: 'misi', l: 'Misi desa', t: T.baris, petunjuk: 'Satu misi per baris.' },
+      { k: 'geografis', l: 'Letak geografis', t: T.paragraf },
+    ] },
+
+  { id: 'batas', judul: 'Batas wilayah', jalur: 'profil.batasWilayah',
+    medan: [
+      { k: 'utara', l: 'Sebelah utara' }, { k: 'timur', l: 'Sebelah timur' },
+      { k: 'selatan', l: 'Sebelah selatan' }, { k: 'barat', l: 'Sebelah barat' },
+    ] },
+
+  { id: 'fasilitas', judul: 'Fasilitas desa', jalur: 'profil.fasilitas', daftar: true,
+    labelBaris: 'Fasilitas', kunciJudul: 'nama',
+    medan: [{ k: 'nama', l: 'Nama fasilitas' }, { k: 'jumlah', l: 'Jumlah', t: T.angka }] },
+
+  { id: 'perangkat', judul: 'Perangkat desa', jalur: 'pemerintahan.perangkat', daftar: true,
+    labelBaris: 'Perangkat', kunciJudul: 'nama',
+    bantu: 'Urutannya di sini menentukan urutan tampil di website.',
+    medan: [
+      { k: 'nama', l: 'Nama lengkap' }, { k: 'jabatan', l: 'Jabatan' },
+      { k: 'foto', l: 'Foto', t: 'foto' },
+    ] },
+
+  { id: 'lembaga', judul: 'Lembaga desa', jalur: 'pemerintahan.lembaga', daftar: true,
+    labelBaris: 'Lembaga', kunciJudul: 'nama',
+    medan: [{ k: 'nama', l: 'Nama lembaga' }, { k: 'keterangan', l: 'Keterangan', t: T.paragraf }] },
+
+  { id: 'potensi', judul: 'Potensi desa', jalur: 'potensi.sektor', daftar: true,
+    labelBaris: 'Potensi', kunciJudul: 'nama',
+    medan: [
+      { k: 'nama', l: 'Nama potensi' },
+      { k: 'sifat', l: 'Sifatnya', t: T.pilih, opsi: [['darat', 'Darat'], ['laut', 'Laut']],
+        petunjuk: 'Yang bersifat laut ditulis dengan huruf miring, mengikuti kaidah peta laut.' },
+      { k: 'teks', l: 'Penjelasan', t: T.paragraf },
+      { k: 'sumber', l: 'Sumber data' },
+    ] },
+
+  { id: 'umkm', judul: 'UMKM warga', jalur: 'potensi.umkm', daftar: true,
+    labelBaris: 'UMKM', kunciJudul: 'nama',
+    medan: [
+      { k: 'nama', l: 'Nama usaha' }, { k: 'produk', l: 'Produk' }, { k: 'kontak', l: 'Kontak' },
+    ] },
+
+  { id: 'berita', judul: 'Berita & kegiatan', jalur: 'berita', daftar: true,
+    labelBaris: 'Kabar', kunciJudul: 'judul',
+    medan: [
+      { k: 'judul', l: 'Judul' },
+      { k: 'tanggal', l: 'Tanggal', petunjuk: 'Contoh: 13 Agustus 2026' },
+      { k: 'ringkas', l: 'Ringkasan', petunjuk: 'Satu kalimat, tampil di beranda.' },
+      { k: 'isi', l: 'Isi lengkap', t: T.paragraf },
+    ] },
+
+  { id: 'jam', judul: 'Jam pelayanan', jalur: 'layanan.jam', daftar: true,
+    labelBaris: 'Jadwal', kunciJudul: 'hari',
+    medan: [
+      { k: 'hari', l: 'Hari', petunjuk: 'Contoh: Senin–Kamis' },
+      { k: 'jam', l: 'Jam', petunjuk: 'Contoh: 08.00–15.00' },
+    ] },
+
+  { id: 'layanan', judul: 'Jenis layanan', jalur: 'layanan.daftar', daftar: true,
+    labelBaris: 'Layanan', kunciJudul: 'nama',
+    bantu: 'Bagian yang paling sering dicari warga.',
+    medan: [
+      { k: 'nama', l: 'Nama layanan' },
+      { k: 'keterangan', l: 'Keterangan singkat' },
+      { k: 'syarat', l: 'Syarat', t: T.baris, petunjuk: 'Satu syarat per baris.' },
+      { k: 'lama', l: 'Lama pengurusan', petunjuk: 'Contoh: Selesai 1 hari kerja' },
+      { k: 'biaya', l: 'Biaya', petunjuk: 'Contoh: Gratis' },
+    ] },
+
+  { id: 'akun', judul: 'Akun pengelola', khusus: true },
+];
+
+/* ═══ Menggambar borang ═══ */
+function gambarMedan(m, nilai, jalurNilai) {
+  const id = 'f-' + jalurNilai.replace(/[^\w]/g, '-');
+  let kendali;
+
+  if (m.t === T.paragraf) {
+    kendali = `<textarea class="inp" id="${id}" data-jalur="${esc(jalurNilai)}" rows="5">${esc(nilai || '')}</textarea>`;
+  } else if (m.t === T.baris) {
+    const teks = Array.isArray(nilai) ? nilai.join('\n') : (nilai || '');
+    kendali = `<textarea class="inp" id="${id}" data-jalur="${esc(jalurNilai)}" data-jenis="baris" rows="4">${esc(teks)}</textarea>`;
+  } else if (m.t === T.pilih) {
+    const opsi = m.opsi.map(([v, l]) =>
+      `<option value="${esc(v)}"${v === nilai ? ' selected' : ''}>${esc(l)}</option>`).join('');
+    kendali = `<select class="inp" id="${id}" data-jalur="${esc(jalurNilai)}">${opsi}</select>`;
+  } else if (m.t === T.angka) {
+    kendali = `<input class="inp" id="${id}" type="number" data-jalur="${esc(jalurNilai)}" data-jenis="angka" value="${nilai ?? ''}">`;
+  } else if (m.t === 'foto') {
+    kendali = `
+      <div style="display:flex;gap:.75rem;align-items:center">
+        ${nilai ? `<img src="${esc(nilai)}" alt="" style="width:3.2rem;height:3.2rem;border-radius:50%;object-fit:cover">` : ''}
+        <input type="file" accept="image/*" data-foto="${esc(jalurNilai)}" style="font-size:.85rem">
+      </div>`;
+  } else {
+    kendali = `<input class="inp" id="${id}" data-jalur="${esc(jalurNilai)}" value="${esc(nilai || '')}">`;
+  }
+
+  return `<div class="medan">
+    <label for="${id}">${esc(m.l)}</label>
+    ${kendali}
+    ${m.petunjuk ? `<p class="petunjuk">${esc(m.petunjuk)}</p>` : ''}
+  </div>`;
+}
+
+const IKON = {
+  atas: 'M12 19V5M5 12l7-7 7 7',
+  bawah: 'M12 5v14M5 12l7 7 7-7',
+  hapus: 'M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3',
+};
+const tombolIkon = (aksi, i, judul, d) =>
+  `<button class="ikon-btn" data-aksi="${aksi}" data-i="${i}" title="${judul}" aria-label="${judul}">
+     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round"><path d="${d}"/></svg></button>`;
+
+function gambarDaftar(b) {
+  const arr = ambil(DRAF.konten, b.jalur) || [];
+  const baris = arr.map((item, i) => `
+    <div class="baris">
+      <div class="baris-kepala">
+        <span>${esc(b.labelBaris)} ${i + 1}${item[b.kunciJudul] ? ' · ' + esc(item[b.kunciJudul]) : ''}</span>
+        <div class="alat">
+          ${i > 0 ? tombolIkon('naik', i, 'Naikkan', IKON.atas) : ''}
+          ${i < arr.length - 1 ? tombolIkon('turun', i, 'Turunkan', IKON.bawah) : ''}
+          ${tombolIkon('buang', i, 'Hapus', IKON.hapus)}
+        </div>
+      </div>
+      ${b.medan.map((m) => gambarMedan(m, item[m.k], `${b.jalur}.${i}.${m.k}`)).join('')}
+    </div>`).join('');
+
+  return `
+    <div class="kotak">
+      <h2>${esc(b.judul)}</h2>
+      ${b.bantu ? `<p class="bantu">${esc(b.bantu)}</p>` : ''}
+      ${baris || `<div class="kosong" style="margin-bottom:1rem">Belum ada isi. Klik tombol di bawah untuk menambah.</div>`}
+      <button class="tombol garis" data-aksi="tambah">+ Tambah ${esc(b.labelBaris.toLowerCase())}</button>
+    </div>`;
+}
+
+function gambarBagian(b) {
+  if (b.daftar) return gambarDaftar(b);
+  const induk = ambil(DRAF.konten, b.jalur) || {};
+  return `
+    <div class="kotak">
+      <h2>${esc(b.judul)}</h2>
+      ${b.bantu ? `<p class="bantu">${esc(b.bantu)}</p>` : ''}
+      ${b.medan.map((m) => gambarMedan(m, induk[m.k], `${b.jalur}.${m.k}`)).join('')}
+    </div>`;
+}
+
+/* ═══ Ringkasan & penerbitan ═══ */
+function waktuIndo(iso) {
+  if (!iso) return 'belum pernah';
+  const d = new Date(iso);
+  return d.toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
+}
+
+function gambarRingkasan() {
+  const m = DRAF.meta || {};
+  const riwayat = (DRAF.riwayat || []).slice(0, 12);
+  const a = DRAF.konten?.angka || {};
+
+  return `
+    <div class="kotak">
+      <h2>Terbitkan perubahan</h2>
+      <p class="bantu">Suntingan tersimpan otomatis sebagai draf dan belum dilihat warga.
+        Tekan Terbitkan bila sudah siap — website dan peta dirakit ulang, dan perubahannya
+        tampak sekitar satu menit kemudian.</p>
+      <div class="definisi" style="max-width:none;margin-bottom:1.4rem">
+        <div><dt>Draf terakhir diubah</dt><dd>${esc(waktuIndo(m.diubah))}${m.oleh ? ' · ' + esc(m.oleh) : ''}</dd></div>
+      </div>
+      <button class="tombol" id="btn-terbit">Terbitkan sekarang</button>
+      <div id="hasil-terbit" style="margin-top:1rem"></div>
+    </div>
+
+    <div class="kotak">
+      <h2>Data peta</h2>
+      <p class="bantu">Statistik penduduk, titik lokasi, dan batas wilayah disunting langsung
+        di peta — borangnya sudah lengkap di sana, dan tersimpan ke draf yang sama.</p>
+      <div class="definisi" style="max-width:none;margin-bottom:1.4rem">
+        <div><dt>Jumlah penduduk</dt><dd>${a.penduduk ? esc(a.penduduk.toLocaleString('id-ID')) + ' jiwa' : 'belum diisi'}</dd></div>
+        <div><dt>Titik lokasi terdata</dt><dd>${(DRAF.data?.tempat || []).length} titik</dd></div>
+        <div><dt>Batas wilayah</dt><dd>${DRAF.data?.batas?.desa ? 'sudah digambar' : 'belum digambar'}</dd></div>
+      </div>
+      <a class="tombol garis" href="/peta?kelola=1">Buka penyunting peta</a>
+    </div>
+
+    <div class="kotak">
+      <h2>Riwayat perubahan</h2>
+      ${riwayat.length ? `<ul class="riwayat">${riwayat.map((r) => `
+        <li><time>${esc(waktuIndo(r.waktu))}</time>
+            <span><b>${esc(r.oleh)}</b> — ${esc(r.ringkasan)}</span></li>`).join('')}</ul>`
+        : '<div class="kosong">Belum ada perubahan tercatat.</div>'}
+    </div>`;
+}
+
+/* ═══ Akun ═══ */
+async function gambarAkun() {
+  let daftar = [];
+  try { daftar = (await api('/api/pengguna')).pengguna; } catch (e) { /* tampilkan seadanya */ }
+  const admin = SAYA.peran === 'admin';
+
+  return `
+    <div class="kotak">
+      <h2>Ganti kata sandi saya</h2>
+      <div id="sandi-pesan"></div>
+      <div class="dua">
+        <div class="medan"><label for="s-lama">Kata sandi sekarang</label>
+          <input class="inp" id="s-lama" type="password" autocomplete="current-password"></div>
+        <div class="medan"><label for="s-baru">Kata sandi baru</label>
+          <input class="inp" id="s-baru" type="password" autocomplete="new-password"></div>
+      </div>
+      <button class="tombol" id="btn-sandi">Simpan kata sandi</button>
+    </div>
+
+    <div class="kotak">
+      <h2>Daftar pengelola</h2>
+      <p class="bantu">${admin ? 'Sebagai admin, Anda bisa menambah dan menghapus akun.'
+                              : 'Hanya admin yang bisa menambah atau menghapus akun.'}</p>
+      <table class="tabel">
+        <thead><tr><th>Nama</th><th>Pengguna</th><th>Peran</th>${admin ? '<th></th>' : ''}</tr></thead>
+        <tbody>${daftar.map((p) => `
+          <tr>
+            <td>${esc(p.nama)}</td>
+            <td>${esc(p.pengguna)}</td>
+            <td><span class="lencana ${p.peran === 'admin' ? 'admin' : ''}">${esc(p.peran)}</span></td>
+            ${admin ? `<td style="text-align:right">${p.id === SAYA.id ? '<span class="lencana">Anda</span>'
+              : `<button class="tombol bahaya kecil" data-hapus="${esc(p.id)}">Hapus</button>`}</td>` : ''}
+          </tr>`).join('')}</tbody>
+      </table>
+    </div>
+
+    ${admin ? `
+    <div class="kotak">
+      <h2>Tambah pengelola</h2>
+      <div id="tambah-pesan"></div>
+      <div class="dua">
+        <div class="medan"><label for="t-nama">Nama lengkap</label><input class="inp" id="t-nama"></div>
+        <div class="medan"><label for="t-pengguna">Nama pengguna</label>
+          <input class="inp" id="t-pengguna" autocapitalize="none">
+          <p class="petunjuk">Huruf kecil, angka, titik, garis bawah, atau strip.</p></div>
+      </div>
+      <div class="dua">
+        <div class="medan"><label for="t-sandi">Kata sandi awal</label>
+          <input class="inp" id="t-sandi" type="password" autocomplete="new-password">
+          <p class="petunjuk">Minimal 8 karakter. Minta yang bersangkutan segera menggantinya.</p></div>
+        <div class="medan"><label for="t-peran">Peran</label>
+          <select class="inp" id="t-peran">
+            <option value="pengelola">Pengelola — menyunting &amp; menerbitkan</option>
+            <option value="admin">Admin — sekaligus mengatur akun</option>
+          </select></div>
+      </div>
+      <button class="tombol" id="btn-tambah">Tambah pengelola</button>
+    </div>` : ''}`;
+}
+
+/* ═══ Perutean ═══ */
+async function gambar() {
+  const b = BAGIAN.find((x) => x.id === bagianAktif);
+  $('#menu').innerHTML = BAGIAN.map((x, i) =>
+    (x.id === 'akun' ? '<hr>' : '') +
+    `<button data-bagian="${x.id}"${x.id === bagianAktif ? ' aria-current="true"' : ''}>${esc(x.judul)}</button>`
+  ).join('');
+
+  if (b.id === 'ringkasan') $('#isi').innerHTML = gambarRingkasan();
+  else if (b.id === 'akun') $('#isi').innerHTML = await gambarAkun();
+  else $('#isi').innerHTML = gambarBagian(b);
+}
+
+/* ═══ Menyimpan ═══ */
+function tandaiBerubah(ringkasan) {
+  adaPerubahan = true;
+  clearTimeout(jedaSimpan);
+  lapor('Menyimpan…', 9000);
+  jedaSimpan = setTimeout(() => simpanDraf(ringkasan), 1200);
+}
+
+async function simpanDraf(ringkasan) {
+  if (!adaPerubahan) return;
+  try {
+    const hasil = await api('/api/draf', {
+      method: 'PUT',
+      body: { data: DRAF.data, konten: DRAF.konten, ringkasan: ringkasan || 'Menyunting isi website' },
+    });
+    DRAF.meta = hasil.meta;
+    DRAF.riwayat = hasil.riwayat;
+    adaPerubahan = false;
+    lapor('Tersimpan');
+  } catch (e) {
+    lapor('Gagal menyimpan: ' + e.message, 6000);
+  }
+}
+
+// Jangan biarkan suntingan terakhir hilang saat tab ditutup.
+addEventListener('beforeunload', (e) => {
+  if (adaPerubahan) { e.preventDefault(); e.returnValue = ''; }
+});
+
+/* ═══ Peristiwa ═══ */
+document.addEventListener('input', (e) => {
+  const jalur = e.target.dataset?.jalur;
+  if (!jalur || !DRAF) return;
+
+  let nilai = e.target.value;
+  if (e.target.dataset.jenis === 'baris') {
+    nilai = nilai.split('\n').map((s) => s.trim()).filter(Boolean);
+  } else if (e.target.dataset.jenis === 'angka') {
+    nilai = nilai === '' ? null : Number(nilai);
+  }
+  atur(DRAF.konten, jalur, nilai);
+  tandaiBerubah();
+});
+
+document.addEventListener('click', async (e) => {
+  const pindah = e.target.closest('[data-bagian]');
+  if (pindah) {
+    if (adaPerubahan) await simpanDraf();
+    bagianAktif = pindah.dataset.bagian;
+    return gambar();
+  }
+
+  const b = BAGIAN.find((x) => x.id === bagianAktif);
+
+  if (e.target.closest('[data-aksi="tambah"]') && b?.daftar) {
+    const arr = ambil(DRAF.konten, b.jalur) || [];
+    const kosong = {};
+    b.medan.forEach((m) => { kosong[m.k] = m.t === 'baris' ? [] : (m.t === 'pilih' ? m.opsi[0][0] : ''); });
+    atur(DRAF.konten, b.jalur, [...arr, kosong]);
+    tandaiBerubah(`Menambah ${b.labelBaris.toLowerCase()}`);
+    return gambar();
+  }
+
+  const alat = e.target.closest('[data-aksi][data-i]');
+  if (alat && b?.daftar) {
+    const arr = [...(ambil(DRAF.konten, b.jalur) || [])];
+    const i = Number(alat.dataset.i);
+    if (alat.dataset.aksi === 'buang') {
+      if (!confirm(`Hapus ${b.labelBaris.toLowerCase()} ini?`)) return;
+      arr.splice(i, 1);
+    } else {
+      const ke = alat.dataset.aksi === 'naik' ? i - 1 : i + 1;
+      [arr[i], arr[ke]] = [arr[ke], arr[i]];
+    }
+    atur(DRAF.konten, b.jalur, arr);
+    tandaiBerubah(`Mengubah urutan ${b.labelBaris.toLowerCase()}`);
+    return gambar();
+  }
+
+  if (e.target.id === 'btn-terbit') {
+    const tombol = e.target;
+    tombol.disabled = true;
+    tombol.textContent = 'Menerbitkan…';
+    try {
+      if (adaPerubahan) await simpanDraf();
+      const hasil = await api('/api/terbitkan', { method: 'POST' });
+      $('#hasil-terbit').innerHTML = `<div class="berhasil">${esc(hasil.pesan)}</div>`;
+    } catch (err) {
+      $('#hasil-terbit').innerHTML = `<div class="galat">${esc(err.message)}</div>`;
+    }
+    tombol.disabled = false;
+    tombol.textContent = 'Terbitkan sekarang';
+    return;
+  }
+
+  if (e.target.id === 'btn-sandi') {
+    const pesan = $('#sandi-pesan');
+    try {
+      await api('/api/pengguna', {
+        method: 'PATCH',
+        body: { sandiLama: $('#s-lama').value, sandiBaru: $('#s-baru').value },
+      });
+      pesan.innerHTML = '<div class="berhasil">Kata sandi diganti.</div>';
+      $('#s-lama').value = $('#s-baru').value = '';
+    } catch (err) { pesan.innerHTML = `<div class="galat">${esc(err.message)}</div>`; }
+    return;
+  }
+
+  if (e.target.id === 'btn-tambah') {
+    const pesan = $('#tambah-pesan');
+    try {
+      await api('/api/pengguna', {
+        method: 'POST',
+        body: {
+          nama: $('#t-nama').value, pengguna: $('#t-pengguna').value,
+          sandi: $('#t-sandi').value, peran: $('#t-peran').value,
+        },
+      });
+      return gambar();
+    } catch (err) { pesan.innerHTML = `<div class="galat">${esc(err.message)}</div>`; }
+    return;
+  }
+
+  const hapus = e.target.closest('[data-hapus]');
+  if (hapus) {
+    if (!confirm('Hapus akun ini? Orang tersebut tidak bisa masuk lagi.')) return;
+    try {
+      await api(`/api/pengguna?id=${encodeURIComponent(hapus.dataset.hapus)}`, { method: 'DELETE' });
+      return gambar();
+    } catch (err) { alert(err.message); }
+    return;
+  }
+
+  if (e.target.id === 'btn-keluar') {
+    if (adaPerubahan) await simpanDraf();
+    await api('/api/keluar', { method: 'POST' });
+    location.reload();
+  }
+});
+
+/* Unggah foto perangkat desa */
+document.addEventListener('change', async (e) => {
+  const jalur = e.target.dataset?.foto;
+  if (!jalur || !e.target.files?.[0]) return;
+
+  const berkas = e.target.files[0];
+  lapor('Mengunggah foto…', 9000);
+  try {
+    const dataUrl = await kecilkan(berkas, 640);
+    const { url } = await api('/api/foto', { method: 'POST', body: { dataUrl, nama: berkas.name } });
+    atur(DRAF.konten, jalur, url);
+    await simpanDraf('Mengganti foto');
+    gambar();
+    lapor('Foto tersimpan');
+  } catch (err) {
+    lapor('Gagal mengunggah: ' + err.message, 6000);
+  }
+});
+
+// Foto dikecilkan di browser dulu — lebih cepat terkirim, dan hemat penyimpanan.
+function kecilkan(berkas, maks) {
+  return new Promise((selesai, gagal) => {
+    const gambar = new Image();
+    const pembaca = new FileReader();
+    pembaca.onerror = () => gagal(new Error('Berkas tidak terbaca'));
+    pembaca.onload = () => { gambar.src = pembaca.result; };
+    gambar.onerror = () => gagal(new Error('Berkas itu bukan gambar'));
+    gambar.onload = () => {
+      const skala = Math.min(1, maks / Math.max(gambar.width, gambar.height));
+      const k = document.createElement('canvas');
+      k.width = Math.round(gambar.width * skala);
+      k.height = Math.round(gambar.height * skala);
+      k.getContext('2d').drawImage(gambar, 0, 0, k.width, k.height);
+      selesai(k.toDataURL('image/jpeg', 0.82));
+    };
+    pembaca.readAsDataURL(berkas);
+  });
+}
+
+/* ═══ Masuk ═══ */
+$('#borang-masuk').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const tombol = $('#m-kirim');
+  tombol.disabled = true;
+  tombol.textContent = 'Memeriksa…';
+  try {
+    const hasil = await api('/api/masuk', {
+      method: 'POST',
+      body: { pengguna: $('#m-pengguna').value, sandi: $('#m-sandi').value },
+    });
+    SAYA = hasil.pengguna;
+    await mulaiKerja();
+  } catch (err) {
+    $('#masuk-galat').innerHTML = `<div class="galat">${esc(err.message)}</div>`;
+    tombol.disabled = false;
+    tombol.textContent = 'Masuk';
+  }
+});
+
+async function mulaiKerja() {
+  $('#layar-masuk').hidden = true;
+  $('#ruang').hidden = false;
+  $('#nama-saya').textContent = SAYA.nama;
+  DRAF = await api('/api/draf');
+  DRAF.konten = DRAF.konten || {};
+  DRAF.data = DRAF.data || {};
+  await gambar();
+}
+
+(async function mulai() {
+  let aku;
+  try {
+    aku = await api('/api/aku');
+  } catch (e) {
+    // Server tidak menjawab sama sekali. Diam-diam menampilkan layar masuk akan
+    // membuat orang mengetik sandi berulang kali tanpa tahu apa yang salah.
+    $('#masuk-galat').innerHTML =
+      `<div class="galat">Tidak bisa menghubungi server (${esc(e.message)}). Periksa sambungan internet.</div>`;
+    return;
+  }
+  if (!aku.masuk) return;                    // memang belum masuk — wajar
+
+  SAYA = aku.pengguna;
+  try {
+    await mulaiKerja();
+  } catch (e) {
+    $('#layar-masuk').hidden = false;
+    $('#ruang').hidden = true;
+    $('#masuk-galat').innerHTML =
+      `<div class="galat">Sudah masuk sebagai ${esc(SAYA.nama)}, tetapi data gagal dimuat: ${esc(e.message)}</div>`;
+  }
+})();
+</script>
+</body>
+</html>

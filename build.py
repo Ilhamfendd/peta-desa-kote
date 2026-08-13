@@ -6,6 +6,8 @@
 Hasil: peta-desa-kote.html — tidak butuh server, CDN, atau pemasangan.
 """
 import base64, json, pathlib, sys, re
+from datetime import datetime, timezone
+from alat import ambil_terbit
 
 AKAR = pathlib.Path(__file__).parent
 SRC = AKAR / 'src'
@@ -29,8 +31,31 @@ def main():
 
     # Data desa: pakai data.json bila ada, kalau tidak biarkan kosong
     # (aplikasi membangun kerangka kosongnya sendiri).
+    #
+    # meta.diperbarui diambil dari waktu ubah data.json, bukan ditulis tangan.
+    # Ini penting: aplikasi hanya mau memakai data terbit bila cap waktunya
+    # LEBIH BARU daripada salinan di localStorage. Kalau cap waktunya lupa
+    # dimajukan, data baru diam-diam kalah oleh salinan lama di browser —
+    # dan peta tampak kosong padahal datanya sudah masuk.
     data_path = SRC / 'data.json'
-    desa = data_path.read_text(encoding='utf-8').strip() if data_path.exists() else 'null'
+    desa = 'null'
+
+    # Bila sudah ada yang diterbitkan lewat halaman admin, itu yang dipakai;
+    # berkas di repo tinggal jadi cadangan untuk perakitan pertama dan luring.
+    terbit = ambil_terbit()
+    data = None
+    if terbit and terbit.get('data'):
+        data = terbit['data']
+        stempel = terbit.get('meta', {}).get('diterbitkan')
+    elif data_path.exists():
+        data = json.loads(data_path.read_text(encoding='utf-8'))
+        stempel = datetime.fromtimestamp(
+            data_path.stat().st_mtime, timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.000Z')
+
+    if data is not None:
+        if stempel:
+            data.setdefault('meta', {})['diperbarui'] = stempel
+        desa = json.dumps(data, ensure_ascii=False)
 
     bagian = {
         '/*__LEAFLET_CSS__*/': baca('vendor/leaflet.css'),

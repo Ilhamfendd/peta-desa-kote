@@ -468,6 +468,30 @@ function mulai() {
 
   ambilCuaca(false);
   setInterval(() => ambilCuaca(true), 30 * 60 * 1000);
+
+  sambungkanPengelola();
+}
+
+// Dijalankan di latar belakang, sesudah peta tampil. Kalau ditunggu lebih dulu,
+// pengunjung biasa ikut menunggu jaringan padahal tidak butuh apa pun dari server.
+async function sambungkanPengelola() {
+  if (!await sambungServer()) return;
+  tandaServer('siap');
+
+  const draf = await muatDrafServer();
+  if (!draf) return;
+
+  // Draf di server adalah kebenaran bersama; salinan di perangkat ini bisa saja
+  // tertinggal karena orang lain menyunting dari komputer lain.
+  S.data = gabung(dataKosong(), draf.data);
+  (S.data.tempat || []).forEach(t => {
+    if (typeof t.foto === 'string') t.foto = t.foto ? [t.foto] : [];
+    else if (!Array.isArray(t.foto)) t.foto = [];
+  });
+
+  $('#brand-name').textContent = S.data.meta.nama;
+  gambarBatas(); gambarTempat(); buatPanelLapis(); gambarFokus(); gambarUlang();
+  pesan(`Data draf dimuat${draf.meta && draf.meta.oleh ? ' — terakhir diubah ' + draf.meta.oleh : ''}`);
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mulai);

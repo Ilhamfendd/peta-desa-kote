@@ -9,6 +9,7 @@ sebagai pengingat.
 """
 import base64, html, json, math, pathlib, shutil, sys
 from datetime import date
+from alat import ambil_terbit
 
 try:                                   # konsol Windows bawaan memakai cp1252
     sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -651,10 +652,15 @@ def main():
     else:
         sumber = SITUS / 'konten.json'
 
-    if not sumber.exists():
-        sys.exit(f'{sumber} tidak ditemukan')
-
-    k = json.loads(sumber.read_text(encoding='utf-8'))
+    # Isi yang sudah diterbitkan lewat halaman admin mengalahkan berkas di repo.
+    # Mode pratinjau selalu memakai berkas yang ditunjuk, jangan ditarik dari server.
+    terbit = None if len(sys.argv) > 1 else ambil_terbit()
+    if terbit and terbit.get('konten'):
+        k = terbit['konten']
+    else:
+        if not sumber.exists():
+            sys.exit(f'{sumber} tidak ditemukan')
+        k = json.loads(sumber.read_text(encoding='utf-8'))
     gaya = (SITUS / 'gaya.css').read_text(encoding='utf-8')
 
     logo_p = SRC / 'logo-kkn-emblem.png'
@@ -666,6 +672,16 @@ def main():
     for berkas, judul, _ in HALAMAN:
         hero, isi = PEMBANGUN[berkas](k, kosong)
         (PUBLIC / berkas).write_text(kerangka(k, berkas, judul, isi, gaya, logo, hero), encoding='utf-8')
+
+    # Halaman pengelolaan. Memakai gaya yang sama dengan situs, tapi tidak
+    # tercantum di navigasi mana pun dan diberi tanda noindex.
+    admin_src = SITUS / 'admin.html'
+    if admin_src.exists():
+        (PUBLIC / 'admin').mkdir(parents=True, exist_ok=True)
+        (PUBLIC / 'admin' / 'index.html').write_text(
+            admin_src.read_text(encoding='utf-8')
+                .replace('__GAYA__', gaya).replace('__LOGO__', logo),
+            encoding='utf-8')
 
     # Peta digital pindah ke /peta — alamat utama kini dipakai halaman profil
     if PETA.exists():

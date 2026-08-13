@@ -271,6 +271,73 @@ pengunjung. Isinya ikut berubah sendiri setiap kali data desa diperbarui.
 Judul berkas bisa dirapikan lewat `situs/konten.json` → `unduhan.keterangan`,
 memakai nama berkas sebagai kuncinya.
 
+## Halaman pengelolaan (`/admin`)
+
+Data desa tidak lagi tersimpan di browser masing-masing orang. Perangkat desa
+masuk ke **`/admin`** dengan akun sendiri, menyunting, lalu menekan **Terbitkan**.
+
+### Cara kerjanya
+
+```
+Pengelola menyunting
+   -> tersimpan otomatis sebagai DRAF di Vercel Blob   (seketika, belum dilihat warga)
+Tekan "Terbitkan"
+   -> draf disalin jadi versi TERBIT
+   -> Vercel merakit ulang situs & peta                 (sekitar 1 menit)
+   -> warga melihat perubahannya
+```
+
+Draf dan versi terbit sengaja dipisah. Akibatnya suntingan setengah jadi tidak
+langsung terlihat warga, dan yang terpenting: **situs serta peta tetap statis**.
+Peta masih bisa diekspor jadi satu berkas mandiri untuk dipakai luring, persis
+seperti sebelumnya.
+
+| Disunting di mana | Isinya |
+|---|---|
+| `/admin` | Seluruh teks website: sambutan, sejarah, visi–misi, perangkat, lembaga, potensi, UMKM, berita, layanan, kontak |
+| `/peta?kelola=1` | Statistik penduduk, titik lokasi, batas wilayah — borang yang sudah ada, kini menyimpan ke draf yang sama |
+
+Peran akun: **admin** (bisa mengatur akun) dan **pengelola** (menyunting dan
+menerbitkan). Setiap perubahan tercatat siapa dan kapan, terlihat di Ringkasan.
+
+### Pemasangan (sekali saja)
+
+Perlu akun Vercel yang sudah tersambung ke repo ini.
+
+```bash
+npm i -g vercel                 # bila belum ada
+vercel link                     # sambungkan folder ini ke proyek Vercel
+
+vercel blob store add desa-kote # membuat penyimpanan; BLOB_READ_WRITE_TOKEN terpasang sendiri
+```
+
+Lalu tambahkan dua env var lagi di **Vercel → Settings → Environment Variables**:
+
+| Nama | Isi |
+|---|---|
+| `SESI_RAHASIA` | Teks acak minimal 16 karakter. Buat dengan `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` |
+| `VERCEL_DEPLOY_HOOK` | Alamat Deploy Hook dari **Settings → Git → Deploy Hooks** (cabang `main`) |
+
+Terakhir, buat admin pertama dari komputer sendiri:
+
+```bash
+vercel env pull .env.local
+node buat-admin.mjs "Nama Kepala Desa" kades katasandiyangpanjang
+```
+
+Akun berikutnya dibuat lewat `/admin` → **Akun pengelola**. Ganti kata sandi
+pertama itu segera, karena sandi yang diketik di terminal tercatat di riwayat.
+
+> **Kalau `VERCEL_DEPLOY_HOOK` belum diisi**, tombol Terbitkan tetap menyimpan
+> versi terbit tetapi situsnya tidak dirakit ulang — halaman admin mengatakannya
+> apa adanya, tidak pura-pura berhasil.
+
+### Kalau server sedang mati
+
+Peta tetap terbuka dan tetap menampilkan data hasil perakitan terakhir. Yang
+hilang hanya kemampuan menyunting. Ini disengaja: `sambungServer()` gagal diam,
+dan pengunjung biasa tidak pernah menunggu jaringan untuk apa pun.
+
 ## Sudah online
 
 **https://peta-desa-kote.vercel.app**

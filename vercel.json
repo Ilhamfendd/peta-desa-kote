@@ -1,6 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "python3 build.py && python3 bangun-situs.py",
+  "outputDirectory": "public",
   "cleanUrls": true,
+  "functions": {
+    "api/draf.js": {
+      "includeFiles": "{src/data.json,situs/konten.json}"
+    }
+  },
   "headers": [
     {
       "source": "/(.*)\\.html",
@@ -18,6 +25,16 @@
       "source": "/:hal(profil|pemerintahan|potensi|layanan|berita|unduhan|peta)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
+    },
+    {
+      "source": "/admin",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" },
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" },
+        { "key": "Referrer-Policy", "value": "same-origin" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" }
       ]
     }
   ]

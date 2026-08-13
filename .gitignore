@@ -11,3 +11,6 @@ __pycache__/
 # Berkas kerja lokal — hasil olahan, tidak pernah ikut ke GitHub.
 # Termasuk berkas pratinjau berisi data karangan dan keluaran ambil-tempat.py.
 lokal/
+
+# Node
+node_modules/

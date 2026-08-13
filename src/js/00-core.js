@@ -317,14 +317,27 @@ const S = {
   tabAktif: 'beranda'
 };
 
-function simpan(diamDiam) {
+function simpan(diamDiam, ringkasan) {
   S.data.meta.diperbarui = new Date().toISOString();
   S.data.meta.versiApl = APP.versi;
+
+  // Bila pengelola sedang masuk, server yang jadi pegangan: datanya tersimpan
+  // untuk semua orang, bukan cuma di perangkat ini. Salinan lokal tetap ditulis
+  // sebagai jaring pengaman kalau jaringan putus di tengah jalan.
+  if (typeof SERVER !== 'undefined' && SERVER.aktif) {
+    simpanKeServer(ringkasan);
+    if (!diamDiam) pesan('Perubahan tersimpan');
+  } else if (!diamDiam) {
+    pesan('Perubahan tersimpan di perangkat ini');
+  }
+
   try {
     localStorage.setItem(APP.simpanan, JSON.stringify(S.data));
-    if (!diamDiam) pesan('Perubahan tersimpan di perangkat ini');
   } catch (e) {
-    pesan('Gagal menyimpan — penyimpanan browser penuh atau diblokir', true);
+    // Penyimpanan browser penuh bukan masalah bila server yang memegang data.
+    if (!(typeof SERVER !== 'undefined' && SERVER.aktif)) {
+      pesan('Gagal menyimpan — penyimpanan browser penuh atau diblokir', true);
+    }
   }
 }
 

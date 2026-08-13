@@ -103,6 +103,44 @@ yang resmi sering sibuk.
 Cuaca & gelombang dari Open-Meteo (tanpa kunci API), termasuk API kelautan
 karena Kote adalah desa pesisir.
 
+## Halaman pengelolaan & penyimpanan server
+
+Sejak versi 2, data desa disimpan di **Vercel Blob**, bukan di localStorage.
+Alurnya: sunting → **draf** (`desa/draf.json`, tersimpan seketika) → Terbitkan →
+**terbit** (`desa/terbit.json`, publik) → deploy hook → perakitan ulang.
+
+`build.py` dan `bangun-situs.py` mengambil versi terbit lewat `alat.py`
+(`GET /api/terbit`) **hanya bila env `VERCEL` ada**. Di komputer sendiri keduanya
+tetap memakai berkas repo, supaya perakitan bisa jalan tanpa internet.
+
+Fungsi API ada di `api/` (Node ESM — `package.json` wajib punya `"type": "module"`).
+Berkas berawalan `_` bukan rute. Tidak memakai pustaka auth: scrypt + kue
+bertanda HMAC dari `node:crypto` (`api/_lib/sesi.js`).
+
+**Aturan yang tidak boleh dilanggar di sini:**
+
+1. **Peta wajib tetap hidup tanpa server.** `sambungServer()` harus gagal diam.
+   Jangan pernah menunggu jaringan sebelum peta digambar — itu merusak pemakaian
+   luring, yang jadi alasan berkas mandiri ini ada.
+2. **`meta.diperbarui` menentukan siapa yang menang** antara data terbit dan
+   salinan localStorage. `build.py` mengisinya dari waktu ubah `data.json`.
+   Pernah terjadi: data diperbarui tapi cap waktunya tidak, sehingga salinan lama
+   di browser diam-diam menang dan peta tampak kosong. Jangan tulis tangan.
+3. **Jangan kembalikan draf lewat `/api/terbit`.** Rute itu terbuka untuk umum;
+   yang boleh keluar hanya yang sudah diterbitkan.
+
+**Jebakan CSS yang sudah menelan waktu:** atribut `hidden` kalah oleh `display`
+apa pun. `.masuk-latar` memakai `display:grid`, jadi layar masuk tetap tergambar
+menutupi ruang kerja walau `hidden` sudah dipasang. `situs/admin.html` sekarang
+punya `[hidden]{display:none!important}`. Ini hanya ketahuan lewat tangkapan
+layar — pemeriksaan DOM justru bilang semuanya benar.
+
+**Menguji tanpa Blob:** salin `api/` ke luar proyek, ganti `_lib/simpan.js`
+dengan tiruan di memori, tambahkan `{"type":"module"}`, lalu panggil handler-nya
+dengan req/res tiruan. Chrome `--screenshot` memotret saat `load`, sebelum
+pemuatan asinkron selesai — untuk memotret keadaan akhir, `--dump-dom` dulu,
+buang blok skripnya, baru potret berkas hasilnya.
+
 ## Website profil (`situs/`)
 
 Arahnya **peta laut**, karena Kote desa pesisir — bukan templat website desa.
