@@ -1,0 +1,24 @@
+﻿Nama;Kategori;Alamat;Kontak;Jam;Website;Keterangan;Lintang;Bujur
+Masjid Dusun 1;ibadah;;;;;;;
+Surau Dusun 1;ibadah;;;;;;;
+TPU Cik Mat Dusun 1;sosial;;;;;Pemakaman umum;;
+Musala Dusun 2;ibadah;;;;;;;
+TPU Dusun 2;sosial;;;;;Pemakaman umum;;
+Masjid Dusun 3;ibadah;;;;;;;
+Kantor Desa Kote;pemerintahan;;;;;;;
+Balai Desa;pemerintahan;;;;;;;
+Kantor BPD;pemerintahan;;;;;PERIKSA: apakah kantornya terpisah dari kantor desa?;;
+Pos Masuk Kote;infrastruktur;;;;;PERIKSA: gapura, pos jaga, atau pos kamling?;;
+SD 03 Singkep;pendidikan;;;;;PERIKSA nama resminya (SD Negeri 003 …?);;
+PAUD;pendidikan;;;;;PERIKSA nama resminya — ada 2 PAUD di daftar;;
+PAUD (kedua);pendidikan;;;;;PERIKSA nama resminya — ada 2 PAUD di daftar;;
+Pesantren;pendidikan;;;;;PERIKSA nama resminya;;
+Polindes;kesehatan;;;;;;;
+Pelabuhan;transportasi;;;;;Satu-satunya pelabuhan di Kec. Singkep Pesisir;;
+BBI;perikanan;;;;;PERIKSA: Balai Benih Ikan? tulis nama lengkapnya;;
+PT Ketam;ekonomi;;;;;PERIKSA: kalau usaha pengolahan kepiting, ubah kategori jadi perikanan;;
+Kopdes Merah Putih Kote;ekonomi;;;;;Koperasi desa;;
+Lapangan Bola;sosial;;;;;;;
+Lapangan Voli Kejora;sosial;;;;;;;
+Lapangan Voli Gelamit;sosial;;;;;;;
+Sanggar;sosial;;;;;PERIKSA nama resminya;;

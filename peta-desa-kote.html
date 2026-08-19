@@ -5170,7 +5170,10 @@ function formTempat(awal) {
       alamat: v('alamat'), kontak: v('kontak'), website: v('website'),
       jam: susunJam({ hari: v('hari'), penuh: jam24 && jam24.checked, buka: v('buka'), tutup: v('tutup') }),
       foto: fotoData,
-      lat: parseFloat(v('lat')), lon: parseFloat(v('lon'))
+      // angkaKoordinat, BUKAN parseFloat: papan ketik ponsel berbahasa Indonesia
+      // memberi koma sebagai tombol desimal, dan parseFloat('-0,3638') = 0 —
+      // angka sah, lolos isFinite, lalu tersimpan diam-diam di titik yang salah.
+      lat: angkaKoordinat(v('lat')), lon: angkaKoordinat(v('lon'))
     };
   };
 
@@ -5178,6 +5181,16 @@ function formTempat(awal) {
     const rec = kumpul(body);
     if (!rec.nama) { body.querySelector('[name="nama"]').focus(); pesan('Nama tempat wajib diisi', true); return false; }
     if (!isFinite(rec.lat) || !isFinite(rec.lon)) { pesan('Koordinat tidak sah', true); return false; }
+
+    // Titik di luar jangkauan peta hampir pasti salah — GPS gagal mengunci, atau
+    // koordinatnya salah ketik. Lebih baik ditahan sekarang daripada baru
+    // ketahuan setelah puluhan tempat terlanjur masuk.
+    if (!batasPeta().contains([rec.lat, rec.lon])) {
+      const p = S.data.meta.pusat || APP.pusat;
+      pesan(`Titik ini ${teksJarak(jarak(p, [rec.lat, rec.lon]))} dari pusat desa — `
+            + 'periksa lagi koordinatnya, GPS mungkin belum mengunci', true);
+      return false;
+    }
     rec.id = t.id || idBaru();
     const i = S.data.tempat.findIndex(x => x.id === rec.id);
     if (i >= 0) S.data.tempat[i] = rec; else S.data.tempat.push(rec);
@@ -5271,7 +5284,11 @@ function formTempat(awal) {
         p => {
           badan.querySelector('[name="lat"]').value = p.coords.latitude.toFixed(6);
           badan.querySelector('[name="lon"]').value = p.coords.longitude.toFixed(6);
-          pesan(`Lokasi terpasang (ketelitian ± ${angka1(p.coords.accuracy)} m)`);
+          // Ketelitian ratusan meter berarti browser memakai perkiraan jaringan,
+          // bukan satelit — titiknya bisa meleset jauh tanpa terlihat salah.
+          const buruk = p.coords.accuracy > 100;
+          pesan(`Lokasi terpasang (ketelitian ± ${angka1(p.coords.accuracy)} m)`
+                + (buruk ? ' — kurang teliti, tunggu di ruang terbuka lalu ulangi' : ''), buruk);
         },
         () => pesan('Lokasi tidak bisa diakses — izinkan lewat pengaturan browser', true),
         { enableHighAccuracy: true, timeout: 10000 });
