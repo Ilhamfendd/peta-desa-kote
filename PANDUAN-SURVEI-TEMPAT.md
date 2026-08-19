@@ -151,7 +151,8 @@ Periksa hasilnya di **peta-desa-kote.vercel.app/peta** — semua titik harus mun
 | Tab **Kelola** tidak muncul | Belum masuk, atau sesi 12 jam sudah habis — masuk lagi di `/admin` |
 | **Pakai lokasi saya** tidak jalan | Izin lokasi ditolak. Buka pengaturan browser → izinkan Lokasi |
 | Titik GPS jauh melenceng | GPS belum terkunci. Tunggu di ruang terbuka, atau geser titiknya manual di mode Satelit |
-| Muncul "Titik ini … dari pusat desa" | Aplikasi menolak menyimpan karena titiknya jelas di luar wilayah. Tekan **Pakai lokasi saya** lagi setelah GPS terkunci |
+| Muncul "Titik ini … hampir pasti salah" | Ditolak karena lebih dari 25 km dari desa — GPS belum mengunci, atau koordinat salah ketik. Tekan **Pakai lokasi saya** lagi |
+| Muncul "Tersimpan, tapi letaknya … dari pusat desa" | Tetap tersimpan, hanya diingatkan. Kalau memang benar (misalnya di ujung desa), abaikan saja |
 | Ketelitian tertulis ratusan meter | Browser memakai perkiraan jaringan, bukan satelit. Keluar ke ruang terbuka, tunggu, lalu ulangi |
 | Foto gagal diunggah | Sinyal lemah. Simpan dulu tempatnya tanpa foto, fotonya ditambahkan belakangan |
 | Muncul "Gagal menyimpan ke server" | Internet putus. Jangan tutup halamannya — tunggu sinyal, lalu ubah apa saja sedikit agar tersimpan ulang |

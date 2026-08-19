@@ -604,14 +604,21 @@ body.admin #topbar #btn-admin:hover { background: var(--on-brand); color: var(--
 #draw-hud .hud-val { font-weight: 600; font-variant-numeric: tabular-nums; color: var(--ink); }
 
 #toast-wrap {
-  position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 950;
+  /* fixed, dan DI ATAS modal (z-index 1100). Sebelumnya 950 dan absolut:
+     setiap pesan yang muncul saat formulir terbuka tenggelam di belakang
+     .modal-bg yang ber-backdrop-filter, jadi terlihat buram dan tak terbaca —
+     padahal justru di situlah pesan galat paling dibutuhkan. */
+  position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 1200;
   display: flex; flex-direction: column; gap: 6px; align-items: center; pointer-events: none;
+  width: max-content; max-width: min(92vw, 30rem);
 }
 .toast {
-  padding: 8px 14px; font-size: 12.5px;
+  padding: 9px 15px; font-size: 12.5px; line-height: 1.45;
   background: var(--ink); color: var(--plane);
-  border-radius: 999px; box-shadow: var(--shadow);
+  border-radius: 14px; box-shadow: var(--shadow);
   animation: toast-in .18s ease-out;
+  /* Pesan panjang harus membungkus, bukan meluber keluar layar */
+  text-align: center; overflow-wrap: anywhere;
 }
 .toast.bad { background: var(--critical); color: #fff; }
 @keyframes toast-in { from { opacity: 0; transform: translateY(6px); } }

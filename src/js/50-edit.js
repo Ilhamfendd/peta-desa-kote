@@ -334,22 +334,30 @@ function formTempat(awal) {
     if (!rec.nama) { body.querySelector('[name="nama"]').focus(); pesan('Nama tempat wajib diisi', true); return false; }
     if (!isFinite(rec.lat) || !isFinite(rec.lon)) { pesan('Koordinat tidak sah', true); return false; }
 
-    // Titik di luar jangkauan peta hampir pasti salah — GPS gagal mengunci, atau
-    // koordinatnya salah ketik. Lebih baik ditahan sekarang daripada baru
-    // ketahuan setelah puluhan tempat terlanjur masuk.
-    if (!batasPeta().contains([rec.lat, rec.lon])) {
-      const p = S.data.meta.pusat || APP.pusat;
-      pesan(`Titik ini ${teksJarak(jarak(p, [rec.lat, rec.lon]))} dari pusat desa — `
-            + 'periksa lagi koordinatnya, GPS mungkin belum mengunci', true);
+    // Dua tingkat, supaya titik survei yang sah tidak ikut tertolak.
+    // Desa Kote memanjang di sepanjang pantai, jadi ujungnya bisa saja berada
+    // di luar kotak peta tanpa berarti salah — itu cukup diperingatkan.
+    // Yang ditahan hanya yang mustahil: koordinat rusak selalu melempar titiknya
+    // puluhan kilometer (koma desimal terbaca salah -> 0, 104 = ±70 km).
+    const pusatDesa = S.data.meta.pusat || APP.pusat;
+    const meleset = jarak(pusatDesa, [rec.lat, rec.lon]);
+    const BATAS_TOLAK = 25000;                       // 25 km — jauh di luar wilayah desa mana pun
+
+    if (meleset > BATAS_TOLAK) {
+      pesan(`Titik ini ${teksJarak(meleset)} dari pusat desa — hampir pasti salah. `
+            + 'Periksa koordinatnya, atau tekan Pakai lokasi saya lagi setelah GPS mengunci.', true);
       return false;
     }
+    const jauh = !batasPeta().contains([rec.lat, rec.lon]);
     rec.id = t.id || idBaru();
     const i = S.data.tempat.findIndex(x => x.id === rec.id);
     if (i >= 0) S.data.tempat[i] = rec; else S.data.tempat.push(rec);
 
     S.kategoriAktif.add(rec.kategori);
     simpan(); gambarTempat(); buatPanelLapis(); gambarUlang();
-    pesan(baru ? 'Tempat ditambahkan' : 'Tempat diperbarui');
+    pesan(jauh
+      ? `Tersimpan, tapi letaknya ${teksJarak(meleset)} dari pusat desa — pastikan itu benar`
+      : (baru ? 'Tempat ditambahkan' : 'Tempat diperbarui'), jauh);
     setTimeout(() => sorotTempat(rec.id), 120);
   }});
 
