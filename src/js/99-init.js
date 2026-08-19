@@ -25,14 +25,23 @@ function temaAwal() {
   document.documentElement.dataset.theme = t;
 }
 
-/* ── Mode kelola ──────────────────────────────────────────── */
-function alihAdmin(paksa) {
-  S.admin = paksa === undefined ? !S.admin : paksa;
+/* ── Mode kelola ──────────────────────────────────────────────
+   Dulu dibuka lewat tombol gembok di kanan atas. Sekarang tidak ada tombolnya:
+   menyunting hanya mungkin bila pengelola sedang masuk lewat /admin, sebab data
+   desa disimpan di server. Pengunjung biasa tidak pernah melihat tab Kelola. */
+function aturModeKelola(aktif) {
+  S.admin = !!aktif;
   document.body.classList.toggle('admin', S.admin);
-  $('#btn-admin').setAttribute('aria-pressed', String(S.admin));
-  if (!S.admin) { batalGambar(); if (Gambar.batalTempat) Gambar.batalTempat(); }
+
+  const tab = document.querySelector('[data-tab="kelola"]');
+  if (tab) tab.hidden = !S.admin;
+
+  if (!S.admin) {
+    batalGambar();
+    if (Gambar.batalTempat) Gambar.batalTempat();
+    if (S.tabAktif === 'kelola') pilihTab('beranda', false);
+  }
   gambarUlang();
-  pesan(S.admin ? 'Mode kelola aktif — perubahan tersimpan di perangkat ini' : 'Mode kelola dimatikan');
 }
 
 /* ── Pencarian ────────────────────────────────────────────── */
@@ -127,7 +136,6 @@ function pasangInteraksi() {
   /* Topbar */
   $('#btn-theme').addEventListener('click', () =>
     terapkanTema(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
-  $('#btn-admin').addEventListener('click', () => alihAdmin());
   $('#btn-sidebar').addEventListener('click', () =>
     aturLembar(!document.body.classList.contains('sheet-open')));
 
@@ -247,7 +255,6 @@ function pasangInteraksi() {
   document.addEventListener('change', e => {
     const t = e.target;
     if (t.matches('[data-impor]') && t.files[0]) { imporGeometri(t.files[0], t.dataset.impor); t.value = ''; }
-    if (t.matches('[data-impor-json]') && t.files[0]) { imporJSON(t.files[0]); t.value = ''; }
     if (t.matches('[data-impor-csv]') && t.files[0]) { imporCSV(t.files[0]); t.value = ''; }
     if (t.matches('[data-logo-desa]') && t.files[0]) { muatLogoDesa(t.files[0]); t.value = ''; }
   });
@@ -268,8 +275,8 @@ function aksiKlik(e) {
   let n;
 
   if ((n = T('[data-tab-ke]')))        return pilihTab(n.dataset.tabKe);
-  if (T('[data-buka-kelola]'))         { alihAdmin(true); return pilihTab('kelola'); }
-  if (T('[data-alih-admin]'))          return alihAdmin(true);
+  // Tanpa sesi pengelola, isian datanya ada di halaman pengelolaan, bukan di sini.
+  if (T('[data-buka-kelola]'))         return S.admin ? pilihTab('kelola') : (location.href = '/admin');
 
   if ((n = T('[data-hasil]'))) {
     const h = $('#q-results')._hasil[+n.dataset.hasil];
@@ -374,7 +381,6 @@ function aksiKlik(e) {
     if (t) modalBagikan(t);
     return;
   }
-  if (T('[data-bagi-peta]'))            return modalBagikan(null);
 
   if ((n = T('[data-rute]'))) {
     const t = S.data.tempat.find(x => x.id === n.dataset.rute);
@@ -401,26 +407,7 @@ function aksiKlik(e) {
     return;
   }
 
-  if (T('[data-ekspor-html]'))         return eksporHTML();
-  if (T('[data-ekspor-json]'))         return eksporJSON();
-  if (T('[data-ekspor-geojson]'))      return eksporGeoJSON();
   if (T('[data-ekspor-csv]'))          return eksporCSV();
-  if (T('[data-salin-embed]')) {
-    const ta = $('#kode-embed');
-    ta.select();
-    navigator.clipboard ? navigator.clipboard.writeText(ta.value).then(() => pesan('Kode sematan disalin'))
-                        : (document.execCommand('copy'), pesan('Kode sematan disalin'));
-    return;
-  }
-  if (T('[data-reset]')) {
-    return konfirmasi('Kosongkan semua data?', 'Seluruh statistik, tempat, dan batas akan dihapus dari perangkat ini. Cadangkan dulu bila perlu.', () => {
-      try { localStorage.removeItem(APP.simpanan); } catch (err) {}
-      S.data = dataKosong();
-      simpan(true);
-      gambarBatas(); gambarTempat(); buatPanelLapis(); fokusAwal(); gambarUlang();
-      pesan('Data dikosongkan');
-    });
-  }
 }
 
 function konfirmasi(judul, teks, fn) {
@@ -461,7 +448,7 @@ function mulai() {
     if (S.peta) setTimeout(() => { S.peta.invalidateSize({ animate: false }); gambarFokus(); }, 60);
   }
 
-  if (new URLSearchParams(location.search).get('kelola') === '1') alihAdmin(true);
+  S.bukaKelola = new URLSearchParams(location.search).get('kelola') === '1';
 
   bukaDariHash();
   addEventListener('hashchange', bukaDariHash);
@@ -478,6 +465,8 @@ async function sambungkanPengelola() {
   if (!await sambungServer()) return;
   tandaServer('siap');
 
+  aturModeKelola(true);          // sesi ada -> boleh menyunting
+
   const draf = await muatDrafServer();
   if (!draf) return;
 
@@ -491,6 +480,7 @@ async function sambungkanPengelola() {
 
   $('#brand-name').textContent = S.data.meta.nama;
   gambarBatas(); gambarTempat(); buatPanelLapis(); gambarFokus(); gambarUlang();
+  if (S.bukaKelola) pilihTab('kelola');
   pesan(`Data draf dimuat${draf.meta && draf.meta.oleh ? ' — terakhir diubah ' + draf.meta.oleh : ''}`);
 }
 

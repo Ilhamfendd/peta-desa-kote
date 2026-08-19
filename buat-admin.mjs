@@ -8,15 +8,9 @@
 // Setelah ada satu admin, akun berikutnya dibuat lewat halaman /admin.
 
 import crypto from 'node:crypto';
-import fs from 'node:fs';
+import { muatEnv } from './muat-env.mjs';
 
-// Baca .env.local sendiri; Node tidak melakukannya otomatis.
-try {
-  for (const baris of fs.readFileSync('.env.local', 'utf8').split('\n')) {
-    const m = /^\s*([A-Z0-9_]+)\s*=\s*(.*)\s*$/.exec(baris);
-    if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^["']|["']$/g, '');
-  }
-} catch { /* tidak ada .env.local — berarti tokennya sudah di environment */ }
+muatEnv();
 
 const { daftarPengguna, simpanPengguna, acakSandi } = await import('./api/_lib/sesi.js');
 

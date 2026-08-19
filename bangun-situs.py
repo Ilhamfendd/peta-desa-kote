@@ -563,7 +563,7 @@ def ekspor_qgis(folder):
     return dibuat
 
 
-JENIS = {'.pdf': 'PDF', '.png': 'PNG', '.jpg': 'JPG', '.jpeg': 'JPG',
+JENIS = {'.pdf': 'PDF', '.png': 'PNG', '.jpg': 'JPG', '.jpeg': 'JPG', '.html': 'HTML',
          '.geojson': 'GEO', '.json': 'JSON', '.csv': 'CSV', '.zip': 'ZIP',
          '.kml': 'KML', '.xlsx': 'XLSX', '.docx': 'DOCX'}
 
@@ -611,6 +611,20 @@ def hal_unduhan(k, kosong):
       <p style="margin-top:1.2rem"><a class="tombol" href="/peta">Buka peta digital</a></p>
     </div>"""
 
+    # Peta luring tidak disalin ke folder unduhan — berkasnya sudah tersaji di
+    # /peta, jadi cukup ditautkan. Atribut download membuatnya tersimpan alih-alih
+    # terbuka sebagai halaman.
+    mb = PETA.stat().st_size / 1048576 if PETA.exists() else 0
+    luring_html = f'''<h3 style="font-size:1rem;margin:2.5rem 0 .5rem">Peta untuk dipakai tanpa internet</h3>
+  <p style="color:var(--tinta-2);font-size:.95rem;margin-bottom:.9rem;max-width:42rem">
+    Satu berkas berisi peta beserta seluruh datanya. Simpan di laptop atau flashdisk,
+    lalu buka dengan klik dua kali — berguna saat turun ke lapangan atau ketika
+    sinyal tidak ada. Isinya sesuai data terakhir yang diterbitkan.</p>
+  <div class="berkas"><a href="/peta/index.html" download="peta-desa-kote.html">
+      <span class="jenis">HTML</span>
+      <span class="rincian"><b>Peta digital Desa Kote</b><small>peta-desa-kote.html</small></span>
+      <span class="ukuran">{mb:.1f} MB</span></a></div>''' if mb else ''
+
     return '', f"""<section class="bagian"><div class="wadah">
   <div class="bagian-kepala">
     <p class="eyebrow">Unduhan</p><h2>Peta cetak &amp; data</h2>
@@ -619,6 +633,8 @@ def hal_unduhan(k, kosong):
 
   <h3 style="font-size:1rem;margin-bottom:.9rem">Peta cetak</h3>
   {bagian_peta}
+
+  {luring_html}
 
   <h3 style="font-size:1rem;margin:2.5rem 0 .5rem">Data peta</h3>
   <p style="color:var(--tinta-2);font-size:.95rem;margin-bottom:.9rem;max-width:42rem">

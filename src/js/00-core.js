@@ -391,11 +391,6 @@ function kecilkanGambar(file, maks, jenis, kualitas) {
   });
 }
 
-/** Perkiraan ukuran data tersimpan, untuk ditampilkan di panel Kelola. */
-function ukuranData() {
-  try { return new Blob([JSON.stringify(S.data)]).size; } catch (e) { return 0; }
-}
-
 function teksUkuran(b) {
   return b < 1024 ? b + ' B'
        : b < 1048576 ? (b / 1024).toFixed(0) + ' KB'

@@ -27,7 +27,7 @@ Ada dua berkas isian, masing-masing punya cara mengisi sendiri:
 
 | Isi apa | Diisi di mana |
 |---|---|
-| Statistik, tempat, batas wilayah | Peta digital → mode **Kelola** di browser |
+| Statistik, tempat, batas wilayah | Masuk di `/admin`, lalu buka `/peta` → tab **Kelola** |
 | Teks halaman website | `situs/konten.json`, lalu `python bangun-situs.py` |
 
 ---
@@ -79,7 +79,7 @@ kejanggalan yang sebaiknya ditanyakan — bukan untuk diperbaiki sendiri:
 
 Sebagian besar sudah terpenuhi lewat formulir profil desa. Yang **belum**:
 
-Masuk ke: **Kelola → Statistik pokok**
+Masuk ke: `/peta` → tab **Kelola → Statistik pokok** (harus sudah masuk lewat `/admin`)
 
 - [ ] **Jumlah kepala keluarga (KK)** — satu angka
 - [ ] **Jumlah dusun** — satu angka, sekalian nama-namanya
@@ -176,7 +176,8 @@ Kalau ada: alamat, nomor telepon/WA, jam buka, foto
 ### Dua cara mengumpulkannya
 
 **A. Survei jalan kaki — paling akurat**
-Buka peta di HP → mode Kelola → **Tambah tempat di peta** → tombol
+Masuk di `/admin` lewat HP → buka `/peta` → tab **Kelola** →
+**Tambah tempat di peta** → tombol
 **Pakai lokasi saya** mengambil koordinat GPS → isi nama & kategori → ambil foto
 langsung dari kamera. Sekitar 20 tempat bisa selesai dalam satu sore.
 
@@ -186,7 +187,7 @@ di sini**. Cocok untuk tempat yang sudah Anda hafal letaknya.
 
 ### Kalau ingin mengisi borongan
 
-Isi berkas CSV di Excel, lalu **Kelola → Tempat → Muat dari CSV**. Susunan kolom:
+Isi berkas CSV di Excel, lalu buka `/peta` → **Kelola → Tempat → Muat dari CSV**. Susunan kolom:
 
 ```
 Nama;Kategori;Alamat;Kontak;Jam;Website;Keterangan;Lintang;Bujur
@@ -305,14 +306,14 @@ koordinatnya WGS 84 (EPSG:4326).
 
 ## Setelah data masuk
 
-1. **Kelola → Simpan & terbitkan → Unduh HTML mandiri**
-2. Timpa `peta-desa-kote.html` di folder proyek
-3. Jalankan `python terbitkan.py "perbarui data desa"`
+1. Buka **`/admin`**
+2. Tekan **Terbitkan sekarang**
+3. Tunggu sekitar satu menit — website dan peta dirakit ulang otomatis
 
 Alamatnya tetap **https://peta-desa-kote.vercel.app** — kode QR dan tautan yang
 sudah tersebar tidak akan mati.
 
-Cadangkan berkala lewat **Kelola → Cadangkan JSON**.
+Cadangkan berkala dari komputer: `node cadangkan.mjs`.
 
 ---
 
@@ -323,9 +324,9 @@ Cadangkan berkala lewat **Kelola → Cadangkan JSON**.
 Statistik. Data desa tanpa keterangan sumber sulit dipercaya dan sulit
 diperbarui orang berikutnya.
 
-**Foto memakan tempat.** Tiap foto sekitar 60–120 KB setelah dikecilkan
-otomatis. Penyimpanan browser terbatas sekitar 5 MB — pantau angkanya di
-**Kelola → Simpan & terbitkan**. Untuk 20–30 tempat dengan 1–2 foto masih aman.
+**Foto.** Tiap foto sekitar 60–120 KB setelah dikecilkan otomatis, dan disimpan
+sebagai berkas tersendiri di server. Tidak ada lagi batas ~5 MB seperti dulu
+sewaktu foto ikut disimpan di dalam browser.
 
 **Yang tidak boleh dipakai:** data tempat dari Google Maps. Lisensinya melarang
 penyalinan dan penyebaran ulang di luar layanan Google. OpenStreetMap boleh,

@@ -27,9 +27,11 @@ export default async function handler(req, res) {
         diubahTerakhir: draf.meta?.diubah || null,
       },
     };
-    // Publik: perakit (build.py / bangun-situs.py) mengambilnya lewat /api/terbit,
-    // dan proses perakitan di Vercel tidak memegang token Blob.
-    await tulisJSON(BERKAS_TERBIT, terbit, { publik: true });
+    // Tetap privat. Perakit (build.py / bangun-situs.py) mengambilnya lewat
+    // /api/terbit, jadi tidak perlu ada berkas terbuka di alamat yang mudah
+    // ditebak — sekaligus menutup kemungkinan data desa terindeks mesin pencari
+    // dalam bentuk mentah.
+    await tulisJSON(BERKAS_TERBIT, terbit, { publik: false });
 
     const kait = process.env.VERCEL_DEPLOY_HOOK;
     if (!kait) {

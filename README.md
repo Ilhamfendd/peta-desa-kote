@@ -1,11 +1,17 @@
-# Peta Digital Desa Kote
+# Website & Peta Digital Desa Kote
 
-Peta digital interaktif untuk **Desa Kote, Kecamatan Singkep Pesisir, Kabupaten Lingga,
-Kepulauan Riau** (kode wilayah `21.04.06.2004`).
+Website profil desa dan peta digital interaktif untuk **Desa Kote, Kecamatan
+Singkep Pesisir, Kabupaten Lingga, Kepulauan Riau** (kode wilayah `21.04.06.2004`).
 
-Hasil akhirnya **satu berkas**: `peta-desa-kote.html` (±510 KB). Tidak butuh server,
-database, pemasangan, kunci API, maupun CDN. Cukup dobel-klik untuk membuka, atau
-unggah ke website desa.
+| Alamat | Isinya |
+|---|---|
+| `/` | Website profil desa |
+| `/peta` | Peta digital |
+| `/admin` | Halaman pengelolaan — hanya untuk perangkat desa |
+
+Petanya tetap **satu berkas HTML** tanpa kunci API maupun CDN, jadi bisa diunduh
+dan dibuka tanpa internet. Data desa disimpan di server supaya bisa disunting
+bersama dan dilihat semua pengunjung.
 
 ---
 
@@ -18,7 +24,7 @@ unggah ke website desa.
 | **Tempat** | Fasilitas dalam **15 kategori**, lengkap dengan **foto**, penyaring, dan tombol bagikan |
 | **Cuaca** | Kondisi terkini, prakiraan 7 hari, arah & kekuatan angin, matahari terbit/terbenam, serta **peringatan gelombang** berskala BMKG |
 | **Wilayah** | Batas desa (luas & keliling terhitung otomatis), dusun/RW, koordinat, desa sekitar beserta jaraknya |
-| **Kelola** | Semua formulir pengisian data, impor/ekspor, dan penerbitan |
+| **Kelola** | Formulir pengisian data — hanya muncul bagi pengelola yang sudah masuk |
 
 ### Mode peta
 
@@ -146,14 +152,17 @@ Peta ini **sengaja dikirim dalam keadaan kosong**. Tidak ada satu angka penduduk
 yang dikarang — statistik tingkat desa untuk Kote tidak tersedia di sumber publik,
 jadi hanya Anda yang bisa mengisinya.
 
-1. Buka `peta-desa-kote.html`.
-2. Klik ikon **gembok** di kanan atas untuk menyalakan mode Kelola.
-3. Buka tab **Kelola**, isi bagian yang diperlukan.
+1. Masuk di **`/admin`** dengan akun pengelola.
+2. Buka **`/peta`** — tab **Kelola** muncul sendiri karena Anda sudah masuk.
+   Tidak ada tombol gembok; hak menyunting datang dari akun, bukan dari saklar.
+3. Isi bagian yang diperlukan di tab Kelola.
 4. Untuk batas desa: **Wilayah → Gambar batas di peta**, klik mengikuti batas,
    tekan `Enter` bila selesai. Luas dan keliling dihitung sendiri.
 5. Untuk fasilitas: **Tempat → Tambah tempat di peta**, klik lokasinya, isi formulir.
 
-Perubahan tersimpan otomatis di browser Anda (`localStorage`).
+Perubahan tersimpan otomatis sebagai **draf di server** — bisa dilanjutkan dari
+perangkat lain, dan terlihat oleh sesama pengelola. Yang dilihat warga baru
+berubah setelah **Terbitkan** ditekan di `/admin`.
 
 **Pintasan saat menggambar:** `Enter` selesai · `Esc` batal · `Backspace` mundur satu
 titik · seret bulatan untuk menggeser titik · klik bulatan untuk menghapusnya.
@@ -171,9 +180,9 @@ Saat menambah atau mengubah tempat, tekan **Ambil foto atau pilih dari galeri** 
 Di HP, tombol itu menawarkan kamera maupun galeri. Fotonya dikecilkan otomatis ke
 1000 px dan disimpan di dalam data peta — tidak perlu hosting gambar terpisah.
 
-Foto ponsel 4 MB biasanya menyusut jadi sekitar 60–120 KB. Ukuran seluruh data
-ditampilkan di **Kelola → Simpan & terbitkan**; penyimpanan browser umumnya
-terbatas sekitar 5 MB, jadi pantau angkanya bila memasang banyak foto.
+Foto ponsel 4 MB biasanya menyusut jadi sekitar 60–120 KB, lalu disimpan sebagai
+berkas tersendiri di Vercel Blob. Batas ~5 MB penyimpanan browser yang dulu
+membatasi jumlah foto **sudah tidak berlaku**.
 
 ### Batas usulan (semi-otomatis)
 
@@ -305,11 +314,18 @@ menerbitkan). Setiap perubahan tercatat siapa dan kapan, terlihat di Ringkasan.
 Perlu akun Vercel yang sudah tersambung ke repo ini.
 
 ```bash
-npm i -g vercel                 # bila belum ada
-vercel link                     # sambungkan folder ini ke proyek Vercel
+npm i -g vercel                              # bila belum ada
+vercel link                                  # sambungkan folder ini ke proyek Vercel
 
-vercel blob store add desa-kote # membuat penyimpanan; BLOB_READ_WRITE_TOKEN terpasang sendiri
+vercel blob create-store desa-kote --access public
+# BLOB_READ_WRITE_TOKEN otomatis terpasang di proyek
 ```
+
+> `--access public` di atas hanya menentukan bawaan penyimpanannya. Tiap berkas
+> tetap ditentukan sendiri oleh kode: **berkas akun dan draf ditulis sebagai
+> privat**, hanya foto yang publik. Kalau penyimpanan privat ternyata tidak
+> tersedia di akun Anda, penyimpanan akun akan berhenti dengan pesan jelas —
+> tidak diam-diam jatuh jadi publik.
 
 Lalu tambahkan dua env var lagi di **Vercel → Settings → Environment Variables**:
 
@@ -331,6 +347,34 @@ pertama itu segera, karena sandi yang diketik di terminal tercatat di riwayat.
 > **Kalau `VERCEL_DEPLOY_HOOK` belum diisi**, tombol Terbitkan tetap menyimpan
 > versi terbit tetapi situsnya tidak dirakit ulang — halaman admin mengatakannya
 > apa adanya, tidak pura-pura berhasil.
+
+### Cadangan & pindah akun
+
+Tidak perlu membuat akun Vercel baru sekarang. Pakai akun yang sudah ada; nanti
+saat desa punya akun sendiri, proyeknya bisa dipindahkan.
+
+```bash
+node cadangkan.mjs                        # -> lokal/cadangan-YYYY-MM-DD/
+node pulihkan.mjs lokal/cadangan-2026-08-13
+```
+
+Cadangan berisi akun pengelola, draf, versi terbit, dan seluruh foto. Taruhnya
+di `lokal/` yang tidak ikut ke GitHub — **di dalamnya ada data akun.**
+
+**Dua cara memindahkan ke akun desa:**
+
+1. **Transfer proyek lewat Vercel** — Settings → General → Transfer Project.
+   Penyimpanan Blob bisa ikut berpindah, tapi Vercel sendiri melaporkan
+   kemungkinan gagal sebagian (`resourceTransferErrors`). Jalankan
+   `node cadangkan.mjs` **sebelum** transfer, apa pun yang terjadi.
+
+2. **Pasang ulang dari nol** — lebih panjang, tapi selalu bisa: akun desa
+   mengimpor repo GitHub yang sama, membuat penyimpanan Blob sendiri, memasang
+   `SESI_RAHASIA` dan `VERCEL_DEPLOY_HOOK`, lalu `node pulihkan.mjs <cadangan>`.
+   Akun dan kata sandi lama tetap berlaku.
+
+`pulihkan.mjs` menulis ulang alamat foto, karena penyimpanan yang baru memberi
+alamat berbeda — tanpa itu semua foto akan tampil rusak. Bagian ini sudah diuji.
 
 ### Kalau server sedang mati
 
@@ -359,40 +403,35 @@ python terbitkan.py "pesan commit"  # dengan pesan sendiri
 `terbitkan.py` sudah menjalankan `build.py` dan `bangun-situs.py` lebih dulu, jadi
 satu perintah itu cukup.
 
-Kalau datanya diisi lewat mode Kelola di browser: unduh **HTML mandiri**,
-timpa `peta-desa-kote.html`, lalu jalankan `python terbitkan.py`.
+Kalau datanya diisi lewat `/admin` atau tab Kelola di peta, tidak ada langkah
+manual sama sekali: tekan **Terbitkan**, dan Vercel merakit ulang sendiri.
+`terbitkan.py` hanya diperlukan bila yang berubah adalah **kodenya**.
 
-> Karena sekarang berjalan di HTTPS, tombol **Pakai lokasi saya** (GPS) dan menu
-> berbagi bawaan HP ikut berfungsi — keduanya diblokir browser saat berkas dibuka
+> Karena berjalan di HTTPS, tombol **Pakai lokasi saya** (GPS) dan menu berbagi
+> bawaan HP ikut berfungsi — keduanya diblokir browser saat berkas dibuka
 > langsung lewat `file://`.
 
-Isi alamat itu di **Kelola → Alamat terbit & kode QR** supaya tautan berbagi dan
-kode QR menunjuk ke alamat yang benar.
+## Memasang di website desa yang sudah ada
 
-## Cara memasang ke website desa
-
-1. Di tab **Kelola → Simpan & terbitkan**, klik **Unduh HTML mandiri**.
-   Berkas yang terunduh sudah berisi peta **dan** data terbaru Anda.
-2. Unggah berkas itu ke hosting website desa.
-3. Buka langsung lewat tautannya, atau sematkan ke sebuah halaman:
+Website ini **sudah menjadi** website desa, jadi biasanya tidak perlu disematkan
+ke mana-mana. Kalau desa tetap memakai situs lain (OpenSID, WordPress), cukup
+tautkan saja:
 
 ```html
-<iframe src="/peta-desa-kote.html" title="Peta Digital Desa Kote"
-        style="width:100%;height:640px;border:0;border-radius:12px"
-        loading="lazy" allow="geolocation"></iframe>
+<a href="https://peta-desa-kote.vercel.app/peta">Peta Digital Desa Kote</a>
 ```
 
-Cocok untuk WordPress, OpenSID, maupun HTML biasa. Bisa juga diunggah gratis ke
-GitHub Pages atau Netlify.
+Menyematkan lewat `<iframe>` juga bisa, tetapi tautan biasa lebih ramah di HP dan
+tidak memotong tinggi peta.
 
-### Berbagi & kode QR
+## Berbagi & kode QR
 
-Isi **alamat peta di website desa** pada **Kelola → Alamat terbit & kode QR**.
-Setelah terisi:
+Alamat peta sudah tetap — `https://peta-desa-kote.vercel.app/peta` — jadi tidak
+ada yang perlu diisi lagi.
 
-- Tiap tempat punya tombol **Bagikan** — menghasilkan tautan yang langsung membuka
-  peta pada tempat itu, misalnya
-  `…/peta-desa-kote.html#t=dermaga-nelayan`. Cocok dikirim di grup WhatsApp.
+- Tiap tempat punya tombol **Bagikan**: menghasilkan tautan yang langsung membuka
+  peta pada tempat itu, misalnya `…/peta#t=dermaga-nelayan`. Cocok dikirim di grup
+  WhatsApp.
 - Tersedia **kode QR** untuk peta maupun untuk satu tempat, bisa diunduh sebagai
   PNG beresolusi tinggi untuk dicetak di banner, papan pengumuman, atau lampiran
   laporan KKN.
@@ -400,15 +439,13 @@ Setelah terisi:
 Kode QR dibuat di dalam berkas ini sendiri — tanpa layanan luar, jadi tetap
 berfungsi meski dibuka tanpa internet.
 
-> **Alur pembaruan:** sunting di browser → **Unduh HTML mandiri** → unggah ulang
-> menimpa yang lama. Pengunjung selalu melihat versi terbitan; salinan lokal yang
-> lebih lama otomatis dikalahkan oleh versi terbitan yang lebih baru.
+**Pengunjung tidak bisa mengubah apa pun.** Tab Kelola hanya muncul bagi pengelola
+yang sudah masuk, dan setiap penyimpanan diperiksa lagi di sisi server — bukan
+sekadar disembunyikan di tampilan.
 
-Pengunjung website **tidak bisa** mengubah data — mode Kelola hanya memengaruhi
-browser orang yang menyalakannya, dan tidak pernah ikut terbit.
-
-Cadangkan berkala lewat **Cadangkan JSON**. **Ekspor GeoJSON** menghasilkan berkas
-yang bisa dibuka di QGIS atau ArcGIS.
+Cadangan seluruh data dibuat dari komputer dengan `node cadangkan.mjs`. Berkas
+GeoJSON untuk QGIS tersedia di halaman **Unduhan**, ikut diperbarui setiap kali
+data desa berubah.
 
 ---
 

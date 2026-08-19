@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).json({ galat: 'Metode tidak didukung' });
 
   try {
-    const terbit = await bacaJSON(BERKAS_TERBIT);
+    const terbit = await bacaJSON(BERKAS_TERBIT, { publik: false });
     res.setHeader('Cache-Control', 'no-store');
     if (!terbit) {
       // Belum pernah diterbitkan — perakit akan memakai berkas bawaan di repo.

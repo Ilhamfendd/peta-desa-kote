@@ -5,6 +5,6 @@
   "type": "module",
   "description": "Website profil dan peta digital Desa Kote, Singkep Pesisir, Lingga",
   "dependencies": {
-    "@vercel/blob": "^0.27.0"
+    "@vercel/blob": "^2.8.0"
   }
 }

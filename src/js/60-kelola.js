@@ -13,90 +13,14 @@ function unduh(nama, isi, tipe) {
 
 const namaBerkas = ext => `peta-${S.data.meta.nama.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().slice(0, 10)}.${ext}`;
 
-/* ── Ekspor ───────────────────────────────────────────────── */
-function eksporJSON() {
-  unduh(namaBerkas('json'), JSON.stringify(S.data, null, 2), 'application/json');
-  pesan('Data JSON diunduh');
-}
-
-function eksporGeoJSON() {
-  const f = [];
-  if (S.data.batas.desa) {
-    f.push(Object.assign({}, S.data.batas.desa, {
-      properties: Object.assign({}, S.data.batas.desa.properties, { jenis: 'batas_desa', nama: S.data.meta.nama })
-    }));
-  }
-  (S.data.batas.dusun || []).forEach(d => {
-    if (d.geo) f.push(Object.assign({}, d.geo, { properties: { jenis: 'dusun', nama: d.nama } }));
-  });
-  S.data.tempat.forEach(t => f.push({
-    type: 'Feature',
-    properties: { jenis: 'tempat', nama: t.nama, kategori: t.kategori, deskripsi: t.deskripsi,
-                  alamat: t.alamat, kontak: t.kontak, jam: t.jam, website: t.website },
-    geometry: { type: 'Point', coordinates: [+t.lon.toFixed(6), +t.lat.toFixed(6)] }
-  }));
-
-  if (!f.length) return pesan('Belum ada geometri untuk diekspor', true);
-  unduh(namaBerkas('geojson'), JSON.stringify({ type: 'FeatureCollection', features: f }, null, 2), 'application/geo+json');
-  pesan(`${f.length} objek diekspor ke GeoJSON`);
-}
-
-/** Menyalin halaman ini menjadi berkas HTML baru berisi data terkini. */
-function bangunHTMLMandiri() {
-  const doc = document.documentElement.cloneNode(true);
-
-  // "<" di-escape agar teks pengguna tidak bisa menutup blok <script> lebih awal.
-  doc.querySelector('#desa-data').textContent = JSON.stringify(S.data).replace(/</g, '\\u003c');
-
-  const peta = doc.querySelector('#map');
-  peta.innerHTML = ''; peta.className = ''; peta.removeAttribute('style');
-
-  doc.querySelectorAll('.panel').forEach(p => { p.innerHTML = ''; });
-  ['#layer-panel', '#legend', '#toast-wrap', '#q-results', '#draw-hud'].forEach(s => {
-    const n = doc.querySelector(s); if (n) n.innerHTML = '';
-  });
-  const hud = doc.querySelector('#draw-hud'); if (hud) hud.hidden = true;
-  const qr = doc.querySelector('#q-results'); if (qr) qr.hidden = true;
-  const q = doc.querySelector('#q'); if (q) q.removeAttribute('value');
-  const tip = doc.querySelector('.chart-tip'); if (tip) tip.remove();
-  const mb = doc.querySelector('.modal-bg'); if (mb) mb.remove();
-
-  // Tautan pulang ke situs desa dilepas: berkas hasil ekspor sering dibuka
-  // langsung dari komputer, dan "/" di sana menunjuk ke akar penyimpanan.
-  // mulai() memasangnya kembali sendiri bila berkasnya disajikan lewat web.
-  const merek = doc.querySelector('#brand');
-  if (merek) { merek.removeAttribute('href'); merek.removeAttribute('title'); }
-
-  doc.querySelector('body').className = '';
-  doc.querySelectorAll('.panel').forEach((p, i) => { p.hidden = i !== 0; });
-  doc.querySelectorAll('.tabs button').forEach((b, i) => b.setAttribute('aria-selected', String(i === 0)));
-
-  return '<!DOCTYPE html>\n' + doc.outerHTML;
-}
-
-function eksporHTML() {
-  unduh('peta-desa-kote.html', bangunHTMLMandiri(), 'text/html');
-  pesan('Berkas HTML mandiri diunduh — siap diunggah ke website desa');
-}
-
-/* ── Impor ────────────────────────────────────────────────── */
-function imporJSON(file) {
-  const fr = new FileReader();
-  fr.onload = () => {
-    try {
-      const masuk = JSON.parse(String(fr.result));
-      if (!masuk || !masuk.meta) throw new Error('bukan data peta desa');
-      S.data = gabung(dataKosong(), masuk);
-      simpan(true);
-      S.kategoriAktif = new Set(Object.keys(KATEGORI));
-      gambarBatas(); gambarTempat(); buatPanelLapis(); fokusAwal(); gambarUlang();
-      pesan('Data berhasil dimuat');
-    } catch (e) {
-      pesan('Berkas bukan data peta yang sah', true);
-    }
-  };
-  fr.readAsText(file);
-}
+/* ── Impor ────────────────────────────────────────────────────
+   Ekspor HTML mandiri, cadangan JSON, dan ekspor GeoJSON sudah dicabut dari
+   sini: data tidak lagi hidup di browser, jadi menyalinnya dari layar cuma
+   membuat salinan yang bercabang. Penggantinya:
+     · cadangan penuh   -> node cadangkan.mjs
+     · GeoJSON untuk QGIS -> halaman /unduhan
+     · berkas peta luring -> halaman /unduhan
+   ───────────────────────────────────────────────────────────── */
 
 /* ── Impor CSV ────────────────────────────────────────────────
    Menerima berkas hasil ekspor aplikasi ini maupun keluaran
@@ -411,23 +335,24 @@ function panelKelola() {
     return `<div class="p-head"><h2>Kelola data</h2><p>Ubah isi peta ini</p></div>
       <div class="empty-state">
         ${ikon('M4.5 10.5h15v10h-15zM8 10.5V7.5a4 4 0 0 1 8 0v3')}
-        <b>Mode kelola belum aktif</b>
-        <p>Nyalakan lewat tombol gembok di kanan atas untuk mengubah data.</p>
+        <b>Perlu masuk sebagai pengelola</b>
+        <p>Data desa disimpan di server, jadi menyuntingnya harus lewat akun.
+           Masuk di halaman pengelolaan, lalu kembali ke sini.</p>
       </div>
       <div class="btn-row" style="margin-top:12px">
-        <button class="btn primary wide" data-alih-admin>Aktifkan mode kelola</button>
+        <a class="btn primary wide" href="/admin">Buka halaman pengelolaan</a>
       </div>`;
   }
 
   const luasPeta = luasDariPeta();
 
   return `
-    <div class="p-head"><h2>Kelola data</h2><p>Perubahan tersimpan di browser ini</p></div>
+    <div class="p-head"><h2>Kelola data</h2><p>Tersimpan otomatis ke draf di server</p></div>
 
     <div class="note">
       ${ikon('M12 20.5a8.5 8.5 0 1 0 0-17 8.5 8.5 0 0 0 0 17zM12 11v5.2M12 7.9h.01')}
-      <span>Suntingan di sini hanya tersimpan di perangkat Anda. Agar tampil di website desa,
-      unduh <b>HTML mandiri</b> di bagian bawah lalu unggah berkasnya.</span>
+      <span>Suntingan tersimpan sebagai <b>draf</b> dan belum dilihat warga.
+      Tekan <b>Terbitkan</b> di halaman pengelolaan bila sudah siap.</span>
     </div>
 
     <details class="acc" open>
@@ -566,56 +491,16 @@ function panelKelola() {
     </details>
 
     <details class="acc" open>
-      <summary>Simpan & terbitkan</summary>
+      <summary>Terbitkan</summary>
       <div class="acc-body">
-        <button class="btn primary wide" data-ekspor-html style="margin-bottom:8px">
-          ${ikon('M12 3.6v11.5M7.6 10.8l4.4 4.3 4.4-4.3M4.5 19.5h15')}Unduh HTML mandiri</button>
-        <p class="chart-note" style="margin-bottom:12px">
-          Satu berkas berisi peta + data terbaru. Unggah ke website desa, lalu buka lewat tautannya.</p>
-        <div class="btn-row">
-          <button class="btn" data-ekspor-json>Cadangkan JSON</button>
-          <button class="btn" data-ekspor-geojson>Ekspor GeoJSON</button>
-        </div>
-        <label class="f" style="margin-top:12px"><span>Pulihkan dari cadangan JSON</span>
-          <input type="file" class="inp" accept=".json" data-impor-json></label>
-        <p class="chart-note" style="margin-bottom:8px">Ukuran data saat ini
-          <b>${esc(teksUkuran(ukuranData()))}</b>${S.data.tempat.filter(t => t.foto).length
-            ? ` · ${S.data.tempat.filter(t => t.foto).length} foto tersimpan` : ''}.
-          Penyimpanan browser umumnya terbatas sekitar 5 MB.</p>
-        <button class="btn danger wide" data-reset>Kosongkan semua data</button>
-      </div>
-    </details>
-
-    <details class="acc">
-      <summary>Alamat terbit & kode QR</summary>
-      <div class="acc-body">
-        <label class="f"><span>Alamat peta di website desa
-          <em>dipakai untuk tautan berbagi dan kode QR</em></span>
-          <input class="inp" value="${esc(p.urlPublik || '')}" data-set-teks="profil.urlPublik"
-                 placeholder="https://desakote.lingga.go.id/peta-desa-kote.html"></label>
-        ${p.urlPublik ? `
-          <div style="display:flex;gap:13px;align-items:center;margin-top:4px">
-            <div style="background:#fff;padding:7px;border-radius:var(--radius);border:1px solid var(--border);flex:none">
-              ${qrSVG(safeUrl(p.urlPublik) || p.urlPublik, { ukuran: 116 }) || ''}
-            </div>
-            <div style="min-width:0">
-              <p class="chart-note" style="margin-bottom:8px">Cetak di banner, papan pengumuman, atau lampiran laporan.
-                Warga tinggal memindai dengan kamera HP.</p>
-              <button class="btn sm" data-bagi-peta>Perbesar & unduh</button>
-            </div>
-          </div>`
-        : `<p class="chart-note">Isi alamatnya dulu, kode QR akan muncul di sini.</p>`}
-      </div>
-    </details>
-
-    <details class="acc">
-      <summary>Pasang di website desa</summary>
-      <div class="acc-body">
-        <p class="chart-note" style="margin-bottom:9px">Unggah <code>peta-desa-kote.html</code> ke hosting desa, lalu sisipkan:</p>
-        <textarea class="inp" readonly rows="4" id="kode-embed" style="font-family:ui-monospace,monospace;font-size:11.5px">&lt;iframe src="/peta-desa-kote.html" title="Peta Digital Desa Kote" style="width:100%;height:640px;border:0;border-radius:12px" loading="lazy" allow="geolocation"&gt;&lt;/iframe&gt;</textarea>
-        <button class="btn wide" data-salin-embed style="margin-top:7px">Salin kode sematan</button>
+        <p class="chart-note" style="margin-bottom:10px">
+          Perubahan di sini sudah tersimpan ke draf bersama. Yang dilihat warga baru
+          berubah setelah diterbitkan — termasuk halaman profil desa, karena keduanya
+          dirakit ulang bersamaan.</p>
+        <a class="btn primary wide" href="/admin">Buka halaman pengelolaan</a>
         <p class="chart-note" style="margin-top:10px">
-          Cocok untuk WordPress, OpenSID, maupun HTML biasa. Bisa juga diunggah ke GitHub Pages tanpa biaya.</p>
+          Cadangan seluruh data dibuat dari komputer dengan
+          <code>node cadangkan.mjs</code>.</p>
       </div>
     </details>`;
 }

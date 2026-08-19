@@ -10,7 +10,7 @@ kode, dan penjelasan memakai bahasa Indonesia.**
 
 1. **Jangan pernah mengarang data desa.** Statistik penduduk tingkat desa untuk Kote
    tidak ada di sumber publik. Berkas terbit dikirim **kosong**; angka hanya boleh
-   masuk lewat mode Kelola oleh pengelola desa. Bila butuh data contoh untuk menguji
+   masuk lewat halaman pengelolaan oleh perangkat desa. Bila butuh data contoh untuk menguji
    tampilan, taruh di luar folder proyek dan beri label jelas.
 2. **Jangan sunting berkas hasil rakitan.** `peta-desa-kote.html` dirakit dari
    `src/` oleh `build.py`; seluruh `public/*.html` dan `public/peta/index.html`
@@ -116,6 +116,12 @@ tetap memakai berkas repo, supaya perakitan bisa jalan tanpa internet.
 Fungsi API ada di `api/` (Node ESM — `package.json` wajib punya `"type": "module"`).
 Berkas berawalan `_` bukan rute. Tidak memakai pustaka auth: scrypt + kue
 bertanda HMAC dari `node:crypto` (`api/_lib/sesi.js`).
+
+**`@vercel/blob` wajib v2 ke atas.** Versi 0.x hanya mengenal `access: 'public'`
+dan tidak punya `get()`. Sempat terpasang 0.27.3 dan itu diam-diam mematikan
+seluruh rencana penyimpanan privat — berkas akun akan gagal ditulis, atau lebih
+buruk, tersimpan terbuka di alamat yang mudah ditebak (`addRandomSuffix: false`).
+Jangan turunkan versinya.
 
 **Aturan yang tidak boleh dilanggar di sini:**
 
