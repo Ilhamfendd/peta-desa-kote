@@ -5,10 +5,17 @@
 //
 // Karena alamatnya jadi mudah ditebak, akses tiap berkas ditentukan tegas:
 //
-//   desa/pengguna.json  privat   berisi sandi teracak
-//   desa/draf.json      privat   suntingan yang belum diterbitkan
-//   desa/terbit.json    privat   dibaca lewat /api/terbit, bukan langsung
-//   desa/foto/*         publik   dipasang sebagai <img> di situs
+//   desa/pengguna.json  berisi sandi teracak
+//   desa/draf.json      suntingan yang belum diterbitkan
+//   desa/terbit.json    dibaca perakit lewat /api/terbit
+//   desa/foto/*         disajikan lewat /api/foto
+//
+// SELURUH penyimpanan harus dibuat dengan `--access private`. Mode akses itu
+// milik penyimpanannya, bukan per berkas — penyimpanan publik menolak
+// `cache=0` dengan pesan "only available for private stores", dan menyimpan
+// berkas akun di sana berarti alamatnya bisa ditebak siapa pun.
+// Foto memang perlu dilihat umum, tapi itu diurus rute /api/foto, bukan dengan
+// membuka seluruh penyimpanan.
 //
 // Butuh @vercel/blob v2 ke atas: penyimpanan privat dan get() belum ada di v0.x.
 
@@ -66,18 +73,25 @@ export async function bacaJSON(jalur, { publik = false } = {}) {
 }
 
 export async function tulisBerkas(jalur, data, tipe) {
-  const hasil = await put(jalur, data, {
-    access: 'public',      // dipasang langsung sebagai <img> di situs
+  await put(jalur, data, {
+    access: 'private',
     contentType: tipe,
     addRandomSuffix: false,
     allowOverwrite: true,
     token: token(),
   });
-  return hasil.url;
+  // Yang dikembalikan alamat rute sendiri, bukan alamat Blob: alamat Blob privat
+  // butuh token, sedangkan foto ini dipasang di halaman yang dibuka siapa saja.
+  return `/api/foto?jalur=${encodeURIComponent(jalur)}`;
 }
 
-export async function hapusBerkas(url) {
-  await del(url, { token: token() });
+/** Isi berkas sebagai aliran — dipakai /api/foto untuk menyajikan gambar. */
+export async function bacaBerkas(jalur, { ifNoneMatch } = {}) {
+  return get(jalur, { access: 'private', token: token(), ifNoneMatch });
+}
+
+export async function hapusBerkas(jalurAtauUrl) {
+  await del(jalurAtauUrl, { token: token() });
 }
 
 export async function daftarBerkas(awalan) {

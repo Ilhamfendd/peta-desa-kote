@@ -14,7 +14,7 @@ import { muatEnv, wajibToken } from './muat-env.mjs';
 muatEnv();
 wajibToken();
 
-const { bacaJSON, daftarBerkas, BERKAS_DRAF, BERKAS_TERBIT } = await import('./api/_lib/simpan.js');
+const { bacaJSON, bacaBerkas, daftarBerkas, BERKAS_DRAF, BERKAS_TERBIT } = await import('./api/_lib/simpan.js');
 
 const tujuan = process.argv[2]
   || path.join('lokal', `cadangan-${new Date().toISOString().slice(0, 10)}`);
@@ -42,10 +42,11 @@ const foto = await daftarBerkas('desa/foto/');
 const petaFoto = {};
 for (const f of foto) {
   const nama = path.basename(f.pathname);
-  const r = await fetch(f.url);
-  if (!r.ok) { console.log(`  !  gagal mengunduh ${nama} (${r.status})`); continue; }
-  await fs.writeFile(path.join(tujuan, 'foto', nama), Buffer.from(await r.arrayBuffer()));
-  petaFoto[f.url] = `foto/${nama}`;   // dipakai pulihkan.mjs untuk menulis ulang alamat
+  // Berkasnya privat, jadi diambil lewat SDK bertoken — bukan fetch biasa.
+  const hasil = await bacaBerkas(f.pathname);
+  if (!hasil || hasil.statusCode !== 200) { console.log(`  !  gagal mengunduh ${nama}`); continue; }
+  await fs.writeFile(path.join(tujuan, 'foto', nama), Buffer.from(await new Response(hasil.stream).arrayBuffer()));
+  petaFoto[`/api/foto?jalur=${encodeURIComponent(f.pathname)}`] = `foto/${nama}`;
 }
 await fs.writeFile(path.join(tujuan, 'foto.json'), JSON.stringify(petaFoto, null, 2), 'utf8');
 

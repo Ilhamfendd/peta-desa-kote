@@ -5226,14 +5226,26 @@ function formTempat(awal) {
     kotak.innerHTML = `<p class="chart-note">Mengolah ${berkas.length} foto…</p>`;
     // 1000 px / kualitas 0,7 — cukup tajam di layar, tetap ringan saat ditanam
     Promise.all(berkas.map(f => kecilkanGambar(f, 1000, 'image/jpeg', 0.7).catch(() => null)))
-      .then(hasil => {
-        const sah = hasil.filter(Boolean);
+      .then(async hasil => {
+        let sah = hasil.filter(Boolean);
+        const besar = sah.reduce((s, d) => s + d.length * 0.75, 0);
+        let gagal = hasil.length - sah.length;
+
+        // Bila tersambung ke server, fotonya diunggah jadi berkas tersendiri dan
+        // yang disimpan hanya alamatnya. Kalau ikut ditanam sebagai base64, satu
+        // draf bisa membengkak berkali-kali lipat hanya karena foto.
+        if (typeof SERVER !== 'undefined' && SERVER.aktif) {
+          kotak.innerHTML = `<p class="chart-note">Mengunggah ${sah.length} foto…</p>`;
+          const naik = await Promise.all(sah.map((d, i) =>
+            unggahFoto(d, `tempat-${i + 1}`).catch(() => null)));
+          gagal += naik.filter(u => !u).length;
+          sah = naik.filter(Boolean);
+        }
+
         fotoData = fotoData.concat(sah);
         gambarKotak();
-        const gagal = hasil.length - sah.length;
-        const besar = sah.reduce((s, d) => s + d.length * 0.75, 0);
         pesan(`${sah.length} foto ditambahkan (${teksUkuran(Math.round(besar))})`
-              + (gagal ? ` · ${gagal} gagal dibaca` : ''), !!gagal);
+              + (gagal ? ` · ${gagal} gagal` : ''), !!gagal);
       });
   });
 

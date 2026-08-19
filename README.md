@@ -317,15 +317,21 @@ Perlu akun Vercel yang sudah tersambung ke repo ini.
 npm i -g vercel                              # bila belum ada
 vercel link                                  # sambungkan folder ini ke proyek Vercel
 
-vercel blob create-store desa-kote --access public
+vercel blob create-store desa-kote --access private
 # BLOB_READ_WRITE_TOKEN otomatis terpasang di proyek
 ```
 
-> `--access public` di atas hanya menentukan bawaan penyimpanannya. Tiap berkas
-> tetap ditentukan sendiri oleh kode: **berkas akun dan draf ditulis sebagai
-> privat**, hanya foto yang publik. Kalau penyimpanan privat ternyata tidak
-> tersedia di akun Anda, penyimpanan akun akan berhenti dengan pesan jelas —
-> tidak diam-diam jatuh jadi publik.
+> **Harus `private`.** Mode akses itu milik penyimpanannya, bukan per berkas —
+> sudah dipastikan dari pesan galat Vercel sendiri: `cache=0 is only available
+> for private stores`. Kalau dibuat publik, berkas akun beserta sandi teracaknya
+> berada di alamat yang bisa ditebak, sebab nama berkasnya sengaja dibuat tetap.
+>
+> Foto tetap bisa dilihat pengunjung: disajikan lewat rute `/api/foto`, yang
+> hanya melayani berkas di bawah `desa/foto/` — bukan dengan membuka seluruh
+> penyimpanan.
+>
+> Kalau terlanjur terbuat sebagai publik, hapus dan buat ulang:
+> `vercel blob delete-store <storeId>`
 
 Lalu tambahkan dua env var lagi di **Vercel → Settings → Environment Variables**:
 

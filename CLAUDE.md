@@ -117,6 +117,15 @@ Fungsi API ada di `api/` (Node ESM — `package.json` wajib punya `"type": "modu
 Berkas berawalan `_` bukan rute. Tidak memakai pustaka auth: scrypt + kue
 bertanda HMAC dari `node:crypto` (`api/_lib/sesi.js`).
 
+**Penyimpanan Blob wajib dibuat `--access private`.** Mode akses adalah sifat
+penyimpanan, BUKAN per berkas — ini sudah diuji, bukan dugaan: penyimpanan publik
+menolak `cache=0` dengan pesan `only available for private stores`, dan
+`vercel blob get-store` menampilkan `Access: Public/Private` per penyimpanan.
+Karena `addRandomSuffix: false`, alamat berkas mudah ditebak; menaruh
+`desa/pengguna.json` di penyimpanan publik berarti membuka daftar akun.
+Foto ikut privat dan disajikan lewat `GET /api/foto?jalur=…` — rute itu satu-satunya
+pintu keluar dan hanya melayani `desa/foto/…` (diuji terhadap traversal).
+
 **`@vercel/blob` wajib v2 ke atas.** Versi 0.x hanya mengenal `access: 'public'`
 dan tidak punya `get()`. Sempat terpasang 0.27.3 dan itu diam-diam mematikan
 seluruh rencana penyimpanan privat — berkas akun akan gagal ditulis, atau lebih
