@@ -115,6 +115,9 @@ function safeUrl(u) {
   if (!s) return '';
   if (/^(https?:|mailto:|tel:)/i.test(s)) return s;
   if (/^data:image\/(png|jpe?g|gif|webp|avif);base64,/i.test(s)) return s;
+  // Jalur di situs ini sendiri, mis. /api/foto?jalur=… tempat foto disajikan.
+  // "/x" diterima, "//host" TIDAK — itu alamat ke host lain, bukan jalur lokal.
+  if (/^\/[^/]/.test(s)) return s;
   if (/^[\w.-]+\.[a-z]{2,}(\/|$)/i.test(s)) return 'https://' + s;
   return '';
 }
