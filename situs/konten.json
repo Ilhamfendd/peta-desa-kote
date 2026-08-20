@@ -20,7 +20,7 @@
       104.5098449
     ],
     "tagline": "Desa pesisir di utara Pulau Singkep",
-    "deskripsi": "Profil resmi Desa Kote, Kecamatan Singkep Pesisir, Kabupaten Lingga, Kepulauan Riau. Data wilayah, kependudukan, potensi, layanan, dan peta digital desa.",
+    "deskripsi": "Profil resmi Desa Kote, Kecamatan Singkep Pesisir, Kabupaten Lingga, Kepulauan Riau — desa pesisir bekas pelabuhan ramai di Pulau Singkep dan tempat tumbuhnya Zapin Kote. Berisi data wilayah, kependudukan, potensi, layanan, dan peta digital desa.",
     "alamat": "",
     "telepon": "",
     "email": "",
@@ -49,7 +49,7 @@
     }
   },
   "profil": {
-    "sejarah": "",
+    "sejarah": "Nama Kote berasal dari kata \"kota\". Penamaan itu tidak lepas dari sejarahnya: Kote dahulu merupakan pelabuhan sekaligus pusat perekonomian yang ramai di Pulau Singkep, tempat kapal-kapal bersandar pada masa kejayaan timah — salah satu pusat kegiatan selain Dabo dan Kuala Raya.\n\nJejak itu masih terlihat sampai sekarang: Desa Kote memiliki satu-satunya pelabuhan di Kecamatan Singkep Pesisir, dan perikanan tetap menjadi mata pencaharian terbesar warganya.\n\nCatatan: keterangan asal usul nama ini dihimpun dari publikasi Balai Pelestarian Nilai Budaya Kepulauan Riau tentang asal usul nama kampung di Lingga, bukan dari arsip desa. Mohon diperiksa, dikoreksi, dan dilengkapi oleh perangkat desa bersama tetua kampung.",
     "visi": "",
     "misi": [],
     "geografis": "Desa Kote terletak di pesisir utara Pulau Singkep, menghadap Selat Berhala. Wilayahnya memanjang mengikuti garis pantai, dengan permukiman terpusat di sepanjang jalan yang menghubungkan Dabo Singkep dengan Pelabuhan Jagoh.",
@@ -154,6 +154,12 @@
         "sifat": "darat",
         "sumber": "Pemerintah Desa Kote — formulir \"Permintaan Data Profil Seluruh Desa se-Kecamatan Singkep Pesisir\", data 2024",
         "teks": "123 warga hidup dari wiraswasta — jumlah terbesar kedua setelah perikanan. Desa Kote juga tercatat sebagai desa dengan industri mikro terbanyak di kecamatannya."
+      },
+      {
+        "nama": "Zapin Kote",
+        "sifat": "darat",
+        "sumber": "Dinas Kebudayaan Provinsi Kepulauan Riau dan Balai Pelestarian Nilai Budaya Kepulauan Riau. Mohon diperiksa dan dilengkapi perangkat desa.",
+        "teks": "Tarian Zapin Melayu yang tumbuh dan berkembang di Desa Kote, dan tercatat sebagai warisan budaya takbenda Indonesia. Gerakannya lebih energik dibanding zapin lain — langkah kaki lebih lebar, disertai loncatan dan penekanan pada tiap gerak.\n\nZapin masuk ke Kote sekitar 1920–1930-an, dibawa Raja Muhammad dan Raja Muhammad Sumbing dari Daik. Salah seorang muridnya, Muhammad Yasin, meneruskan mengajarkannya kepada warga desa. Tariannya diiringi gambus dan marwas, dengan lagu-lagu bermuatan sejarah dan pesan moral."
       },
       {
         "nama": "Pulau Serang",

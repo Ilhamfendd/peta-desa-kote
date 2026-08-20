@@ -258,7 +258,7 @@ def hal_beranda(k, kosong):
     if sektor:
         kartu = ''.join(f"""<article class="kartu">
       <h3{' class="laut"' if s_.get('sifat') == 'laut' else ''}>{E(s_['nama'])}</h3>
-      <p>{E(s_['teks'])}</p>
+      <p>{E(s_['teks'].split(chr(10) + chr(10))[0])}</p>
       {f'<span class="sumber">{E(s_["sumber"])}</span>' if s_.get('sumber') else ''}
     </article>""" for s_ in sektor[:3])
         isi += f"""<section class="bagian"><div class="wadah">
@@ -419,7 +419,7 @@ def hal_potensi(k, kosong):
     p = k['potensi']
     kartu = ''.join(f"""<article class="kartu">
       <h3{' class="laut"' if s.get('sifat') == 'laut' else ''}>{E(s['nama'])}</h3>
-      <p>{E(s['teks'])}</p>
+      {paragraf(s['teks'])}
       {f'<span class="sumber">{E(s["sumber"])}</span>' if s.get('sumber') else ''}
     </article>""" for s in p['sektor'])
 
