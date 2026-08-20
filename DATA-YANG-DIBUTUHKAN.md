@@ -194,10 +194,10 @@ Nama;Kategori;Alamat;Kontak;Jam;Website;Keterangan;Lintang;Bujur
 Kantor Desa Kote;pemerintahan;Jl. Raya Kote;0812xxxx;Senin–Jumat 08.00–15.00;;;-0.363800;104.506845
 ```
 
-Wajib hanya **Nama, Lintang, Bujur**. Kategori yang dikenali: `pemerintahan`,
+Wajib hanya **Nama, Lintang, Bujur**. 19 kategori yang dikenali: `pemerintahan`,
 `pendidikan`, `kesehatan`, `ibadah`, `ekonomi`, `kuliner`, `perikanan`,
-`pertanian`, `wisata`, `penginapan`, `sosial`, `transportasi`, `air`,
-`infrastruktur`, `lainnya`.
+`pertanian`, `wisata`, `penginapan`, `sosial`, `olahraga`, `pemakaman`,
+`transportasi`, `air`, `infrastruktur`, `keamanan`, `kebencanaan`, `lainnya`.
 
 ---
 

@@ -86,6 +86,12 @@ seluruh data dan sulit ketahuan.
 Ini berlaku untuk nomor telepon, jam buka, nama resmi — semuanya. Kalau ragu,
 tanyakan ke pengurus tempatnya, atau kosongkan dan beri catatan.
 
+**Pilih kategori yang paling tepat, jangan asal "Lainnya".** Sekarang ada 19
+kategori — termasuk **Olahraga** (lapangan), **Pemakaman** (TPU), **Keamanan**
+(pos kamling), dan **Kebencanaan** (titik kumpul, jalur evakuasi). Kategori yang
+tepat membuat penyaring dan legenda peta berguna; kalau semua masuk "Lainnya",
+peta jadi sulit dibaca.
+
 **Jangan menyalin dari Google Maps.** Lisensinya melarang. Koordinat dari GPS HP
 Anda sendiri tidak masalah — itu pengukuran Anda sendiri.
 

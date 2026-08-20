@@ -21,7 +21,7 @@ bersama dan dilihat semua pengunjung.
 |---|---|
 | **Beranda** | Identitas desa, angka pokok, visi, kontak, cuaca ringkas |
 | **Statistik** | Penduduk, kepadatan, rasio jenis kelamin, piramida umur, pendidikan, mata pencaharian, agama — tiap grafik punya tampilan **Tabel** |
-| **Tempat** | Fasilitas dalam **15 kategori**, lengkap dengan **foto**, penyaring, dan tombol bagikan |
+| **Tempat** | Fasilitas dalam **19 kategori**, lengkap dengan **foto**, penyaring, dan tombol bagikan |
 | **Cuaca** | Kondisi terkini, prakiraan 7 hari, arah & kekuatan angin, matahari terbit/terbenam, serta **peringatan gelombang** berskala BMKG |
 | **Wilayah** | Batas desa (luas & keliling terhitung otomatis), dusun/RW, koordinat, desa sekitar beserta jaraknya |
 | **Kelola** | Formulir pengisian data — hanya muncul bagi pengelola yang sudah masuk |
@@ -81,15 +81,21 @@ Alat lain: cari lokasi saya, pencarian, cetak/PDF, dan mode terang/gelap.
 
 ### Kategori tempat
 
-15 kategori, dipilih untuk kebutuhan desa pesisir:
+19 kategori, dipilih untuk kebutuhan desa pesisir:
 
 | | | |
 |---|---|---|
 | Pemerintahan | Pendidikan | Kesehatan |
 | Rumah ibadah | Ekonomi & UMKM | Kuliner & warung |
 | Perikanan | Pertanian & kebun | Wisata |
-| Penginapan | Sosial & budaya | Transportasi |
-| Air bersih | Infrastruktur | Lainnya |
+| Penginapan | Sosial & budaya | **Olahraga** |
+| **Pemakaman** | Transportasi | Air bersih |
+| Infrastruktur | **Keamanan** | **Kebencanaan** |
+| Lainnya | | |
+
+Empat kategori terakhir ditambahkan setelah survei lapangan pertama: dari 13
+tempat, lima terpaksa masuk "Lainnya" karena tidak ada yang cocok — tiga lapangan
+dan dua pemakaman.
 
 Warna penanda **sengaja dipisahkan dari palet grafik** (`--pin-*` di `style.css`).
 Peta boleh memakai lebih banyak rona karena bentuk ikon ikut membedakan, sementara
