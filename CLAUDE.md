@@ -141,7 +141,13 @@ Jangan turunkan versinya.
    salinan localStorage. `build.py` mengisinya dari waktu ubah `data.json`.
    Pernah terjadi: data diperbarui tapi cap waktunya tidak, sehingga salinan lama
    di browser diam-diam menang dan peta tampak kosong. Jangan tulis tangan.
-3. **Jangan kembalikan draf lewat `/api/terbit`.** Rute itu terbuka untuk umum;
+3. **Begitu ada versi terbit, `situs/konten.json` dan `src/data.json` tidak lagi
+   dipakai saat Vercel merakit** — `ambil_terbit()` menggantinya dengan isi dari
+   Blob. Menyunting berkas repo lalu push TIDAK mengubah apa pun di situs; ini
+   sudah sempat menyesatkan. Untuk mengubah isi, sunting lewat `/admin`, atau
+   sisipkan ke draf lewat SDK lalu minta pengelola menekan Terbitkan. Berkas
+   repo tinggal jadi cadangan untuk perakitan pertama dan pemakaian luring.
+4. **Jangan kembalikan draf lewat `/api/terbit`.** Rute itu terbuka untuk umum;
    yang boleh keluar hanya yang sudah diterbitkan.
 
 **Jebakan CSS yang sudah menelan waktu:** atribut `hidden` kalah oleh `display`

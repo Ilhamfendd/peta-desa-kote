@@ -30,6 +30,9 @@ def ambil_terbit():
         with urllib.request.urlopen(permintaan, timeout=15) as balasan:
             hasil = json.loads(balasan.read().decode('utf-8'))
         print(f'  data terbit diambil dari {url}')
+        print('  PERHATIAN: isi situs/konten.json dan src/data.json DIABAIKAN pada perakitan ini.')
+        print('  Sejak ada versi terbit, isi situs datang dari halaman /admin.')
+        print('  Menyunting berkas repo saja tidak akan mengubah apa pun di situs.')
     except urllib.error.HTTPError as e:
         # 404 = belum pernah diterbitkan lewat admin. Itu wajar, bukan kegagalan.
         print(f'  {url} -> {e.code}; memakai berkas bawaan di repo')
