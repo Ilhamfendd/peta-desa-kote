@@ -238,7 +238,7 @@ python ambil-tempat.py --radius 25
 python ambil-tempat.py --lat -0.49 --lon 104.56 --radius 8 --keluaran dabo.csv
 ```
 
-Menghasilkan CSV siap muat, lengkap dengan pemetaan tag OSM ke 15 kategori
+Menghasilkan CSV siap muat, lengkap dengan pemetaan tag OSM ke 19 kategori
 aplikasi. Objek tanpa nama dilewati, dan yang kembar dibuang.
 
 > **Lisensi:** OpenStreetMap berlisensi ODbL — bebas dipakai dan disebarkan
