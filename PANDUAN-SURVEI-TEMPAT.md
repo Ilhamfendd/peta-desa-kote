@@ -139,6 +139,43 @@ jadi tidak perlu mengubah pengaturan Excel.
 
 ---
 
+## Menggambar batas dusun
+
+Peta dinding di kantor desa memuat pembagian dusun. Isinya cocok dengan data
+kantor desa — **2 + 1 + 2 = 5 RW** dan **4 + 2 + 4 = 10 RT**, persis angka resmi.
+
+| Dusun | Isinya | Letak di peta dinding |
+|---|---|---|
+| **Dusun I** | 2 RW · 4 RT | sisi timur, ke arah Dabo |
+| **Dusun II** | 1 RW · 2 RT | bagian tengah |
+| **Dusun III** | 2 RW · 4 RT | sisi barat, ke arah Jagoh |
+
+**Foto peta dinding tidak bisa langsung dijadikan batas di aplikasi.** Peta itu
+sketsa: tidak ada koordinat, tidak berskala, dan sengaja digambar agar muat di
+kertas. Kalau dijiplak begitu saja, yang tersimpan adalah garis karangan yang
+tampak resmi — lebih berbahaya daripada dibiarkan kosong.
+
+Cara menggambarnya yang benar, sekitar 10 menit per dusun:
+
+1. Masuk di `/admin`, lalu buka `/peta`
+2. Ganti tampilan peta ke **Satelit** lewat kotak kecil di kiri bawah
+3. Buka tab **Wilayah** → **Gambar batas dusun**
+4. Klik mengikuti batasnya, tekan `Enter` bila selesai
+5. Isi namanya: **Dusun I**, **Dusun II**, atau **Dusun III**
+
+**Lakukan bersama perangkat desa atau kepala dusun.** Bawa foto peta dinding
+sebagai acuan, tapi yang menentukan garisnya adalah orang yang tahu batas
+sebenarnya di lapangan. Di peta dinding, batas dusun tampak mengikuti
+patokan alam — Sungai Bacok di barat, Sungai Perkis di timur, serta punggung
+Bukit Panjang, Bukit Buang, Bukit Gelamid, dan Bukit Bendera.
+
+> **Batas desa yang sekarang tampil juga masih rancangan.** Isinya poligon GADM
+> bawaan aplikasi (`sumber: GADM 4.1 — perlu diperiksa`), belum pernah
+> disesuaikan. Perlu digeser mengikuti batas sebenarnya, dengan sasaran luas
+> **20,79 km²**.
+
+---
+
 ## Sesudah selesai
 
 Data sudah tersimpan begitu ditekan Simpan, tapi **belum dilihat warga**.

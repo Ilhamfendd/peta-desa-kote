@@ -203,8 +203,14 @@ Wajib hanya **Nama, Lintang, Bujur**. 19 kategori yang dikenali: `pemerintahan`,
 
 ## 🗺️ Prioritas 3 — Batas wilayah
 
-- [ ] **Batas Desa Kote** — poligon
-- [ ] **Batas dusun** — satu poligon per dusun
+- [ ] **Batas Desa Kote** — poligon. Yang terpasang sekarang masih poligon GADM
+      bawaan yang **belum disesuaikan sama sekali**.
+- [ ] **Batas dusun** — tiga poligon. Pembagiannya sudah diketahui dari peta
+      dinding kantor desa: **Dusun I** (2 RW, 4 RT, sisi timur ke arah Dabo),
+      **Dusun II** (1 RW, 2 RT, tengah), **Dusun III** (2 RW, 4 RT, sisi barat
+      ke arah Jagoh). Jumlahnya cocok dengan data resmi: 5 RW dan 10 RT.
+      Yang belum ada hanya garis batasnya di peta — foto peta dinding tidak bisa
+      dipakai langsung karena tidak berkoordinat dan tidak berskala.
 
 ### Urutan usaha, dari yang terbaik
 
