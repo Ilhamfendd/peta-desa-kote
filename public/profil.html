@@ -299,6 +299,51 @@ main > .bagian:first-child { padding-top: clamp(2rem, 4vw, 3rem); }
 .berkas small { display: block; color: var(--tinta-3); font-size: .84rem; }
 .berkas .ukuran { color: var(--tinta-3); font-size: .84rem; font-variant-numeric: tabular-nums; flex: none; }
 
+/* ─────────── Borang pengaduan ─────────── */
+.borang { max-width: 42rem; }
+.borang.sempit { max-width: 26rem; }
+.borang label { display: block; font-size: .88rem; font-weight: 550; margin-bottom: .4rem; }
+.borang .wajib, .borang .pilihan {
+  font-weight: 400; font-size: .78rem; margin-left: .4rem;
+}
+.borang .wajib { color: var(--magenta); }
+.borang .pilihan { color: var(--tinta-3); }
+.borang .medan { margin-bottom: 1.15rem; }
+.borang .inp, .borang textarea, .borang select {
+  width: 100%; font: inherit; font-size: 1rem; color: var(--tinta);
+  padding: .7rem .85rem; border: 1px solid var(--garis); border-radius: 8px;
+  background: #fff; transition: border-color .15s, box-shadow .15s;
+}
+.borang .inp:focus, .borang textarea:focus, .borang select:focus {
+  outline: none; border-color: var(--hijau-2); box-shadow: 0 0 0 3px rgba(42,90,47,.13);
+}
+.borang textarea { resize: vertical; line-height: 1.6; }
+.borang .dua { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+@media (max-width: 620px) { .borang .dua { grid-template-columns: 1fr; } }
+
+/* Kolom jebakan penangkal robot — disembunyikan tanpa display:none,
+   sebab sebagian robot melewati kolom yang benar-benar tak tergambar. */
+.jebakan {
+  position: absolute; left: -9999px; width: 1px; height: 1px;
+  overflow: hidden; opacity: 0; pointer-events: none;
+}
+
+.setuju { margin: .5rem 0 1.25rem; }
+.setuju label {
+  display: flex; gap: .7rem; align-items: flex-start;
+  font-weight: 400; font-size: .93rem; color: var(--tinta-2); margin: 0;
+}
+.setuju input { margin-top: .25rem; width: 1.05rem; height: 1.05rem; flex: none; accent-color: var(--hijau-2); }
+
+.galat {
+  background: #fdf1f0; border: 1px solid #f0c8c5; color: #8f2a25;
+  padding: .8rem 1rem; border-radius: 8px; font-size: .93rem; margin-bottom: 1.25rem;
+}
+.berhasil {
+  background: #eef7ef; border: 1px solid #c6e2c9; color: #22562a;
+  padding: .8rem 1rem; border-radius: 8px; font-size: .93rem; margin-bottom: 1.25rem;
+}
+
 /* Keadaan kosong — jujur, bukan isian palsu */
 .kosong {
   border: 1px dashed var(--garis); border-radius: 10px;
@@ -400,7 +445,7 @@ main > .bagian:first-child { padding-top: clamp(2rem, 4vw, 3rem); }
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
-    <nav class="nav" id="nav"><a href="/">Beranda</a><a href="/profil" aria-current="page">Profil</a><a href="/pemerintahan">Pemerintahan</a><a href="/potensi">Potensi</a><a href="/layanan">Layanan</a><a href="/berita">Berita</a><a href="/unduhan">Unduhan</a><a href="/peta" class="sorot">Peta Digital</a></nav>
+    <nav class="nav" id="nav"><a href="/">Beranda</a><a href="/profil" aria-current="page">Profil</a><a href="/pemerintahan">Pemerintahan</a><a href="/potensi">Potensi</a><a href="/layanan">Pengaduan</a><a href="/berita">Berita</a><a href="/unduhan">Unduhan</a><a href="/peta" class="sorot">Peta Digital</a></nav>
   </div>
 </header>
 
@@ -444,7 +489,7 @@ main > .bagian:first-child { padding-top: clamp(2rem, 4vw, 3rem); }
       </div>
       <div>
         <h4>Halaman</h4>
-        <ul><li><a href="/">Beranda</a></li><li><a href="/profil">Profil</a></li><li><a href="/pemerintahan">Pemerintahan</a></li><li><a href="/potensi">Potensi</a></li><li><a href="/layanan">Layanan</a></li><li><a href="/berita">Berita</a></li><li><a href="/unduhan">Unduhan</a></li>
+        <ul><li><a href="/">Beranda</a></li><li><a href="/profil">Profil</a></li><li><a href="/pemerintahan">Pemerintahan</a></li><li><a href="/potensi">Potensi</a></li><li><a href="/layanan">Pengaduan</a></li><li><a href="/berita">Berita</a></li><li><a href="/unduhan">Unduhan</a></li>
         <li><a href="/peta">Peta Digital</a></li></ul>
       </div>
       <div>

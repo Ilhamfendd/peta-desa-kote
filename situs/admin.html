@@ -315,6 +315,7 @@ const BAGIAN = [
       { k: 'biaya', l: 'Biaya', petunjuk: 'Contoh: Gratis' },
     ] },
 
+  { id: 'pengaduan', judul: 'Pengaduan warga', khusus: true },
   { id: 'akun', judul: 'Akun pengelola', khusus: true },
 ];
 
@@ -502,6 +503,64 @@ async function gambarAkun() {
     </div>` : ''}`;
 }
 
+/* ═══ Pengaduan warga ═══
+   Isinya data pribadi: tampil hanya di sini, tidak pernah ke halaman publik. */
+const STATUS_ADUAN = {
+  baru: 'Baru masuk', diproses: 'Sedang diproses',
+  selesai: 'Selesai', ditolak: 'Tidak dapat ditindaklanjuti',
+};
+
+async function gambarPengaduan() {
+  let daftar = [];
+  try { daftar = (await api('/api/pengaduan')).daftar || []; }
+  catch (e) { return `<div class="kotak"><div class="galat">${esc(e.message)}</div></div>`; }
+
+  const hitung = (st) => daftar.filter((p) => p.status === st).length;
+
+  const kartu = daftar.map((p) => {
+    const t = new Date(p.dikirim).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
+    const pilihan = Object.entries(STATUS_ADUAN).map(([v, l]) =>
+      `<option value="${v}"${v === p.status ? ' selected' : ''}>${esc(l)}</option>`).join('');
+    return `<div class="baris" data-tiket="${esc(p.tiket)}">
+      <div class="baris-kepala">
+        <span>${esc(p.tiket)} · ${esc(t)}</span>
+        <span class="lencana${p.status === 'baru' ? ' admin' : ''}" style="margin-left:auto">
+          ${esc(STATUS_ADUAN[p.status] || p.status)}</span>
+      </div>
+      <h3 style="font-size:1.05rem;margin-bottom:.5rem">${esc(p.judul)}</h3>
+      <p style="white-space:pre-wrap;color:var(--tinta-2);font-size:.95rem">${esc(p.isi)}</p>
+      <dl class="definisi" style="max-width:none;margin-top:1rem">
+        <div><dt>Jenis</dt><dd>${esc(p.kategori)}</dd></div>
+        ${p.tanggal ? `<div><dt>Tanggal kejadian</dt><dd>${esc(p.tanggal)}</dd></div>` : ''}
+        ${p.lokasi ? `<div><dt>Lokasi</dt><dd>${esc(p.lokasi)}</dd></div>` : ''}
+        <div><dt>Pelapor</dt><dd>${p.nama ? esc(p.nama) : '<i>tanpa nama</i>'}</dd></div>
+        ${p.kontak ? `<div><dt>Kontak</dt><dd>${esc(p.kontak)}</dd></div>` : ''}
+      </dl>
+      <div class="dua" style="margin-top:1rem">
+        <div class="medan"><label>Status</label>
+          <select class="inp" data-aduan-status>${pilihan}</select></div>
+      </div>
+      <div class="medan"><label>Tanggapan resmi <span style="font-weight:400;color:var(--tinta-3)">— terlihat warga lewat nomor tiket</span></label>
+        <textarea class="inp" rows="3" data-aduan-tanggapan>${esc(p.tanggapan || '')}</textarea></div>
+      <button class="tombol kecil" data-aduan-simpan>Simpan tanggapan</button>
+    </div>`;
+  }).join('');
+
+  return `<div class="kotak">
+      <h2>Pengaduan warga</h2>
+      <p class="bantu">Isi pengaduan memuat data pribadi. Jangan disalin ke tempat lain,
+        dan jangan ditampilkan di website. Warga hanya melihat status dan tanggapan resmi
+        lewat nomor tiketnya.</p>
+      <div class="definisi" style="max-width:none">
+        <div><dt>Baru masuk</dt><dd>${hitung('baru')}</dd></div>
+        <div><dt>Sedang diproses</dt><dd>${hitung('diproses')}</dd></div>
+        <div><dt>Selesai</dt><dd>${hitung('selesai')}</dd></div>
+        <div><dt>Seluruhnya</dt><dd>${daftar.length}</dd></div>
+      </div>
+    </div>
+    ${daftar.length ? kartu : '<div class="kotak"><div class="kosong">Belum ada pengaduan masuk.</div></div>'}`;
+}
+
 /* ═══ Perutean ═══ */
 async function gambar() {
   const b = BAGIAN.find((x) => x.id === bagianAktif);
@@ -511,6 +570,7 @@ async function gambar() {
   ).join('');
 
   if (b.id === 'ringkasan') $('#isi').innerHTML = gambarRingkasan();
+  else if (b.id === 'pengaduan') $('#isi').innerHTML = await gambarPengaduan();
   else if (b.id === 'akun') $('#isi').innerHTML = await gambarAkun();
   else $('#isi').innerHTML = gambarBagian(b);
 }
@@ -607,6 +667,26 @@ document.addEventListener('click', async (e) => {
     }
     tombol.disabled = false;
     tombol.textContent = 'Terbitkan sekarang';
+    return;
+  }
+
+  const simpanAduan = e.target.closest('[data-aduan-simpan]');
+  if (simpanAduan) {
+    const baris = simpanAduan.closest('[data-tiket]');
+    simpanAduan.disabled = true;
+    try {
+      await api('/api/pengaduan', {
+        method: 'PATCH',
+        body: {
+          tiket: baris.dataset.tiket,
+          status: baris.querySelector('[data-aduan-status]').value,
+          tanggapan: baris.querySelector('[data-aduan-tanggapan]').value,
+        },
+      });
+      lapor('Tanggapan tersimpan');
+      return gambar();
+    } catch (err) { lapor('Gagal: ' + err.message, 6000); }
+    simpanAduan.disabled = false;
     return;
   }
 

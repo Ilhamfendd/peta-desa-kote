@@ -105,7 +105,7 @@ HALAMAN = [
     ('profil.html',       'Profil Desa',  'Profil'),
     ('pemerintahan.html', 'Pemerintahan', 'Pemerintahan'),
     ('potensi.html',      'Potensi & UMKM', 'Potensi'),
-    ('layanan.html',      'Layanan',      'Layanan'),
+    ('layanan.html',      'Pengaduan & Layanan', 'Pengaduan'),
     ('berita.html',       'Berita & Kegiatan', 'Berita'),
     ('unduhan.html',      'Unduhan',      'Unduhan'),
 ]
@@ -487,9 +487,199 @@ def hal_potensi(k, kosong):
     return '', isi
 
 
+# Skrip halaman pengaduan. Ditulis di luar f-string supaya kurung kurawal JS
+# tidak perlu digandakan.
+SKRIP_ADUAN = """
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var esc = function (t) { return String(t == null ? '' : t).replace(/[&<>"]/g,
+    function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); };
+
+  function kabar(el, teks, buruk) {
+    el.innerHTML = '<div class="' + (buruk ? 'galat' : 'berhasil') + '">' + teks + '</div>';
+  }
+
+  var borang = $('#borang-aduan');
+  if (borang) borang.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var tombol = $('#a-kirim'), pesan = $('#aduan-pesan');
+    tombol.disabled = true; tombol.textContent = 'Mengirim…';
+
+    fetch('/api/pengaduan', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        judul: $('#a-judul').value, isi: $('#a-isi').value,
+        kategori: $('#a-kategori').value, tanggal: $('#a-tanggal').value,
+        lokasi: $('#a-lokasi').value, nama: $('#a-nama').value,
+        kontak: $('#a-kontak').value, setuju: $('#a-setuju').checked,
+        alamatSurat: $('#a-alamat-surat').value
+      })
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (h) {
+        if (!h.ok) { kabar(pesan, esc(h.j.galat || 'Gagal mengirim.'), true); return; }
+        kabar(pesan, 'Pengaduan terkirim. Nomor tiket Anda: <b>' + esc(h.j.tiket) +
+              '</b><br>Simpan nomor ini untuk menengok tindak lanjutnya.');
+        borang.reset();
+        pesan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      })
+      .catch(function () { kabar(pesan, 'Tidak bisa menghubungi server. Periksa sambungan internet.', true); })
+      .then(function () { tombol.disabled = false; tombol.textContent = 'Kirim pengaduan'; });
+  });
+
+  var LABEL = { baru: 'Baru masuk', diproses: 'Sedang diproses',
+                selesai: 'Selesai', ditolak: 'Tidak dapat ditindaklanjuti' };
+
+  var cek = $('#borang-tiket');
+  if (cek) cek.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var hasil = $('#tiket-hasil'), no = $('#t-nomor').value.trim();
+    if (!no) return;
+    hasil.innerHTML = '<p class="catatan" style="margin:0">Mencari…</p>';
+
+    fetch('/api/pengaduan?tiket=' + encodeURIComponent(no))
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (h) {
+        if (!h.ok) { kabar(hasil, esc(h.j.galat || 'Tidak ditemukan.'), true); return; }
+        var p = h.j.pengaduan;
+        var t = new Date(p.dikirim).toLocaleDateString('id-ID', { dateStyle: 'long' });
+        hasil.innerHTML =
+          '<div class="kartu"><h3>' + esc(p.tiket) + '</h3>' +
+          '<dl class="definisi" style="max-width:none;margin-top:.75rem">' +
+          '<div><dt>Status</dt><dd>' + esc(LABEL[p.status] || p.status) + '</dd></div>' +
+          '<div><dt>Dikirim</dt><dd>' + esc(t) + '</dd></div></dl>' +
+          (p.tanggapan
+            ? '<p style="margin-top:1rem"><b>Tanggapan desa</b></p><p style="margin-top:.35rem;color:var(--tinta-2)">'
+              + esc(p.tanggapan) + '</p>'
+            : '<p class="catatan" style="margin-top:1rem">Belum ada tanggapan tertulis.</p>') +
+          '</div>';
+      })
+      .catch(function () { kabar(hasil, 'Tidak bisa menghubungi server.', true); });
+  });
+})();
+</script>
+"""
+
+
+KATEGORI_ADUAN = [
+    ('infrastruktur',  'Jalan, jembatan, lampu, air'),
+    ('pelayanan',      'Pelayanan kantor desa'),
+    ('kebersihan',     'Sampah & kebersihan'),
+    ('keamanan',       'Keamanan & ketertiban'),
+    ('bantuan-sosial', 'Bantuan sosial'),
+    ('kesehatan',      'Kesehatan'),
+    ('pendidikan',     'Pendidikan'),
+    ('lainnya',        'Lainnya'),
+]
+
+
 def hal_layanan(k, kosong):
+    """Pengaduan warga di depan, keterangan layanan menyusul.
+
+    Susunan kolomnya mengikuti SP4N-LAPOR!, sistem pengaduan resmi nasional:
+    judul, kronologi, tanggal & lokasi kejadian, kategori, plus nomor tiket
+    untuk menengok tindak lanjut tanpa perlu punya akun.
+    """
     l = k['layanan']
+    pilihan = ''.join(f'<option value="{E(kode)}">{E(nama)}</option>'
+                      for kode, nama in KATEGORI_ADUAN)
+
     isi = f"""<section class="bagian"><div class="wadah">
+  <div class="bagian-kepala">
+    <p class="eyebrow">Pengaduan</p>
+    <h2>Sampaikan keluhan atau usulan</h2>
+    <p>Jalan rusak, lampu mati, sampah menumpuk, atau usulan untuk desa — tulis di sini.
+       Pengaduan langsung masuk ke perangkat desa, dan Anda mendapat nomor tiket
+       untuk menengok tindak lanjutnya.</p>
+  </div>
+
+  <form class="borang" id="borang-aduan" novalidate>
+    <div id="aduan-pesan"></div>
+
+    <div class="medan">
+      <label for="a-judul">Inti masalahnya <span class="wajib">wajib</span></label>
+      <input class="inp" id="a-judul" maxlength="150" required
+             placeholder="Contoh: Lampu jalan mati di depan dermaga">
+    </div>
+
+    <div class="medan">
+      <label for="a-isi">Ceritakan kejadiannya <span class="wajib">wajib</span></label>
+      <textarea class="inp" id="a-isi" rows="6" maxlength="4000" required
+                placeholder="Sejak kapan, di mana persisnya, dan apa dampaknya bagi warga"></textarea>
+    </div>
+
+    <div class="dua">
+      <div class="medan">
+        <label for="a-kategori">Jenis pengaduan</label>
+        <select class="inp" id="a-kategori">{pilihan}</select>
+      </div>
+      <div class="medan">
+        <label for="a-tanggal">Tanggal kejadian</label>
+        <input class="inp" id="a-tanggal" type="date">
+      </div>
+    </div>
+
+    <div class="medan">
+      <label for="a-lokasi">Lokasi kejadian</label>
+      <input class="inp" id="a-lokasi" maxlength="200" placeholder="Patokan pun cukup, mis. seberang balai desa">
+    </div>
+
+    <div class="dua">
+      <div class="medan">
+        <label for="a-nama">Nama Anda <span class="pilihan">boleh dikosongkan</span></label>
+        <input class="inp" id="a-nama" maxlength="100" autocomplete="name">
+      </div>
+      <div class="medan">
+        <label for="a-kontak">Nomor HP / WA <span class="pilihan">boleh dikosongkan</span></label>
+        <input class="inp" id="a-kontak" maxlength="100" inputmode="tel" autocomplete="tel">
+      </div>
+    </div>
+
+    <!-- Kolom jebakan: tersembunyi dari warga, hanya diisi robot pengirim spam -->
+    <div class="jebakan" aria-hidden="true">
+      <label for="a-alamat-surat">Jangan diisi</label>
+      <input id="a-alamat-surat" tabindex="-1" autocomplete="off">
+    </div>
+
+    <div class="setuju">
+      <label>
+        <input type="checkbox" id="a-setuju">
+        <span>Saya setuju pengaduan ini beserta data yang saya isi disimpan dan
+        digunakan Pemerintah Desa Kote untuk menindaklanjutinya.</span>
+      </label>
+    </div>
+
+    <p class="catatan" style="margin-top:0">
+      <b>Yang perlu Anda tahu.</b> Nama dan nomor HP <b>boleh dikosongkan</b> — pengaduan
+      tanpa nama tetap diterima, hanya saja kami tidak bisa mengabari hasilnya langsung.
+      Isi pengaduan hanya terbaca oleh perangkat desa yang berwenang, tidak ditampilkan
+      di website, dan tidak diberikan kepada pihak lain. Yang bisa dilihat umum lewat
+      nomor tiket hanyalah <b>status dan tanggapan resmi</b>.
+    </p>
+
+    <button class="tombol" type="submit" id="a-kirim">Kirim pengaduan</button>
+  </form>
+</div></section>
+
+<section class="bagian"><div class="wadah">
+  <div class="bagian-kepala">
+    <p class="eyebrow">Tindak lanjut</p>
+    <h2>Cek status pengaduan</h2>
+    <p>Masukkan nomor tiket yang Anda terima saat mengirim pengaduan.</p>
+  </div>
+  <form class="borang sempit" id="borang-tiket" novalidate>
+    <div class="medan">
+      <label for="t-nomor">Nomor tiket</label>
+      <input class="inp" id="t-nomor" placeholder="KOTE-2608-A1B2C3" autocapitalize="characters">
+    </div>
+    <button class="tombol garis" type="submit">Lihat status</button>
+    <div id="tiket-hasil" style="margin-top:1.25rem"></div>
+  </form>
+</div></section>"""
+
+    # ── Keterangan layanan: tetap ada, di bawah ──
+    isi += f"""<section class="bagian"><div class="wadah">
   <div class="bagian-kepala">
     <p class="eyebrow">Pelayanan</p><h2>Layanan administrasi</h2>
     {f'<p>{E(l["pengantar"])}</p>' if l.get('pengantar') else ''}
@@ -518,7 +708,7 @@ def hal_layanan(k, kosong):
                 'tiap surat sedang disusun. Sementara ini, urusan surat-menyurat '
                 'dilayani langsung di Kantor Desa Kote.</div>')
 
-    return '', isi + '</div></section>'
+    return '', isi + '</div></section>' + SKRIP_ADUAN
 
 
 def hal_berita(k, kosong):

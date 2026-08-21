@@ -300,6 +300,28 @@ pengunjung. Isinya ikut berubah sendiri setiap kali data desa diperbarui.
 Judul berkas bisa dirapikan lewat `situs/konten.json` → `unduhan.keterangan`,
 memakai nama berkas sebagai kuncinya.
 
+## Pengaduan warga (`/pengaduan`)
+
+Halaman **Pengaduan** memuat borang untuk warga menyampaikan keluhan atau usulan.
+Susunan kolomnya mengikuti **SP4N-LAPOR!**, sistem pengaduan resmi nasional:
+inti masalah, kronologi, tanggal & lokasi kejadian, jenis pengaduan — ditambah
+**nomor tiket** supaya warga bisa menengok tindak lanjutnya tanpa perlu akun.
+
+Pengelola membacanya di `/admin` → **Pengaduan warga**, mengubah statusnya, dan
+menulis tanggapan resmi yang bisa dilihat warga lewat nomor tiket.
+
+**Pelindungan data (UU 27/2022).** Pengaduan memuat data pribadi, jadi:
+
+- nama dan kontak **boleh dikosongkan** — pengaduan anonim tetap diterima
+- isinya disimpan privat di Blob, hanya terbaca pengelola yang sudah masuk
+- rute publik `GET /api/pengaduan?tiket=…` hanya mengembalikan **status dan
+  tanggapan**, tidak pernah isi laporan, nama, atau kontak
+- warga harus mencentang persetujuan sebelum mengirim
+
+Penangkal spam: kolom jebakan tersembunyi, jeda 3 menit per pengirim (memakai
+sidik alamat yang dicincang — alamat IP-nya sendiri tidak disimpan), dan batas
+kasar jumlah kiriman per jam.
+
 ## Halaman pengelolaan (`/admin`)
 
 Data desa tidak lagi tersimpan di browser masing-masing orang. Perangkat desa

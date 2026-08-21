@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Layanan — Desa Kote</title>
+<title>Pengaduan &amp; Layanan — Desa Kote</title>
 <meta name="description" content="Profil resmi Desa Kote, Kecamatan Singkep Pesisir, Kabupaten Lingga, Kepulauan Riau — desa pesisir bekas pelabuhan ramai di Pulau Singkep dan tempat tumbuhnya Zapin Kote. Berisi data wilayah, kependudukan, potensi, layanan, dan peta digital desa.">
-<meta property="og:title" content="Layanan — Desa Kote">
+<meta property="og:title" content="Pengaduan &amp; Layanan — Desa Kote">
 <meta property="og:description" content="Profil resmi Desa Kote, Kecamatan Singkep Pesisir, Kabupaten Lingga, Kepulauan Riau — desa pesisir bekas pelabuhan ramai di Pulau Singkep dan tempat tumbuhnya Zapin Kote. Berisi data wilayah, kependudukan, potensi, layanan, dan peta digital desa.">
 <meta property="og:type" content="website">
 <link rel="icon" href="/lambang-daerah.png">
@@ -299,6 +299,51 @@ main > .bagian:first-child { padding-top: clamp(2rem, 4vw, 3rem); }
 .berkas small { display: block; color: var(--tinta-3); font-size: .84rem; }
 .berkas .ukuran { color: var(--tinta-3); font-size: .84rem; font-variant-numeric: tabular-nums; flex: none; }
 
+/* ─────────── Borang pengaduan ─────────── */
+.borang { max-width: 42rem; }
+.borang.sempit { max-width: 26rem; }
+.borang label { display: block; font-size: .88rem; font-weight: 550; margin-bottom: .4rem; }
+.borang .wajib, .borang .pilihan {
+  font-weight: 400; font-size: .78rem; margin-left: .4rem;
+}
+.borang .wajib { color: var(--magenta); }
+.borang .pilihan { color: var(--tinta-3); }
+.borang .medan { margin-bottom: 1.15rem; }
+.borang .inp, .borang textarea, .borang select {
+  width: 100%; font: inherit; font-size: 1rem; color: var(--tinta);
+  padding: .7rem .85rem; border: 1px solid var(--garis); border-radius: 8px;
+  background: #fff; transition: border-color .15s, box-shadow .15s;
+}
+.borang .inp:focus, .borang textarea:focus, .borang select:focus {
+  outline: none; border-color: var(--hijau-2); box-shadow: 0 0 0 3px rgba(42,90,47,.13);
+}
+.borang textarea { resize: vertical; line-height: 1.6; }
+.borang .dua { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+@media (max-width: 620px) { .borang .dua { grid-template-columns: 1fr; } }
+
+/* Kolom jebakan penangkal robot — disembunyikan tanpa display:none,
+   sebab sebagian robot melewati kolom yang benar-benar tak tergambar. */
+.jebakan {
+  position: absolute; left: -9999px; width: 1px; height: 1px;
+  overflow: hidden; opacity: 0; pointer-events: none;
+}
+
+.setuju { margin: .5rem 0 1.25rem; }
+.setuju label {
+  display: flex; gap: .7rem; align-items: flex-start;
+  font-weight: 400; font-size: .93rem; color: var(--tinta-2); margin: 0;
+}
+.setuju input { margin-top: .25rem; width: 1.05rem; height: 1.05rem; flex: none; accent-color: var(--hijau-2); }
+
+.galat {
+  background: #fdf1f0; border: 1px solid #f0c8c5; color: #8f2a25;
+  padding: .8rem 1rem; border-radius: 8px; font-size: .93rem; margin-bottom: 1.25rem;
+}
+.berhasil {
+  background: #eef7ef; border: 1px solid #c6e2c9; color: #22562a;
+  padding: .8rem 1rem; border-radius: 8px; font-size: .93rem; margin-bottom: 1.25rem;
+}
+
 /* Keadaan kosong — jujur, bukan isian palsu */
 .kosong {
   border: 1px dashed var(--garis); border-radius: 10px;
@@ -400,16 +445,177 @@ main > .bagian:first-child { padding-top: clamp(2rem, 4vw, 3rem); }
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
         <path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
-    <nav class="nav" id="nav"><a href="/">Beranda</a><a href="/profil">Profil</a><a href="/pemerintahan">Pemerintahan</a><a href="/potensi">Potensi</a><a href="/layanan" aria-current="page">Layanan</a><a href="/berita">Berita</a><a href="/unduhan">Unduhan</a><a href="/peta" class="sorot">Peta Digital</a></nav>
+    <nav class="nav" id="nav"><a href="/">Beranda</a><a href="/profil">Profil</a><a href="/pemerintahan">Pemerintahan</a><a href="/potensi">Potensi</a><a href="/layanan" aria-current="page">Pengaduan</a><a href="/berita">Berita</a><a href="/unduhan">Unduhan</a><a href="/peta" class="sorot">Peta Digital</a></nav>
   </div>
 </header>
 
 
 <main><section class="bagian"><div class="wadah">
   <div class="bagian-kepala">
+    <p class="eyebrow">Pengaduan</p>
+    <h2>Sampaikan keluhan atau usulan</h2>
+    <p>Jalan rusak, lampu mati, sampah menumpuk, atau usulan untuk desa — tulis di sini.
+       Pengaduan langsung masuk ke perangkat desa, dan Anda mendapat nomor tiket
+       untuk menengok tindak lanjutnya.</p>
+  </div>
+
+  <form class="borang" id="borang-aduan" novalidate>
+    <div id="aduan-pesan"></div>
+
+    <div class="medan">
+      <label for="a-judul">Inti masalahnya <span class="wajib">wajib</span></label>
+      <input class="inp" id="a-judul" maxlength="150" required
+             placeholder="Contoh: Lampu jalan mati di depan dermaga">
+    </div>
+
+    <div class="medan">
+      <label for="a-isi">Ceritakan kejadiannya <span class="wajib">wajib</span></label>
+      <textarea class="inp" id="a-isi" rows="6" maxlength="4000" required
+                placeholder="Sejak kapan, di mana persisnya, dan apa dampaknya bagi warga"></textarea>
+    </div>
+
+    <div class="dua">
+      <div class="medan">
+        <label for="a-kategori">Jenis pengaduan</label>
+        <select class="inp" id="a-kategori"><option value="infrastruktur">Jalan, jembatan, lampu, air</option><option value="pelayanan">Pelayanan kantor desa</option><option value="kebersihan">Sampah &amp; kebersihan</option><option value="keamanan">Keamanan &amp; ketertiban</option><option value="bantuan-sosial">Bantuan sosial</option><option value="kesehatan">Kesehatan</option><option value="pendidikan">Pendidikan</option><option value="lainnya">Lainnya</option></select>
+      </div>
+      <div class="medan">
+        <label for="a-tanggal">Tanggal kejadian</label>
+        <input class="inp" id="a-tanggal" type="date">
+      </div>
+    </div>
+
+    <div class="medan">
+      <label for="a-lokasi">Lokasi kejadian</label>
+      <input class="inp" id="a-lokasi" maxlength="200" placeholder="Patokan pun cukup, mis. seberang balai desa">
+    </div>
+
+    <div class="dua">
+      <div class="medan">
+        <label for="a-nama">Nama Anda <span class="pilihan">boleh dikosongkan</span></label>
+        <input class="inp" id="a-nama" maxlength="100" autocomplete="name">
+      </div>
+      <div class="medan">
+        <label for="a-kontak">Nomor HP / WA <span class="pilihan">boleh dikosongkan</span></label>
+        <input class="inp" id="a-kontak" maxlength="100" inputmode="tel" autocomplete="tel">
+      </div>
+    </div>
+
+    <!-- Kolom jebakan: tersembunyi dari warga, hanya diisi robot pengirim spam -->
+    <div class="jebakan" aria-hidden="true">
+      <label for="a-alamat-surat">Jangan diisi</label>
+      <input id="a-alamat-surat" tabindex="-1" autocomplete="off">
+    </div>
+
+    <div class="setuju">
+      <label>
+        <input type="checkbox" id="a-setuju">
+        <span>Saya setuju pengaduan ini beserta data yang saya isi disimpan dan
+        digunakan Pemerintah Desa Kote untuk menindaklanjutinya.</span>
+      </label>
+    </div>
+
+    <p class="catatan" style="margin-top:0">
+      <b>Yang perlu Anda tahu.</b> Nama dan nomor HP <b>boleh dikosongkan</b> — pengaduan
+      tanpa nama tetap diterima, hanya saja kami tidak bisa mengabari hasilnya langsung.
+      Isi pengaduan hanya terbaca oleh perangkat desa yang berwenang, tidak ditampilkan
+      di website, dan tidak diberikan kepada pihak lain. Yang bisa dilihat umum lewat
+      nomor tiket hanyalah <b>status dan tanggapan resmi</b>.
+    </p>
+
+    <button class="tombol" type="submit" id="a-kirim">Kirim pengaduan</button>
+  </form>
+</div></section>
+
+<section class="bagian"><div class="wadah">
+  <div class="bagian-kepala">
+    <p class="eyebrow">Tindak lanjut</p>
+    <h2>Cek status pengaduan</h2>
+    <p>Masukkan nomor tiket yang Anda terima saat mengirim pengaduan.</p>
+  </div>
+  <form class="borang sempit" id="borang-tiket" novalidate>
+    <div class="medan">
+      <label for="t-nomor">Nomor tiket</label>
+      <input class="inp" id="t-nomor" placeholder="KOTE-2608-A1B2C3" autocapitalize="characters">
+    </div>
+    <button class="tombol garis" type="submit">Lihat status</button>
+    <div id="tiket-hasil" style="margin-top:1.25rem"></div>
+  </form>
+</div></section><section class="bagian"><div class="wadah">
+  <div class="bagian-kepala">
     <p class="eyebrow">Pelayanan</p><h2>Layanan administrasi</h2>
     
-  </div><div class="kosong" style="margin-top:2rem">Rincian syarat dan alur tiap surat sedang disusun. Sementara ini, urusan surat-menyurat dilayani langsung di Kantor Desa Kote.</div></div></section></main>
+  </div><div class="kosong" style="margin-top:2rem">Rincian syarat dan alur tiap surat sedang disusun. Sementara ini, urusan surat-menyurat dilayani langsung di Kantor Desa Kote.</div></div></section>
+<script>
+(function () {
+  var $ = function (s) { return document.querySelector(s); };
+  var esc = function (t) { return String(t == null ? '' : t).replace(/[&<>"]/g,
+    function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); };
+
+  function kabar(el, teks, buruk) {
+    el.innerHTML = '<div class="' + (buruk ? 'galat' : 'berhasil') + '">' + teks + '</div>';
+  }
+
+  var borang = $('#borang-aduan');
+  if (borang) borang.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var tombol = $('#a-kirim'), pesan = $('#aduan-pesan');
+    tombol.disabled = true; tombol.textContent = 'Mengirim…';
+
+    fetch('/api/pengaduan', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        judul: $('#a-judul').value, isi: $('#a-isi').value,
+        kategori: $('#a-kategori').value, tanggal: $('#a-tanggal').value,
+        lokasi: $('#a-lokasi').value, nama: $('#a-nama').value,
+        kontak: $('#a-kontak').value, setuju: $('#a-setuju').checked,
+        alamatSurat: $('#a-alamat-surat').value
+      })
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (h) {
+        if (!h.ok) { kabar(pesan, esc(h.j.galat || 'Gagal mengirim.'), true); return; }
+        kabar(pesan, 'Pengaduan terkirim. Nomor tiket Anda: <b>' + esc(h.j.tiket) +
+              '</b><br>Simpan nomor ini untuk menengok tindak lanjutnya.');
+        borang.reset();
+        pesan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      })
+      .catch(function () { kabar(pesan, 'Tidak bisa menghubungi server. Periksa sambungan internet.', true); })
+      .then(function () { tombol.disabled = false; tombol.textContent = 'Kirim pengaduan'; });
+  });
+
+  var LABEL = { baru: 'Baru masuk', diproses: 'Sedang diproses',
+                selesai: 'Selesai', ditolak: 'Tidak dapat ditindaklanjuti' };
+
+  var cek = $('#borang-tiket');
+  if (cek) cek.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var hasil = $('#tiket-hasil'), no = $('#t-nomor').value.trim();
+    if (!no) return;
+    hasil.innerHTML = '<p class="catatan" style="margin:0">Mencari…</p>';
+
+    fetch('/api/pengaduan?tiket=' + encodeURIComponent(no))
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (h) {
+        if (!h.ok) { kabar(hasil, esc(h.j.galat || 'Tidak ditemukan.'), true); return; }
+        var p = h.j.pengaduan;
+        var t = new Date(p.dikirim).toLocaleDateString('id-ID', { dateStyle: 'long' });
+        hasil.innerHTML =
+          '<div class="kartu"><h3>' + esc(p.tiket) + '</h3>' +
+          '<dl class="definisi" style="max-width:none;margin-top:.75rem">' +
+          '<div><dt>Status</dt><dd>' + esc(LABEL[p.status] || p.status) + '</dd></div>' +
+          '<div><dt>Dikirim</dt><dd>' + esc(t) + '</dd></div></dl>' +
+          (p.tanggapan
+            ? '<p style="margin-top:1rem"><b>Tanggapan desa</b></p><p style="margin-top:.35rem;color:var(--tinta-2)">'
+              + esc(p.tanggapan) + '</p>'
+            : '<p class="catatan" style="margin-top:1rem">Belum ada tanggapan tertulis.</p>') +
+          '</div>';
+      })
+      .catch(function () { kabar(hasil, 'Tidak bisa menghubungi server.', true); });
+  });
+})();
+</script>
+</main>
 
 <footer class="kaki">
   <div class="wadah">
@@ -420,7 +626,7 @@ main > .bagian:first-child { padding-top: clamp(2rem, 4vw, 3rem); }
       </div>
       <div>
         <h4>Halaman</h4>
-        <ul><li><a href="/">Beranda</a></li><li><a href="/profil">Profil</a></li><li><a href="/pemerintahan">Pemerintahan</a></li><li><a href="/potensi">Potensi</a></li><li><a href="/layanan">Layanan</a></li><li><a href="/berita">Berita</a></li><li><a href="/unduhan">Unduhan</a></li>
+        <ul><li><a href="/">Beranda</a></li><li><a href="/profil">Profil</a></li><li><a href="/pemerintahan">Pemerintahan</a></li><li><a href="/potensi">Potensi</a></li><li><a href="/layanan">Pengaduan</a></li><li><a href="/berita">Berita</a></li><li><a href="/unduhan">Unduhan</a></li>
         <li><a href="/peta">Peta Digital</a></li></ul>
       </div>
       <div>

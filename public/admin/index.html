@@ -296,6 +296,51 @@ main > .bagian:first-child { padding-top: clamp(2rem, 4vw, 3rem); }
 .berkas small { display: block; color: var(--tinta-3); font-size: .84rem; }
 .berkas .ukuran { color: var(--tinta-3); font-size: .84rem; font-variant-numeric: tabular-nums; flex: none; }
 
+/* ─────────── Borang pengaduan ─────────── */
+.borang { max-width: 42rem; }
+.borang.sempit { max-width: 26rem; }
+.borang label { display: block; font-size: .88rem; font-weight: 550; margin-bottom: .4rem; }
+.borang .wajib, .borang .pilihan {
+  font-weight: 400; font-size: .78rem; margin-left: .4rem;
+}
+.borang .wajib { color: var(--magenta); }
+.borang .pilihan { color: var(--tinta-3); }
+.borang .medan { margin-bottom: 1.15rem; }
+.borang .inp, .borang textarea, .borang select {
+  width: 100%; font: inherit; font-size: 1rem; color: var(--tinta);
+  padding: .7rem .85rem; border: 1px solid var(--garis); border-radius: 8px;
+  background: #fff; transition: border-color .15s, box-shadow .15s;
+}
+.borang .inp:focus, .borang textarea:focus, .borang select:focus {
+  outline: none; border-color: var(--hijau-2); box-shadow: 0 0 0 3px rgba(42,90,47,.13);
+}
+.borang textarea { resize: vertical; line-height: 1.6; }
+.borang .dua { display: grid; grid-template-columns: 1fr 1fr; gap: 0 1rem; }
+@media (max-width: 620px) { .borang .dua { grid-template-columns: 1fr; } }
+
+/* Kolom jebakan penangkal robot — disembunyikan tanpa display:none,
+   sebab sebagian robot melewati kolom yang benar-benar tak tergambar. */
+.jebakan {
+  position: absolute; left: -9999px; width: 1px; height: 1px;
+  overflow: hidden; opacity: 0; pointer-events: none;
+}
+
+.setuju { margin: .5rem 0 1.25rem; }
+.setuju label {
+  display: flex; gap: .7rem; align-items: flex-start;
+  font-weight: 400; font-size: .93rem; color: var(--tinta-2); margin: 0;
+}
+.setuju input { margin-top: .25rem; width: 1.05rem; height: 1.05rem; flex: none; accent-color: var(--hijau-2); }
+
+.galat {
+  background: #fdf1f0; border: 1px solid #f0c8c5; color: #8f2a25;
+  padding: .8rem 1rem; border-radius: 8px; font-size: .93rem; margin-bottom: 1.25rem;
+}
+.berhasil {
+  background: #eef7ef; border: 1px solid #c6e2c9; color: #22562a;
+  padding: .8rem 1rem; border-radius: 8px; font-size: .93rem; margin-bottom: 1.25rem;
+}
+
 /* Keadaan kosong — jujur, bukan isian palsu */
 .kosong {
   border: 1px dashed var(--garis); border-radius: 10px;
@@ -688,6 +733,7 @@ const BAGIAN = [
       { k: 'biaya', l: 'Biaya', petunjuk: 'Contoh: Gratis' },
     ] },
 
+  { id: 'pengaduan', judul: 'Pengaduan warga', khusus: true },
   { id: 'akun', judul: 'Akun pengelola', khusus: true },
 ];
 
@@ -875,6 +921,64 @@ async function gambarAkun() {
     </div>` : ''}`;
 }
 
+/* ═══ Pengaduan warga ═══
+   Isinya data pribadi: tampil hanya di sini, tidak pernah ke halaman publik. */
+const STATUS_ADUAN = {
+  baru: 'Baru masuk', diproses: 'Sedang diproses',
+  selesai: 'Selesai', ditolak: 'Tidak dapat ditindaklanjuti',
+};
+
+async function gambarPengaduan() {
+  let daftar = [];
+  try { daftar = (await api('/api/pengaduan')).daftar || []; }
+  catch (e) { return `<div class="kotak"><div class="galat">${esc(e.message)}</div></div>`; }
+
+  const hitung = (st) => daftar.filter((p) => p.status === st).length;
+
+  const kartu = daftar.map((p) => {
+    const t = new Date(p.dikirim).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
+    const pilihan = Object.entries(STATUS_ADUAN).map(([v, l]) =>
+      `<option value="${v}"${v === p.status ? ' selected' : ''}>${esc(l)}</option>`).join('');
+    return `<div class="baris" data-tiket="${esc(p.tiket)}">
+      <div class="baris-kepala">
+        <span>${esc(p.tiket)} · ${esc(t)}</span>
+        <span class="lencana${p.status === 'baru' ? ' admin' : ''}" style="margin-left:auto">
+          ${esc(STATUS_ADUAN[p.status] || p.status)}</span>
+      </div>
+      <h3 style="font-size:1.05rem;margin-bottom:.5rem">${esc(p.judul)}</h3>
+      <p style="white-space:pre-wrap;color:var(--tinta-2);font-size:.95rem">${esc(p.isi)}</p>
+      <dl class="definisi" style="max-width:none;margin-top:1rem">
+        <div><dt>Jenis</dt><dd>${esc(p.kategori)}</dd></div>
+        ${p.tanggal ? `<div><dt>Tanggal kejadian</dt><dd>${esc(p.tanggal)}</dd></div>` : ''}
+        ${p.lokasi ? `<div><dt>Lokasi</dt><dd>${esc(p.lokasi)}</dd></div>` : ''}
+        <div><dt>Pelapor</dt><dd>${p.nama ? esc(p.nama) : '<i>tanpa nama</i>'}</dd></div>
+        ${p.kontak ? `<div><dt>Kontak</dt><dd>${esc(p.kontak)}</dd></div>` : ''}
+      </dl>
+      <div class="dua" style="margin-top:1rem">
+        <div class="medan"><label>Status</label>
+          <select class="inp" data-aduan-status>${pilihan}</select></div>
+      </div>
+      <div class="medan"><label>Tanggapan resmi <span style="font-weight:400;color:var(--tinta-3)">— terlihat warga lewat nomor tiket</span></label>
+        <textarea class="inp" rows="3" data-aduan-tanggapan>${esc(p.tanggapan || '')}</textarea></div>
+      <button class="tombol kecil" data-aduan-simpan>Simpan tanggapan</button>
+    </div>`;
+  }).join('');
+
+  return `<div class="kotak">
+      <h2>Pengaduan warga</h2>
+      <p class="bantu">Isi pengaduan memuat data pribadi. Jangan disalin ke tempat lain,
+        dan jangan ditampilkan di website. Warga hanya melihat status dan tanggapan resmi
+        lewat nomor tiketnya.</p>
+      <div class="definisi" style="max-width:none">
+        <div><dt>Baru masuk</dt><dd>${hitung('baru')}</dd></div>
+        <div><dt>Sedang diproses</dt><dd>${hitung('diproses')}</dd></div>
+        <div><dt>Selesai</dt><dd>${hitung('selesai')}</dd></div>
+        <div><dt>Seluruhnya</dt><dd>${daftar.length}</dd></div>
+      </div>
+    </div>
+    ${daftar.length ? kartu : '<div class="kotak"><div class="kosong">Belum ada pengaduan masuk.</div></div>'}`;
+}
+
 /* ═══ Perutean ═══ */
 async function gambar() {
   const b = BAGIAN.find((x) => x.id === bagianAktif);
@@ -884,6 +988,7 @@ async function gambar() {
   ).join('');
 
   if (b.id === 'ringkasan') $('#isi').innerHTML = gambarRingkasan();
+  else if (b.id === 'pengaduan') $('#isi').innerHTML = await gambarPengaduan();
   else if (b.id === 'akun') $('#isi').innerHTML = await gambarAkun();
   else $('#isi').innerHTML = gambarBagian(b);
 }
@@ -980,6 +1085,26 @@ document.addEventListener('click', async (e) => {
     }
     tombol.disabled = false;
     tombol.textContent = 'Terbitkan sekarang';
+    return;
+  }
+
+  const simpanAduan = e.target.closest('[data-aduan-simpan]');
+  if (simpanAduan) {
+    const baris = simpanAduan.closest('[data-tiket]');
+    simpanAduan.disabled = true;
+    try {
+      await api('/api/pengaduan', {
+        method: 'PATCH',
+        body: {
+          tiket: baris.dataset.tiket,
+          status: baris.querySelector('[data-aduan-status]').value,
+          tanggapan: baris.querySelector('[data-aduan-tanggapan]').value,
+        },
+      });
+      lapor('Tanggapan tersimpan');
+      return gambar();
+    } catch (err) { lapor('Gagal: ' + err.message, 6000); }
+    simpanAduan.disabled = false;
     return;
   }
 
