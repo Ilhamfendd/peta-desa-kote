@@ -231,12 +231,12 @@ def hal_beranda(k, kosong):
     hero = f"""<section class="hero">
   <div class="hero-peta">{hero_svg(s['pusat'])}</div>
   <div class="wadah hero-isi">
-    <p class="eyebrow"><span class="tanda">◆</span> Kec. {E(s['kecamatan'])} · Kab. {E(s['kabupaten'])} · {E(s['provinsi'])}</p>
+    <p class="eyebrow"><span class="tanda">◆</span> Kec. {E(s['kecamatan'])} · Kab. {E(s['kabupaten'])}<span class="sembunyi-hp"> · {E(s['provinsi'])}</span></p>
     <h1>{E(s['nama'])}<span class="laut">{E(s['tagline'])}</span></h1>
     <p class="hero-lokasi">{E(pembuka)}</p>
     <div class="hero-koordinat">
-      <span>{E(dms(lat, 'lat'))}</span>
-      <span>{E(dms(lon, 'lng'))}</span>
+      <span class="sembunyi-hp">{E(dms(lat, 'lat'))}</span>
+      <span class="sembunyi-hp">{E(dms(lon, 'lng'))}</span>
       <span>Luas <b>{str(a['luas']).replace('.', ',')} km²</b></span>
       <span><b>{NF(a['penduduk'])}</b> jiwa</span>
     </div>

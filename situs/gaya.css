@@ -412,6 +412,16 @@ main > .bagian:first-child { padding-top: clamp(1.75rem, 3vw, 2.25rem); }
   /* Di ponsel, hero dirampingkan supaya isi tulisan sudah mulai terbaca
      sebelum batas layar — bukan cuma judul lalu terpotong. Diukur di ruang
      tampak Safari iPhone (393x700): menghemat sekitar 110 px. */
+  /* Di layar sempit, tiga hal ini lebih banyak memakan ruang daripada memberi
+     keterangan: provinsi membuat baris wilayah membelah dan menyisakan kata
+     menggantung, dan koordinat DMS tidak dipakai siapa pun dari ponsel. */
+  /* Kekhususan disamakan: .hero-koordinat span sudah memasang display:flex,
+     dan selektor satu kelas saja akan kalah — sama seperti jebakan `hidden`
+     yang pernah menimpa halaman admin. */
+  .sembunyi-hp,
+  .hero-koordinat span.sembunyi-hp { display: none; }
+  .hero h1 { font-size: 2.35rem; }
+
   .hero { padding: 2.5rem 0 2.25rem; }
   .hero h1 { margin-top: .55rem; }
   .hero h1 .laut { margin-top: .35rem; }
