@@ -235,9 +235,36 @@ def hal_beranda(k, kosong):
              ('RT / RW', f"{a['rt']} / {a['rw']}", '')]
     angka = ''.join(f'<div><dt>{E(j)}</dt><dd>{v} <em>{E(u)}</em></dd></div>' for j, v, u in kotak)
 
-    isi = f"""<section class="bagian"><div class="wadah">
+    blok_angka = f"""<section class="bagian"><div class="wadah">
+  <div class="bagian-kepala">
+    <p class="eyebrow">Angka pokok</p>
+    <h2>Desa Kote dalam angka</h2>
+  </div>
   <dl class="angka">{angka}</dl>
-  <p class="catatan">Sumber: {E(a['sumber'])}. Angka kepadatan dihitung dari luas dan jumlah penduduk.</p>
+  <p class="catatan">Sumber: {E(a['sumber'])}. Angka kepadatan dihitung dari luas dan jumlah penduduk.
+  Rincian menurut umur, pendidikan, dan mata pencaharian ada di
+  <a href="/profil" style="color:var(--hijau-2)">halaman profil</a>.</p>
+</div></section>"""
+
+    # Pengunjung disambut cerita, bukan tabel. Angka menyusul sebagai pendukung —
+    # sebelumnya deretan angka besar muncul persis di bawah hero, dan yang pertama
+    # dilihat orang justru statistik, bukan keterangan tentang desanya.
+    sejarah = str(k['profil'].get('sejarah') or '')
+    pembuka = [x.strip() for x in sejarah.split('\n\n') if x.strip()
+               and not x.strip().lower().startswith('catatan')][:2]
+    if not pembuka:
+        pembuka = [str(k['profil'].get('geografis') or '')]
+
+    isi = f"""<section class="bagian"><div class="wadah">
+  <div class="bagian-kepala">
+    <p class="eyebrow">Sekilas</p>
+    <h2>Tentang Desa Kote</h2>
+  </div>
+  <div class="prosa">
+    {''.join(f'<p>{E(x)}</p>' for x in pembuka)}
+    <p style="margin-top:1.5rem">
+      <a class="tombol garis" href="/profil">Profil selengkapnya</a></p>
+  </div>
 </div></section>"""
 
     if b['sambutan'].get('teks'):
@@ -269,6 +296,8 @@ def hal_beranda(k, kosong):
   <div class="kisi kisi-3">{kartu}</div>
   <p style="margin-top:1.75rem"><a class="tombol garis" href="/potensi">Lihat seluruh potensi</a></p>
 </div></section>"""
+
+    isi += blok_angka
 
     isi += """<section class="bagian"><div class="wadah">
   <div class="ajak-peta">
