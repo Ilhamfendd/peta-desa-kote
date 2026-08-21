@@ -111,8 +111,15 @@ HALAMAN = [
 ]
 
 
-def kerangka(k, berkas, judul, isi, gaya, logo, hero=''):
+def kerangka(k, berkas, judul, isi, gaya, logo, hero='', lambang=''):
     s = k['situs']
+    # Lambang daerah dipasang sebagai gambar sungguhan, bukan mask satu warna:
+    # lambang resmi itu berwarna dan berdetail, jadi kalau dijadikan siluet
+    # wujudnya hilang. Tanpa berkas lambang, dipakai lambang KKN seperti semula.
+    tanda_atas = (f'<img class="lambang-gambar" src="{lambang}" alt="Lambang {E(s["kabupaten"])}">'
+                  if lambang else '<span class="lambang" aria-hidden="true"></span>')
+    tanda_kaki = (f'<span class="lambang-cakram"><img src="{lambang}" alt=""></span>'
+                  if lambang else '<span class="lambang" aria-hidden="true"></span>')
     nav = ''
     for f, _, label in HALAMAN:
         kini = ' aria-current="page"' if f == berkas else ''
@@ -133,6 +140,7 @@ def kerangka(k, berkas, judul, isi, gaya, logo, hero=''):
 <meta property="og:title" content="{E(judul_penuh)}">
 <meta property="og:description" content="{E(s['deskripsi'])}">
 <meta property="og:type" content="website">
+{f'<link rel="icon" href="{lambang}">' if lambang else ''}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
@@ -144,7 +152,7 @@ def kerangka(k, berkas, judul, isi, gaya, logo, hero=''):
 <header class="kepala">
   <div class="wadah kepala-isi">
     <a class="merek" href="/">
-      <span class="lambang" aria-hidden="true"></span>
+      {tanda_atas}
       <span><b>{E(s['nama'])}</b><small>Kec. {E(s['kecamatan'])} · Kab. {E(s['kabupaten'])}</small></span>
     </a>
     <button class="tombol-nav" aria-label="Buka menu" aria-expanded="false" aria-controls="nav">
@@ -162,7 +170,7 @@ def kerangka(k, berkas, judul, isi, gaya, logo, hero=''):
   <div class="wadah">
     <div class="kaki-kisi">
       <div>
-        <div class="kaki-merek"><span class="lambang" aria-hidden="true"></span><b>{E(s['nama'])}</b></div>
+        <div class="kaki-merek">{tanda_kaki}<b>{E(s['nama'])}</b></div>
         <p>Kecamatan {E(s['kecamatan'])}<br>Kabupaten {E(s['kabupaten'])}<br>{E(s['provinsi'])}</p>
       </div>
       <div>
@@ -711,12 +719,23 @@ def main():
     logo_p = SRC / 'logo-kkn-emblem.png'
     logo = ('data:image/png;base64,' + base64.b64encode(logo_p.read_bytes()).decode()) if logo_p.exists() else ''
 
+    # Lambang daerah disajikan sebagai berkas tersendiri, bukan ditanam base64:
+    # ukurannya puluhan KB dan dipakai di semua halaman — sekali unduh, lalu
+    # disinggahi browser.
+    lambang_p = SITUS / 'lambang-daerah.png'
+    lambang = ''
+    if lambang_p.exists():
+        PUBLIC.mkdir(exist_ok=True)
+        shutil.copy2(lambang_p, PUBLIC / 'lambang-daerah.png')
+        lambang = '/lambang-daerah.png'
+
     PUBLIC.mkdir(parents=True, exist_ok=True)
     kosong = []
 
     for berkas, judul, _ in HALAMAN:
         hero, isi = PEMBANGUN[berkas](k, kosong)
-        (PUBLIC / berkas).write_text(kerangka(k, berkas, judul, isi, gaya, logo, hero), encoding='utf-8')
+        (PUBLIC / berkas).write_text(
+            kerangka(k, berkas, judul, isi, gaya, logo, hero, lambang), encoding='utf-8')
 
     # Halaman pengelolaan. Memakai gaya yang sama dengan situs, tapi tidak
     # tercantum di navigasi mana pun dan diberi tanda noindex.

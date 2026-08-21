@@ -8,6 +8,7 @@
 <meta property="og:title" content="Profil Desa — Desa Kote">
 <meta property="og:description" content="Profil resmi Desa Kote, Kecamatan Singkep Pesisir, Kabupaten Lingga, Kepulauan Riau — desa pesisir bekas pelabuhan ramai di Pulau Singkep dan tempat tumbuhnya Zapin Kote. Berisi data wilayah, kependudukan, potensi, layanan, dan peta digital desa.">
 <meta property="og:type" content="website">
+<link rel="icon" href="/lambang-daerah.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
@@ -90,6 +91,17 @@ a { color: inherit; }
 .kepala-isi { display: flex; align-items: center; gap: 1.25rem; height: 4.25rem; }
 
 .merek { display: flex; align-items: center; gap: .7rem; text-decoration: none; margin-right: auto; }
+/* Lambang daerah: gambar berwarna apa adanya, tidak diwarnai ulang —
+   lambang resmi tidak boleh diubah rupanya. */
+.lambang-gambar { width: 2.3rem; height: 2.3rem; flex: none; object-fit: contain; }
+.lambang-cakram {
+  width: 2.3rem; height: 2.3rem; flex: none;
+  display: grid; place-items: center;
+  background: #fff; border-radius: 50%;
+}
+.lambang-cakram img { width: 78%; height: 78%; object-fit: contain; }
+@media (max-width: 800px) { .lambang-gambar { width: 2rem; height: 2rem; } }
+
 .merek .lambang {
   width: 2.3rem; height: 2.3rem; flex: none;
   background: var(--hijau);
@@ -381,7 +393,7 @@ main > .bagian:first-child { padding-top: clamp(2rem, 4vw, 3rem); }
 <header class="kepala">
   <div class="wadah kepala-isi">
     <a class="merek" href="/">
-      <span class="lambang" aria-hidden="true"></span>
+      <img class="lambang-gambar" src="/lambang-daerah.png" alt="Lambang Lingga">
       <span><b>Desa Kote</b><small>Kec. Singkep Pesisir · Kab. Lingga</small></span>
     </a>
     <button class="tombol-nav" aria-label="Buka menu" aria-expanded="false" aria-controls="nav">
@@ -427,7 +439,7 @@ main > .bagian:first-child { padding-top: clamp(2rem, 4vw, 3rem); }
   <div class="wadah">
     <div class="kaki-kisi">
       <div>
-        <div class="kaki-merek"><span class="lambang" aria-hidden="true"></span><b>Desa Kote</b></div>
+        <div class="kaki-merek"><span class="lambang-cakram"><img src="/lambang-daerah.png" alt=""></span><b>Desa Kote</b></div>
         <p>Kecamatan Singkep Pesisir<br>Kabupaten Lingga<br>Kepulauan Riau</p>
       </div>
       <div>

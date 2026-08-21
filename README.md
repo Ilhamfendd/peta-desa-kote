@@ -124,7 +124,21 @@ Warna grafik statistik **sengaja tidak diubah** — palet itu sudah diuji
 keterbacaannya bagi penyandang buta warna, dan mengubahnya demi kecocokan merek
 justru akan merusak fungsinya.
 
-**Logo desa** bisa Anda tambahkan sendiri di **Kelola → Identitas desa → Logo desa**.
+### Lambang di website
+
+Website memakai **lambang Kabupaten Lingga**, disimpan di `situs/lambang-daerah.png`
+dan disalin ke `public/` saat dibangun. Dipasang sebagai gambar berwarna apa adanya,
+bukan mask satu warna — lambang resmi tidak boleh diubah rupanya.
+
+**Ganti berkasnya bila punya yang lebih resmi.** Berkas yang terpasang sekarang
+diambil dari Wikipedia bahasa Indonesia karena situs resmi Pemkab Lingga tidak
+bisa dijangkau saat itu. Yang paling sah adalah berkas dari kantor desa atau
+`linggakab.go.id`. Cukup timpa `situs/lambang-daerah.png` lalu jalankan
+`python bangun-situs.py` — ukurannya disesuaikan sendiri lewat CSS.
+
+Kalau berkas itu dihapus, website kembali memakai lambang KKN seperti semula.
+
+**Logo desa di peta** bisa Anda tambahkan sendiri di **Kelola → Identitas desa → Logo desa**.
 Gambarnya dikecilkan otomatis ke 256 px agar berkas tetap ringan, lalu tampil di
 samping lambang KKN. Nama tim, institusi, dan tahun juga bisa diubah di sana.
 
