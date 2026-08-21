@@ -274,7 +274,7 @@ def hal_beranda(k, kosong):
     <p class="eyebrow">Sekilas</p>
     <h2>Tentang Desa Kote</h2>
   </div>
-  <div class="prosa">
+  <div class="prosa bukaan">
     {''.join(f'<p>{E(x)}</p>' for x in pembuka)}
     <p style="margin-top:1.5rem">
       <a class="tombol garis" href="/profil">Profil selengkapnya</a></p>

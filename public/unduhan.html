@@ -130,7 +130,9 @@ a { color: inherit; }
 .hero {
   position: relative; overflow: hidden;
   background: var(--laut-dalam); color: #fff;
-  padding: clamp(3.5rem, 9vw, 7rem) 0 clamp(3rem, 7vw, 5.5rem);
+  /* Bantalan bawah sengaja lebih kecil daripada atas: di bawah baris koordinat
+     tidak ada apa-apa lagi, jadi ruang gelap yang lebar hanya terasa berongga. */
+  padding: clamp(3.5rem, 9vw, 7rem) 0 clamp(2.25rem, 4vw, 3.25rem);
 }
 .hero-peta { position: absolute; inset: 0; pointer-events: none; }
 .hero-peta svg { width: 100%; height: 100%; }
@@ -209,8 +211,8 @@ a { color: inherit; }
 .bagian { padding: clamp(3rem, 7vw, 5rem) 0; }
 .bagian + .bagian { border-top: 1px solid var(--garis); }
 /* Angka pokok menempel ke hero, bukan mengambang di tengah kekosongan */
-main > .bagian:first-child { padding-top: clamp(2rem, 4vw, 3rem); }
-.bagian-kepala { max-width: 46rem; margin-bottom: 2.5rem; }
+main > .bagian:first-child { padding-top: clamp(1.75rem, 3vw, 2.25rem); }
+.bagian-kepala { max-width: 46rem; margin-bottom: 1.85rem; }
 .bagian-kepala h2 {
   font-size: clamp(1.7rem, 3.6vw, 2.4rem); margin-top: .7rem;
 }
@@ -218,6 +220,13 @@ main > .bagian:first-child { padding-top: clamp(2rem, 4vw, 3rem); }
 
 .prosa { max-width: 42rem; }
 .prosa p + p { margin-top: 1.1rem; }
+/* Paragraf pertama jadi kalimat pembuka: sedikit lebih besar supaya bagian
+   ini terbaca sebagai bukaan, bukan langsung badan tulisan.
+   Hanya di layar lebar — di ponsel huruf yang lebih besar justru memakan
+   ruang, dan isinya terpotong lebih awal. */
+@media (min-width: 801px) {
+  .prosa.bukaan > p:first-child { font-size: 1.12rem; line-height: 1.6; }
+}
 .prosa h3 { font-size: 1.15rem; margin: 2rem 0 .6rem; }
 
 /* Kartu */
