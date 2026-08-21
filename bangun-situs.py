@@ -269,7 +269,7 @@ def hal_beranda(k, kosong):
     if not pembuka:
         pembuka = [str(k['profil'].get('geografis') or '')]
 
-    isi = f"""<section class="bagian"><div class="wadah">
+    isi = f"""<section class="bagian dua-lajur"><div class="wadah">
   <div class="bagian-kepala">
     <p class="eyebrow">Sekilas</p>
     <h2>Tentang Desa Kote</h2>
