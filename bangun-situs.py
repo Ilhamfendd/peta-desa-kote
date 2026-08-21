@@ -222,17 +222,23 @@ def hal_beranda(k, kosong):
     s, a, b = k['situs'], k['angka'], k['beranda']
     lat, lon = s['pusat']
 
+    # Kalimat pembuka bisa ditulis sendiri lewat /admin. Kalau dikosongkan,
+    # dipakai kalimat pertama keterangan letak geografis seperti semula.
+    pembuka = str(s.get('pembuka') or '').strip()
+    if not pembuka:
+        pembuka = str(k['profil'].get('geografis') or '').split('.')[0].strip() + '.'
+
     hero = f"""<section class="hero">
   <div class="hero-peta">{hero_svg(s['pusat'])}</div>
   <div class="wadah hero-isi">
     <p class="eyebrow"><span class="tanda">◆</span> Kec. {E(s['kecamatan'])} · Kab. {E(s['kabupaten'])} · {E(s['provinsi'])}</p>
     <h1>{E(s['nama'])}<span class="laut">{E(s['tagline'])}</span></h1>
-    <p class="hero-lokasi">{E(k['profil']['geografis'].split('.')[0])}.</p>
+    <p class="hero-lokasi">{E(pembuka)}</p>
     <div class="hero-koordinat">
       <span>{E(dms(lat, 'lat'))}</span>
       <span>{E(dms(lon, 'lng'))}</span>
-      <span>Luas <b>{a['luas']} km²</b></span>
-      <span>Kode <b>{E(s['kode'])}</b></span>
+      <span>Luas <b>{str(a['luas']).replace('.', ',')} km²</b></span>
+      <span><b>{NF(a['penduduk'])}</b> jiwa</span>
     </div>
   </div>
 </section>"""
