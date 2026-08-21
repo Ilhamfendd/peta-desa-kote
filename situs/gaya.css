@@ -400,6 +400,17 @@ main > .bagian:first-child { padding-top: clamp(2rem, 4vw, 3rem); }
   .angka > div:nth-child(2n) { border-right: 0; padding-left: 1rem; }
   .angka > div:nth-last-child(-n+2) { border-bottom: 0; }
 
+  /* Di ponsel, hero dirampingkan supaya isi tulisan sudah mulai terbaca
+     sebelum batas layar — bukan cuma judul lalu terpotong. Diukur di ruang
+     tampak Safari iPhone (393x700): menghemat sekitar 110 px. */
+  .hero { padding: 2.5rem 0 2.25rem; }
+  .hero h1 { margin-top: .55rem; }
+  .hero h1 .laut { margin-top: .35rem; }
+  .hero-lokasi { margin-top: 1.05rem; }
+  .hero-koordinat { margin-top: 1.4rem; gap: .35rem 1.25rem; }
+  main > .bagian:first-child { padding-top: 1.75rem; }
+  .bagian-kepala { margin-bottom: 1.5rem; }
+
   /* Peta ditutupi dari bawah, bukan dari samping — biar pesisirnya tetap tampak */
   .hero-peta::after {
     background: linear-gradient(to bottom,
